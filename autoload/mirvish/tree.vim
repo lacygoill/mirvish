@@ -75,6 +75,11 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " We would need to use the option `--charset=ascii`, and we would need to tweak
 " some regexes whenever they contain `─` (→  --), `└` (→ `--), `├` (|--).
 
+" TODO:
+" Enable 'cursorline' in the filetype plugin.
+" Issue:
+" It makes Vim slow and consume too much cpu when we move the cursor fast.
+
 fu! mirvish#tree#close() abort "{{{1
     let curdir = s:getcurdir()
     if !has_key(s:cache, curdir)
