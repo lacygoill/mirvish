@@ -16,13 +16,6 @@ let g:autoloaded_mirvish = 1
 "}}}
 let s:hide_dot_entries = 0
 
-fu! s:do_i_preview() abort "{{{1
-    if get(b:dirvish, 'last_preview', 0) != line('.')
-        let b:dirvish['last_preview'] = line('.')
-        call s:preview()
-    endif
-endfu
-
 fu! mirvish#format_entries() abort "{{{1
     let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
     "                      ┌ remove the `$` anchor at the end,
@@ -38,14 +31,7 @@ fu! mirvish#format_entries() abort "{{{1
     sort :^.*[\/]:
 endfu
 
-fu! mirvish#install_auto_preview() abort "{{{1
-    augroup mirvish_auto_preview
-        au!
-        au CursorMoved <buffer> nested call s:do_i_preview()
-    augroup END
-endfu
-
-fu! s:preview() abort "{{{1
+fu! mirvish#preview() abort "{{{1
     let file = getline('.')
     if filereadable(file)
         exe 'pedit '.file
@@ -151,19 +137,6 @@ fu! s:auto_metadata() abort "{{{1
         \ |                         call mirvish#show_metadata('manual')
         \ |                     endif
     augroup END
-endfu
-
-fu! mirvish#toggle_auto_preview(enable) abort "{{{1
-    if a:enable && !exists('#mirvish_auto_preview')
-        call mirvish#install_auto_preview()
-        echo '[auto preview] ON'
-        call s:preview()
-    elseif !a:enable && exists('#mirvish_auto_preview')
-        au!  mirvish_auto_preview
-        aug! mirvish_auto_preview
-        echo '[auto preview] OFF'
-        sil! pclose
-    endif
 endfu
 
 fu! mirvish#toggle_dot_entries() abort "{{{1

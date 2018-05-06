@@ -18,8 +18,8 @@
 
 " Dirvish installs the mappings `C-n` and `C-p` to preview the contents
 " of the previous/next file or directory.
-" It's redundant with `coP`, and it clashes with our own `C-n` and `C-p`
-" to move across tabpages.
+" It clashes with our own `C-n` and `C-p` to move across tabpages.
+" Besides, we'll use `}` and `{` instead.
 
 sil nunmap  <buffer>  <c-n>
 sil nunmap  <buffer>  <c-p>
@@ -37,13 +37,6 @@ xno  <buffer><nowait><silent>  <c-t>  :call dirvish#open('tabedit', 1)<cr>
 
 nno  <buffer><nowait><silent>  <c-v><c-v>  :<c-u>call dirvish#open('vsplit', 1)<cr>
 
-" [oP  ]oP  coP {{{2
-
-nno  <buffer><nowait><silent>  [oP  :<c-u>call mirvish#toggle_auto_preview(1)<cr>
-nno  <buffer><nowait><silent>  ]oP  :<c-u>call mirvish#toggle_auto_preview(0)<cr>
-nno  <buffer><nowait><silent>  coP  :<c-u>call mirvish#toggle_auto_preview(
-\                                                  !exists('#mirvish_auto_preview'))<cr>
-
 " gh {{{2
 
 " Map `gh` to toggle dot-prefixed entries.
@@ -53,6 +46,13 @@ nno  <buffer><nowait><silent>  gh  :<c-u>call mirvish#toggle_dot_entries()<cr>
 
 nmap  <buffer><nowait><silent>  h  <plug>(mirvish_update)<plug>(dirvish_up)
 nmap  <buffer><nowait><silent>  l  <cr>
+
+" p } { {{{2
+
+nno  <buffer><nowait><silent>  p  :<c-u>call mirvish#preview()<cr>
+
+nno  <buffer><nowait><silent>  }  j:<c-u>call mirvish#preview()<cr>
+nno  <buffer><nowait><silent>  {  k:<c-u>call mirvish#preview()<cr>
 
 " q {{{2
 
@@ -123,9 +123,9 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
                     \ | exe 'nunmap <buffer> <c-t>'
                     \ | exe 'xunmap <buffer> <c-t>'
                     \ | exe 'nunmap <buffer> <c-v><c-v>'
-                    \ | exe 'nunmap <buffer> [oP'
-                    \ | exe 'nunmap <buffer> ]oP'
-                    \ | exe 'nunmap <buffer> coP'
+                    \ | exe 'nunmap <buffer> }'
+                    \ | exe 'nunmap <buffer> {'
+                    \ | exe 'nunmap <buffer> p'
                     \ | exe 'nunmap <buffer> h'
                     \ | exe 'nunmap <buffer> l'
                     \ | exe 'nunmap <buffer> gh'
