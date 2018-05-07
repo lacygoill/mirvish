@@ -108,10 +108,6 @@ xno   <buffer><expr>  <plug>(mirvish_show_arg_pos)  execute('let g:my_stl_list_p
 nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
 nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
 
-" g:dirvish_mode {{{1
-
-let g:dirvish_mode = ':call mirvish#format_entries()'
-
 " Teardown {{{1
 
 let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
