@@ -1,18 +1,3 @@
-" FIXME:{{{
-"
-" MWE:
-"     $ cat /tmp/vimrc
-"         set rtp^=~/.vim/plugged/vim-dirvish
-"         set rtp+=~/.vim/plugged/vim-dirvish/after
-"         set wig+=*/.git/**/*
-"
-"     $ vim -Nu /tmp/vimrc
-"         :e ~/.vim/plugged/vim-dirvish
-"             → `.git/` is displayed              ✘ (it shouldn't because of our 'wig' value)
-"         R
-"             → `.git/` is not displayed anymore  ✔
-"}}}
-
 " Mappings {{{1
 " C-n  C-p {{{2
 
@@ -24,16 +9,16 @@
 sil nunmap  <buffer>  <c-n>
 sil nunmap  <buffer>  <c-p>
 
-" c-s {{{2
+" C-s {{{2
 
 nno  <buffer><nowait><silent>  <c-s>  :<c-u>call dirvish#open('split', 1)<cr>
 
-" c-t {{{2
+" C-t {{{2
 
 nno  <buffer><nowait><silent>  <c-t>  :<c-u>call dirvish#open('tabedit', 1)<cr>
 xno  <buffer><nowait><silent>  <c-t>  :call dirvish#open('tabedit', 1)<cr>
 
-" c-v c-v {{{2
+" C-v C-v {{{2
 
 nno  <buffer><nowait><silent>  <c-v><c-v>  :<c-u>call dirvish#open('vsplit', 1)<cr>
 
