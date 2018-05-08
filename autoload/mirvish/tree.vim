@@ -8,6 +8,9 @@ let s:hide_dot_entries = 0
 let s:INDICATOR = '[/=*>|]'
 let s:BIG_DIR_PAT = '\%1l.*'
 
+" TODO:
+" Make the plugin remember the width of the last closed window (like what UndoTree does).
+
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
 " TODO: How to make the buffer survive a `:e`, like a dirvish buffer?
