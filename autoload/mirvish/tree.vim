@@ -399,6 +399,13 @@ fu! s:use_cache(dir) abort "{{{1
     " restore last position if one was saved
     if has_key(s:cache[a:dir], 'pos')
         let s:last_pos = s:cache[a:dir].pos
+        " Why not restoring the position now?{{{
+        "
+        " It would be too soon.
+        " This function is called from a `BufNewFile` event.
+        " Vim will  re-position the cursor  on the first line  afterwards (after
+        " BufEnter).
+        "}}}
         augroup mirvish_restore_last_pos
             au! * <buffer>
             au BufWinEnter <buffer>   exe s:last_pos
