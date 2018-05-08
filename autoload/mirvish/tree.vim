@@ -13,9 +13,6 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " file opened from the tree.
 " Like what `UndoTree` does.
 
-" TODO:
-" Make the plugin remember the width of the last closed window (like what UndoTree does).
-
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
 " TODO: How to make the buffer survive a `:e`, like a dirvish buffer?
@@ -89,6 +86,7 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " It makes Vim slow and consume too much cpu when we move the cursor fast.
 
 fu! mirvish#tree#close() abort "{{{1
+    let s:winwidth = winwidth(0)
     let curdir = s:getcurdir()
     if !has_key(s:cache, curdir)
         close
@@ -262,7 +260,7 @@ fu! s:open(dir, nosplit) abort "{{{1
     if a:nosplit
         exe 'e '.tempfile
     else
-        exe 'lefta '.get(s:, 'cur_width', &columns/3).'vnew '.tempfile
+        exe 'lefta '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
     endif
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
