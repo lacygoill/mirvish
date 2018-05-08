@@ -339,8 +339,13 @@ fu! mirvish#tree#relative_dir(who) abort "{{{1
             " If we keep pressing  `l` on a file, we don't  want to keep opening
             " splits forever.
             if new_dir isnot# expand('%:p')
-                exe 'sp '.new_dir
-                norm! zv
+                " E36: Not enough room
+                try
+                    exe 'sp '.new_dir
+                    norm! zv
+                catch
+                    return lg#catch_error()
+                endtry
             endif
             call win_gotoid(id)
             return
