@@ -7,7 +7,7 @@ let g:loaded_mirvish = 1
 
 augroup mirvish_tree_populate
     au!
-    au BufNewFile /tmp/*/tree_explorer* call mirvish#tree#populate(expand('<amatch>'))
+    au BufNewFile /tmp/*/tree_explorer::* call mirvish#tree#populate(expand('<amatch>'))
 augroup END
 
 " Command {{{1
