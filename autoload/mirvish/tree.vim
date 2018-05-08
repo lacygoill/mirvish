@@ -87,13 +87,17 @@ let s:BIG_DIR_PAT = '\%1l.*'
 
 fu! mirvish#tree#close() abort "{{{1
     let s:winwidth = winwidth(0)
-    let curdir = s:getcurdir()
-    if !has_key(s:cache, curdir)
-        close
-        return
+
+    if exists('s:preview_winid')
+        exe win_id2win(s:preview_winid).'wincmd c'
+        unlet s:preview_winid
     endif
-    " save the view in this directory before closing the window
-    call s:save_view(curdir)
+
+    let curdir = s:getcurdir()
+    if has_key(s:cache, curdir)
+        " save the view in this directory before closing the window
+        call s:save_view(curdir)
+    endif
     close
 endfu
 
@@ -320,6 +324,7 @@ endfu
 
 fu! mirvish#tree#preview() abort "{{{1
     exe 'pedit '.s:getfile()
+    let s:preview_winid = win_getid(winnr('#'))
 endfu
 
 fu! mirvish#tree#relative_dir(who) abort "{{{1
