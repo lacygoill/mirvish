@@ -2,13 +2,17 @@ let b:current_syntax = 'tree'
 
 " Syntax {{{1
 
-syn  match  treeOnlyLastComponent               '─\s\zs.*/\%(.\{-}[^/]\)\@='             conceal
-syn  match  treeOnlyLastComponentBeforeWarning  '─\s\zs.*/\ze.\{-}/\%(\s\[.\{-}\]\)\@='  conceal
+let s:pat = exists('g:mirvish_tree_style_ascii')
+        \ ?     '--'
+        \ :     '─'
 
-syn  match  treeDirectory   '\%(─\s.*/\)\@<=[^/]*/$'
+exe 'syn  match  treeOnlyLastComponent               :'.s:pat.'\s\zs.*/\%(.\{-}[^/]\)\@=:             conceal'
+exe 'syn  match  treeOnlyLastComponentBeforeWarning  :'.s:pat.'\s\zs.*/\ze.\{-}/\%(\s\[.\{-}\]\)\@=:  conceal'
+
+exe 'syn  match  treeDirectory   :\%('.s:pat.'\s.*/\)\@<=[^/]*/$:'
 syn  match  treeExecutable  '[^/]*\*$'
 
-syn  match  treeLinkPrefix  '─\s\zs/.*/\ze[^/]*\s->\s'  conceal
+exe 'syn  match  treeLinkPrefix  :'.s:pat.'\s\zs/.*/\ze[^/]*\s->\s:  conceal'
 syn  match  treeLink        '[^/]*\s->\s'
 "                            ├───┘
 "                            └ last path component of a symlink:
