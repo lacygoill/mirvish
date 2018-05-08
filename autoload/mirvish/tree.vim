@@ -270,6 +270,9 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
         return 'echoerr '.string(dir.'/ is not a directory')
     endif
 
+    "                                            ┌ `BufNewFile` won't be emitted
+    "                                            │  if the buffer name ends with a slash
+    "                                            │
     let tempfile = tempname().'/tree_explorer::'.(dir is# '/' ? '' : dir)
     if a:nosplit
         exe 'e '.tempfile
