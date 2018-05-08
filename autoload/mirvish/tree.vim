@@ -9,6 +9,11 @@ let s:INDICATOR = '[/=*>|]'
 let s:BIG_DIR_PAT = '\%1l.*'
 
 " TODO:
+" Add `Tab` mapping to go from the tree window to the window displaying the last
+" file opened from the tree.
+" Like what `UndoTree` does.
+
+" TODO:
 " Make the plugin remember the width of the last closed window (like what UndoTree does).
 
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
