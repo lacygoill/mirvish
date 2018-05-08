@@ -2,9 +2,11 @@ let b:current_syntax = 'tree'
 
 " Syntax {{{1
 
-let s:pat = exists('g:mirvish_tree_style_ascii')
-        \ ?     '--'
-        \ :     '─'
+let s:pat = get(s:, 'pat',
+          \         exists('g:mirvish_tree_style_ascii')
+          \         ?     '--'
+          \         :     '─'
+          \ )
 
 exe 'syn  match  treeOnlyLastComponent               :'.s:pat.'\s\zs.*/\%(.\{-}[^/]\)\@=:             conceal'
 exe 'syn  match  treeOnlyLastComponentBeforeWarning  :'.s:pat.'\s\zs.*/\ze.\{-}/\%(\s\[.\{-}\]\)\@=:  conceal'
