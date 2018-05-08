@@ -16,6 +16,17 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
 " TODO: How to make the buffer survive a `:e`, like a dirvish buffer?
+" Ugly_solution:
+"
+"   augroup reloadable_tree
+"       au!
+"       au BufUnload /tmp/*/tree_viewer::*  let s:bar = expand('<amatch>') | call timer_start(0, {-> Func()})
+"   augroup END
+"
+"   fu! Func() abort
+"       let dir = matchstr(s:bar, 'tree_viewer::\zs.*')
+"       exe 'Tree! '.dir
+"   endfu
 
 " TODO: Sort hidden directories after non-hidden ones.
 
