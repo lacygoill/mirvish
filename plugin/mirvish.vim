@@ -5,7 +5,7 @@ let g:loaded_mirvish = 1
 
 " Variable {{{1
 
-let g:dirvish_mode = get(g:, 'dirvish_mode', ':call mirvish#format_entries()')
+let g:dirvish_mode = ':call mirvish#format_entries()'
 
 " Autocommand {{{1
 

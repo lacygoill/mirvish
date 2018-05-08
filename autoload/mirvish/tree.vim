@@ -8,16 +8,6 @@ let s:hide_dot_entries = 0
 let s:INDICATOR = '[/=*>|]'
 let s:BIG_DIR_PAT = '\%1l.*'
 
-if exists('g:mirvish_tree_style_ascii')
-    let s:pat1 = '\%(|--\|--\)'
-    let s:pat2 = '--'
-    let s:charset =' --charset=ascii'
-else
-    let s:pat1 = '[├└]'
-    let s:pat2 = '─'
-    let s:charset = ''
-endif
-
 
 
 " FIXME:
@@ -124,9 +114,9 @@ fu! mirvish#tree#fde() abort "{{{1
     "
     "         $ vim /tmp/script.profile
     "}}}
-    let idx = strchars(matchstr(getline(v:lnum), '.\{-}'.s:pat1))-1
+    let idx = strchars(matchstr(getline(v:lnum), '.\{-}[├└]'))-1
     let lvl = idx/4
-    if matchstr(getline(v:lnum + 1), '\%'.(idx+5).'v.') =~# s:pat1
+    if matchstr(getline(v:lnum + 1), '\%'.(idx+5).'v.') =~# '[├└]'
         return '>'.(lvl + 1)
     endif
     return lvl
@@ -137,7 +127,7 @@ fu! mirvish#tree#fdl() abort "{{{1
 endfu
 
 fu! mirvish#tree#fdt() abort "{{{1
-    let pat = '\(.*'.s:pat2.'\s\)\(.*\)/'
+    let pat = '\(.*─\s\)\(.*\)/'
     let l:Rep = {-> submatch(1).substitute(submatch(2), '.*/', '', '')}
     return (get(b:, 'foldtitle_full', 0) ? '['.(v:foldend - v:foldstart).']': '')
     \      .substitute(getline(v:foldstart), pat, l:Rep, '')
@@ -152,7 +142,7 @@ fu! s:format() abort "{{{1
     "
     " We need to translate the dot into the current working directory.
     let cwd = getcwd()
-    sil! exe 'keepj keepp %s:'.s:pat2.'\s\zs\.\ze/:\=cwd:'
+    sil! exe keepj keepp %s:─\s\zs\.\ze/:\=cwd:
     " Why?{{{
     "
     " We  may have  created a  symbolic link  whose target  is a  directory, and
@@ -206,7 +196,7 @@ fu! s:get_tree_cmd(dir) abort "{{{1
     "                     ││┌ turn colorization off
     "                     │││
     let short_options = '-fFn'.(s:hide_dot_entries ? '' : ' -a')
-    let long_options = '--dirsfirst --noreport'.s:charset
+    let long_options = '--dirsfirst --noreport'
     "                     │           │
     "                     │           └ don't print the file and directory report at the end
     "                     └ print directories before files
@@ -232,8 +222,8 @@ fu! s:getfile() abort "{{{1
     let line = getline('.')
 
     return line =~# '\s->\s'
-    \ ?        matchstr(line, '.*'.s:pat2.'\s\zs.*\ze\s->\s')
-    \ :        matchstr(line, '.*'.s:pat2.'\s\zs.*'.s:INDICATOR.'\@<!')
+    \ ?        matchstr(line, '.*─\s\zs.*\ze\s->\s')
+    \ :        matchstr(line, '.*─\s\zs.*'.s:INDICATOR.'\@<!')
     " Do NOT add the `$` anchor !                           ^{{{
     "
     " You don't want match until the end of the line.
@@ -264,7 +254,7 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
 
     " save current file name to position the cursor on it
     if a:dir is# ''
-        let s:current_file_pos = '\C\V'.s:pat2.'\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
+        let s:current_file_pos = '\C\V─\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
     endif
 
     let dir = !empty(a:dir) ? expand(a:dir) : expand('%:p:h')
@@ -382,7 +372,7 @@ fu! mirvish#tree#relative_dir(who) abort "{{{1
 
     " If we go up the tree, position the cursor on the directory we come from.
     if exists('curdir')
-        call search('\C\V'.s:pat2.'\s'.curdir.'\m\%(\s->\s\|/$\)')
+        call search('\C\V─\s'.curdir.'\m\%(\s->\s\|/$\)')
     endif
 endfu
 
@@ -402,7 +392,7 @@ fu! mirvish#tree#reload() abort "{{{1
 
     " restore position
     let pat = '\C\V\^'.escape(line, '\').'\$'
-    let pat = substitute(pat, s:pat1, '\\m'.s:pat1.'\\V', 'g')
+    let pat = substitute(pat, '[├└]', '\\m[├└]\\V', 'g')
     call search(pat)
 endfu
 
