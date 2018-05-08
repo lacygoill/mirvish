@@ -15,19 +15,6 @@ let s:BIG_DIR_PAT = '\%1l.*'
 
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
-" TODO: How to make the buffer survive a `:e`, like a dirvish buffer?
-" Ugly_solution:
-"
-"   augroup reloadable_tree
-"       au!
-"       au BufUnload /tmp/*/tree_viewer::*  let s:bar = expand('<amatch>') | call timer_start(0, {-> Func()})
-"   augroup END
-"
-"   fu! Func() abort
-"       let dir = matchstr(s:bar, 'tree_viewer::\zs.*')
-"       exe 'Tree! '.dir
-"   endfu
-
 " TODO: Sort hidden directories after non-hidden ones.
 
 " TODO: Implement `g?` to show mappings, and the complete `$ tree` command which
@@ -274,7 +261,7 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
 
     " save current file name to position the cursor on it
     if a:dir is# ''
-        let current_file_pat = '\C\V─\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
+        let s:current_file_pos = '\C\V─\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
     endif
 
     let dir = !empty(a:dir) ? expand(a:dir) : expand('%:p:h')
@@ -289,6 +276,12 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
     else
         exe 'lefta '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
     endif
+
+    return ''
+endfu
+
+fu! mirvish#tree#populate(path) abort "{{{1
+    let dir = matchstr(a:path, '/tree_viewer::\zs.*')
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
     let b:curdir = dir
@@ -320,11 +313,9 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
     endif
 
     " position cursor on current file
-    if exists('current_file_pat')
-        call search(current_file_pat)
+    if exists('s:current_file_pos')
+        call timer_start(0, {-> search(s:current_file_pos) + execute('unlet! s:current_file_pos')})
     endif
-
-    return ''
 endfu
 
 fu! mirvish#tree#preview() abort "{{{1
@@ -407,7 +398,14 @@ fu! s:use_cache(dir) abort "{{{1
 
     " restore last position if one was saved
     if has_key(s:cache[a:dir], 'pos')
-        exe s:cache[a:dir].pos
+        let s:last_pos = s:cache[a:dir].pos
+        augroup mirvish_restore_last_pos
+            au! * <buffer>
+            au BufWinEnter <buffer>   exe s:last_pos
+                                  \ | unlet! s:last_pos
+                                  \ | exe 'au! mirvish_restore_last_pos'
+                                  \ | aug! mirvish_restore_last_pos
+        augroup END
     endif
 
     " restore last foldlevel if one was saved

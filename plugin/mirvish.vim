@@ -15,3 +15,8 @@ com! -bang -bar -complete=file -nargs=?  Tree  exe mirvish#tree#open(<q-args>, <
 nno  <unique><silent>  -t  :<c-u>Tree<cr>
 nno  <unique><silent>  -T  :<c-u>exe 'Tree '.getcwd()<cr>
 
+augroup mirvish_tree_populate
+    au!
+    au BufNewFile /tmp/*tree* call mirvish#tree#populate(expand('<amatch>'))
+augroup END
+
