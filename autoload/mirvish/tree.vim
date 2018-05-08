@@ -109,6 +109,15 @@ fu! mirvish#tree#close() abort "{{{1
     close
 endfu
 
+fu! mirvish#tree#edit(where) abort "{{{1
+    let file = s:getfile()
+    if a:where is# 'split'
+        exe 'sp '.file
+    else
+        exe 'tabedit '.file
+    endif
+endfu
+
 fu! mirvish#tree#fde() abort "{{{1
     " Warning:{{{
     " This function is by far the slowest when we execute `:Tree`.
@@ -255,15 +264,6 @@ fu! s:matchdelete() abort "{{{1
     \            {i,v -> v.pattern is# s:BIG_DIR_PAT}), 0, []), 'id', 0)
     if id
         call matchdelete(id)
-    endif
-endfu
-
-fu! mirvish#tree#open(where) abort "{{{1
-    let file = s:getfile()
-    if a:where is# 'split'
-        exe 'sp '.file
-    else
-        exe 'tabedit '.file
     endif
 endfu
 

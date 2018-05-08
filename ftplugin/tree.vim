@@ -24,9 +24,9 @@ nno  <buffer><nowait><silent>  p  :<c-u>call mirvish#tree#preview()<cr>
 
 nno  <buffer><nowait><silent>  q        :<c-u>call mirvish#tree#close()<cr>
 nno  <buffer><nowait><silent>  R        :<c-u>call mirvish#tree#reload()<cr>
-nno  <buffer><nowait><silent>  <c-w>f   :<c-u>call mirvish#tree#open('split')<cr>
-nno  <buffer><nowait><silent>  <c-w>F   :<c-u>call mirvish#tree#open('split')<cr>
-nno  <buffer><nowait><silent>  <c-w>gf  :<c-u>call mirvish#tree#open('tab')<cr>
+nno  <buffer><nowait><silent>  <c-w>f   :<c-u>call mirvish#tree#edit('split')<cr>
+nno  <buffer><nowait><silent>  <c-w>F   :<c-u>call mirvish#tree#edit('split')<cr>
+nno  <buffer><nowait><silent>  <c-w>gf  :<c-u>call mirvish#tree#edit('tab')<cr>
 
 " teardown {{{1
 
