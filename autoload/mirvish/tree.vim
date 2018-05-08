@@ -8,6 +8,22 @@ let s:hide_dot_entries = 0
 let s:INDICATOR = '[/=*>|]'
 let s:BIG_DIR_PAT = '\%1l.*'
 
+" FIXME:
+"     :Tree ~/Dropbox/
+"     gg
+"     L
+"     C-l
+"     Z C-l or Z C-h
+"     smash ; and ,
+"
+" It's slow, and consumes 30% of cpu.
+" Profile and optimize syntax highlighting.
+
+" FIXME:
+" Enable 'cursorline' in the filetype plugin.
+" Issue:
+" It makes Vim slow and consume too much cpu when we move the cursor fast.
+
 " TODO:
 " Add `Tab` mapping to go from the tree window to the window displaying the last
 " file opened from the tree.
@@ -38,16 +54,6 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " And after every display  of a layout, we would update a  key storing the total
 " size of the cache.
 
-" FIXME:
-"     :Tree ~/Dropbox/
-"     gg
-"     C-l
-"     Z C-l or Z C-h
-"     smash ; and ,
-"
-" It's slow, and consumes 30% of cpu.
-" Profile and optimize syntax highlighting.
-
 " TODO:
 " Do you think the name of the buffer is right?
 "
@@ -74,11 +80,6 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " For a plugin, maybe we should also support a diagram using only ascii chars.
 " We would need to use the option `--charset=ascii`, and we would need to tweak
 " some regexes whenever they contain `─` (→  --), `└` (→ `--), `├` (|--).
-
-" TODO:
-" Enable 'cursorline' in the filetype plugin.
-" Issue:
-" It makes Vim slow and consume too much cpu when we move the cursor fast.
 
 fu! mirvish#tree#close() abort "{{{1
     let s:winwidth = winwidth(0)
@@ -323,7 +324,13 @@ fu! mirvish#tree#populate(path) abort "{{{1
 
     " position cursor on current file
     if exists('s:current_file_pos')
-        call timer_start(0, {-> search(s:current_file_pos) + execute('unlet! s:current_file_pos')})
+        augroup mirvish_current_file_pos
+            au! * <buffer>
+            au BufWinEnter <buffer>  call search(s:current_file_pos)
+                                 \ | unlet! s:current_file_pos
+                                 \ | exe 'au! mirvish_current_file_pos'
+                                 \ | aug! mirvish_current_file_pos
+        augroup END
     endif
 endfu
 
