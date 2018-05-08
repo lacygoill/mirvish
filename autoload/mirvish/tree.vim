@@ -267,18 +267,6 @@ fu! s:matchdelete() abort "{{{1
     endif
 endfu
 
-fu! s:open(dir, nosplit) abort "{{{1
-    let tempfile = tempname().'/tree_viewer::'.(a:dir is# '/' ? '' : a:dir)
-    if a:nosplit
-        exe 'e '.tempfile
-    else
-        exe 'lefta '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
-    endif
-    " Can be used  by `vim-statusline` to get the directory  viewed in a focused
-    " `tree` window.
-    let b:curdir = a:dir
-endfu
-
 fu! mirvish#tree#open(dir, nosplit) abort "{{{1
     if !executable('tree')
         return 'echoerr '.string('requires the tree shell command; currently not installed')
@@ -294,7 +282,16 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
     if !isdirectory(dir)
         return 'echoerr '.string(dir.'/ is not a directory')
     endif
-    call s:open(dir, a:nosplit)
+
+    let tempfile = tempname().'/tree_viewer::'.(dir is# '/' ? '' : dir)
+    if a:nosplit
+        exe 'e '.tempfile
+    else
+        exe 'lefta '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
+    endif
+    " Can be used  by `vim-statusline` to get the directory  viewed in a focused
+    " `tree` window.
+    let b:curdir = dir
 
     " if there's an old match, delete it
     call s:matchdelete()
