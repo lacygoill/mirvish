@@ -34,6 +34,7 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
 \                     .(empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
 \                     ."
 \                          setl bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
+\                        | unlet! b:mirvish_curdir
 \                        | exe 'au! mirvish_tree * <buffer>'
 \                        | exe 'nunmap <buffer> }'
 \                        | exe 'nunmap <buffer> {'

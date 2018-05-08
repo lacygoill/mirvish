@@ -17,6 +17,6 @@ nno  <unique><silent>  -T  :<c-u>exe 'Tree '.getcwd()<cr>
 
 augroup mirvish_tree_populate
     au!
-    au BufNewFile /tmp/*/tree_explorer* call mirvish#tree#populate(expand('<amatch>'))
+    au BufEnter /tmp/*/tree_explorer* call mirvish#tree#populate(expand('<amatch>'))
 augroup END
 

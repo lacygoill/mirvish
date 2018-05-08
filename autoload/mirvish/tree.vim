@@ -284,13 +284,16 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
 endfu
 
 fu! mirvish#tree#populate(path) abort "{{{1
+    if exists('b:mirvish_curdir')
+        return
+    endif
     let dir = matchstr(a:path, '/tree_explorer::\zs.*')
     if dir is# ''
         let dir = '/'
     endif
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
-    let b:curdir = dir
+    let b:mirvish_curdir = dir
 
     " if there's an old match, delete it
     call s:matchdelete()
