@@ -279,7 +279,7 @@ fu! s:open(dir, nosplit) abort "{{{1
     let b:curdir = a:dir
 endfu
 
-fu! mirvish#tree#populate(dir, nosplit) abort "{{{1
+fu! mirvish#tree#open(dir, nosplit) abort "{{{1
     if !executable('tree')
         return 'echoerr '.string('requires the tree shell command; currently not installed')
     endif
