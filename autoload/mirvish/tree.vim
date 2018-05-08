@@ -40,9 +40,6 @@ let s:BIG_DIR_PAT = '\%1l.*'
 " And after every display  of a layout, we would update a  key storing the total
 " size of the cache.
 
-" TODO:
-" When we close a tree buffer, the preview window should be closed too.
-
 " FIXME:
 "     :Tree ~/Dropbox/
 "     gg
