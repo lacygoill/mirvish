@@ -1,1 +1,1 @@
-au BufNewFile  */tree_viewer::*  set filetype=tree
+au BufNewFile  */tree_explorer::*  set filetype=tree

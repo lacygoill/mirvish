@@ -58,10 +58,10 @@ let s:BIG_DIR_PAT = '\%1l.*'
 "     editvar://{variable_name}
 "
 " If we followed the same scheme, we would use:
-"     tree_viewer:///path/to/file
+"     tree_explorer:///path/to/file
 "
 " instead of:
-"     /tmp/v.../../tree_viewer::/path/to/file
+"     /tmp/v.../../tree_explorer::/path/to/file
 "
 " What's the best choice?
 " Why using `tempname()`?
@@ -221,7 +221,7 @@ fu! s:get_tree_cmd(dir) abort "{{{1
 endfu
 
 fu! s:getcurdir() abort "{{{1
-    let curdir = matchstr(expand('%:p'), 'tree_viewer::\zs.*')
+    let curdir = matchstr(expand('%:p'), 'tree_explorer::\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
@@ -270,7 +270,7 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
         return 'echoerr '.string(dir.'/ is not a directory')
     endif
 
-    let tempfile = tempname().'/tree_viewer::'.(dir is# '/' ? '' : dir)
+    let tempfile = tempname().'/tree_explorer::'.(dir is# '/' ? '' : dir)
     if a:nosplit
         exe 'e '.tempfile
     else
@@ -281,7 +281,7 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
 endfu
 
 fu! mirvish#tree#populate(path) abort "{{{1
-    let dir = matchstr(a:path, '/tree_viewer::\zs.*')
+    let dir = matchstr(a:path, '/tree_explorer::\zs.*')
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
     let b:curdir = dir
