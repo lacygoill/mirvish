@@ -102,10 +102,8 @@ fu! mirvish#tree#close() abort "{{{1
     endif
 
     let curdir = s:getcurdir()
-    if has_key(s:cache, curdir)
-        " save the view in this directory before closing the window
-        call s:save_view(curdir)
-    endif
+    " save the view in this directory before closing the window
+    call s:save_view(curdir)
 
     if exists('s:clean_cache_timer_id')
         call timer_stop(s:clean_cache_timer_id)
@@ -117,7 +115,7 @@ endfu
 fu! mirvish#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
         sil 1;/^[^"]/-d_
-        setl smc<
+        setl smc< cole=3
         return
     endif
 
@@ -127,8 +125,11 @@ fu! mirvish#tree#display_help() abort "{{{1
     " time-consuming.
     " Solution:
     " Temporarily limit how far Vim can go to search for syntax items.
+    "
+    " But, if you do so, it will prevent some text from being concealed.
+    " So, we also temporarily disable conceal.
     "}}}
-    setl smc=50
+    setl smc=50 cole=0
     let dir = matchstr(expand('%:p'), '/tree_explorer::\zs.*')
 
     let help = [
@@ -461,6 +462,9 @@ fu! mirvish#tree#reload() abort "{{{1
 endfu
 
 fu! s:save_view(curdir) abort "{{{1
+    if !has_key(s:cache, a:curdir)
+        return
+    endif
     let s:cache[a:curdir].pos = line('.')
     let s:cache[a:curdir].fdl = &l:fdl
 endfu
