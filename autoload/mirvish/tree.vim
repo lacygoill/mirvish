@@ -89,6 +89,10 @@ let s:HELP = [
 " TODO:
 " Color special files (socket, ...).
 
+fu! s:clean_cache() abort "{{{1
+    unlet! s:cache
+endfu
+
 fu! mirvish#tree#close() abort "{{{1
     let s:winwidth = winwidth(0)
 
@@ -102,6 +106,11 @@ fu! mirvish#tree#close() abort "{{{1
         " save the view in this directory before closing the window
         call s:save_view(curdir)
     endif
+
+    if exists('s:clean_cache_timer_id')
+        call timer_stop(s:clean_cache_timer_id)
+    endif
+    let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
     close
 endfu
 
