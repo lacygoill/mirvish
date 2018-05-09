@@ -89,6 +89,11 @@ fu! mirvish#tree#close() abort "{{{1
     close
 endfu
 
+fu! mirvish#tree#display_cmd() abort "{{{1
+    let dir = matchstr(expand('%:p'), '/tree_explorer::\zs.*')
+    echo s:get_tree_cmd(dir)
+endfu
+
 fu! mirvish#tree#edit(where) abort "{{{1
     let file = s:getfile()
     if a:where is# 'split'
