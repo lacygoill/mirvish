@@ -2,11 +2,11 @@ let b:did_ftplugin = 1
 
 " Mappings {{{1
 
-nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
-nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
-
 nno  <buffer><nowait><silent>  (  :<c-u>call search('.*/$', 'b')<cr>
 nno  <buffer><nowait><silent>  )  :<c-u>call search('.*/$')<cr>
+
+nno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#show_metadata('manual')<cr>
+nno  <buffer><nowait><silent>  -M  :<c-u>call mirvish#show_metadata('auto')<cr>
 
 nno  <buffer><nowait><silent>  <c-w>F   :<c-u>call mirvish#tree#edit('split')<cr>
 nno  <buffer><nowait><silent>  <c-w>f   :<c-u>call mirvish#tree#edit('split')<cr>
@@ -43,10 +43,10 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
 \                          setl bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
 \                        | unlet! b:mirvish_curdir
 \                        | exe 'au! mirvish_tree * <buffer>'
-\                        | exe 'nunmap <buffer> !M'
-\                        | exe 'nunmap <buffer> !m'
 \                        | exe 'nunmap <buffer> ('
 \                        | exe 'nunmap <buffer> )'
+\                        | exe 'nunmap <buffer> -M'
+\                        | exe 'nunmap <buffer> -m'
 \                        | exe 'nunmap <buffer> <c-w>F'
 \                        | exe 'nunmap <buffer> <c-w>f'
 \                        | exe 'nunmap <buffer> <c-w>gf'

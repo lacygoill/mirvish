@@ -1,8 +1,8 @@
 " Mappings {{{1
-" !m {{{2
+" -m {{{2
 
-nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
-nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
+nno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#show_metadata('manual')<cr>
+nno  <buffer><nowait><silent>  -M  :<c-u>call mirvish#show_metadata('auto')<cr>
 
 " C-n  C-p {{{2
 
@@ -108,8 +108,8 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
                     \ ."
                     \   unlet! b:mirvish_last_line
                     \ | exe 'sil! au! dirvish_show_metadata * <buffer>'
-                    \ | exe 'nunmap <buffer> !M'
-                    \ | exe 'nunmap <buffer> !m'
+                    \ | exe 'nunmap <buffer> -M'
+                    \ | exe 'nunmap <buffer> -m'
                     \ | exe 'nunmap <buffer> <c-s>'
                     \ | exe 'nunmap <buffer> <c-t>'
                     \ | exe 'nunmap <buffer> <c-v><c-v>'
