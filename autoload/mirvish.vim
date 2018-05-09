@@ -64,7 +64,7 @@ fu! mirvish#show_metadata(mode) abort "{{{1
             " Re-install it every time we enter a new directory.
             augroup dirvish_show_metadata_and_persist
                 au!
-                au FileType dirvish call s:auto_metadata()
+                au FileType dirvish,tree call s:auto_metadata()
             augroup END
         else
             unlet! b:mirvish_last_line
@@ -103,6 +103,11 @@ fu! mirvish#show_metadata(mode) abort "{{{1
     " So, we remove any possible slash at the end.
     "}}}
     let file = substitute(file, '/$', '', '')
+    " Why?{{{
+    "
+    " In case we call this function from the tree explorer.
+    "}}}
+    let file = matchstr(file, '─\s\zs.*')
     " Is there another way (than `$ ls`) to get the metadata of a file?{{{
     "
     " Yes:
