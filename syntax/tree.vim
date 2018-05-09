@@ -20,11 +20,22 @@ syn  match  treeLinkFile        '\%(\s->\s\)\@<=.*[^*/]$'
 syn  match  treeLinkDirectory   '\%(\s->\s\)\@<=.*/$'
 syn  match  treeLinkExecutable  '\%(\s->\s\)\@<=.*\*$'
 
-syn  match  treeWarning  '[^/]*/\=\ze\s\[.\{-}\]'
+syn  match  treeWarning    '[^/]*/\=\ze\s\[.\{-}\]'
+syn  match  treeHelp       '^"\s.*' contains=treeHelpKey,treeHelpTitle,treeHelpCmd
+syn  match  treeHelpKey    '^"\s\zs\S\+\%(\s\S\+\)\=' contained
+"                                            │
+"                                            └ `f` in `C-w f`
+syn  match  treeHelpTitle  '===.*===' contained
+syn  match  treeHelpCmd    '^"\s$\stree.*' contained
 
 " Colors {{{1
 
 hi link  treeWarning         WarningMsg
+hi link  treeHelp            Comment
+hi link  treeHelpKey         Function
+hi link  treeHelpTitle       Type
+hi link  treeHelpCmd         WarningMsg
+
 hi link  treeDirectory       Directory
 hi       treeExecutable      ctermfg=darkgreen guifg=darkgreen
 

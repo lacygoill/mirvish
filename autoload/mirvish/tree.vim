@@ -6,8 +6,27 @@ let g:autoloaded_mirvish#tree = 1
 let s:cache = {}
 let s:hide_dot_entries = 0
 let s:INDICATOR = '[/=*>|]'
-let s:BIG_DIR_PAT = '\%1l.*'
+let s:BIG_DIR_PAT = '^/.*'
 
+let s:HELP = [
+           \   '   ===== Key Bindings =====',
+           \   '',
+           \   'C-w gf    edit file in new tab',
+           \   'C-w f     edit file in new split',
+           \   '!m        print current file''s metadata',
+           \   '!M        print current file''s metadata and update as the cursor moves',
+           \   '(         move cursor to previous directory',
+           \   ')         move cursor to next directory',
+           \   'R         reload directory hierarchy without using the cache',
+           \   'gh        toggle hidden files/directories visibility',
+           \   'g?        toggle this help',
+           \   'h         move to parent directory',
+           \   'l         move to child directory',
+           \   'p         preview current file/directory contents',
+           \   'q         close the window',
+           \   '{         preview previous file/directory',
+           \   '}         preview next file/directory',
+           \ ]
 
 
 " FIXME:
@@ -89,9 +108,25 @@ fu! mirvish#tree#close() abort "{{{1
     close
 endfu
 
-fu! mirvish#tree#display_cmd() abort "{{{1
+fu! mirvish#tree#display_help() abort "{{{1
+    if getline(1) =~# '"'
+        1;/^[^"]/-d_
+        return
+    endif
+
     let dir = matchstr(expand('%:p'), '/tree_explorer::\zs.*')
-    echom s:get_tree_cmd(dir)
+
+    let help = [
+             \   '   ===== Tree Command =====',
+             \   '',
+             \   '$ '.s:get_tree_cmd(dir),
+             \   '',
+             \ ]
+
+    let help += s:HELP
+
+    call map(help, {i,v -> !empty(v) ? '" '.v : v})
+    call append(0, help)
 endfu
 
 fu! mirvish#tree#edit(where) abort "{{{1

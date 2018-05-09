@@ -20,7 +20,7 @@ nno  <buffer><nowait><silent>  <c-w>f   :<c-u>call mirvish#tree#edit('split')<cr
 nno  <buffer><nowait><silent>  <c-w>gf  :<c-u>call mirvish#tree#edit('tab')<cr>
 
 nno  <buffer><nowait><silent>  R        :<c-u>call mirvish#tree#reload()<cr>
-nno  <buffer><nowait><silent>  g?  :<c-u>call mirvish#tree#display_cmd()<cr>
+nno  <buffer><nowait><silent>  g?  :<c-u>call mirvish#tree#display_help()<cr>
 nno  <buffer><nowait><silent>  gh  :<c-u>call mirvish#tree#toggle_dot_entries()<cr>
 
 nno  <buffer><nowait><silent>  h  :<c-u>call mirvish#tree#relative_dir('parent')<cr>
