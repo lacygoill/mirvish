@@ -1,13 +1,6 @@
 let b:did_ftplugin = 1
 
-setl bt=nofile nobl noswf nowrap
-
-augroup mirvish_tree
-    au! * <buffer>
-    au BufWinEnter <buffer> setl cocu=nc cole=3
-    \                            fde=mirvish#tree#fde() fdm=expr fdt=mirvish#tree#fdt()
-    \                     | call mirvish#tree#fdl()
-augroup END
+" Mappings {{{1
 
 nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
 nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
@@ -30,6 +23,17 @@ nno  <buffer><nowait><silent>  q        :<c-u>call mirvish#tree#close()<cr>
 
 nno  <buffer><nowait><silent>  {  k:call mirvish#tree#preview()<cr>
 nno  <buffer><nowait><silent>  }  j:call mirvish#tree#preview()<cr>
+
+" Options {{{1
+
+setl bt=nofile nobl noswf nowrap
+
+augroup mirvish_tree
+    au! * <buffer>
+    au BufWinEnter <buffer> setl cocu=nc cole=3
+    \                            fde=mirvish#tree#fde() fdm=expr fdt=mirvish#tree#fdt()
+    \                     | call mirvish#tree#fdl()
+augroup END
 
 " teardown {{{1
 
