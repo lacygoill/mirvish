@@ -107,7 +107,9 @@ fu! mirvish#show_metadata(mode) abort "{{{1
     "
     " In case we call this function from the tree explorer.
     "}}}
-    let file = matchstr(file, '─\s\zs.*')
+    if match(file, '─') != -1
+        let file = matchstr(file, '─\s\zs.*')
+    endif
     " Is there another way (than `$ ls`) to get the metadata of a file?{{{
     "
     " Yes:
