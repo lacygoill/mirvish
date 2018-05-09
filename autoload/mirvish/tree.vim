@@ -105,9 +105,7 @@ fu! mirvish#tree#close() abort "{{{1
     " save the view in this directory before closing the window
     call s:save_view(curdir)
 
-    if exists('s:clean_cache_timer_id')
-        call timer_stop(s:clean_cache_timer_id)
-    endif
+    call s:timer_stop()
     let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
     close
 endfu
@@ -309,6 +307,8 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
         return 'echoerr '.string('requires the tree shell command; currently not installed')
     endif
 
+    call s:timer_stop()
+
     " save current file name to position the cursor on it
     if a:dir is# ''
         let s:current_file_pos = '\C\V─\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
@@ -337,6 +337,7 @@ fu! mirvish#tree#populate(path) abort "{{{1
     if exists('b:mirvish_curdir')
         return
     endif
+
     let dir = matchstr(a:path, '/tree_explorer::\zs.*')
     if dir is# ''
         let dir = '/'
@@ -467,6 +468,12 @@ fu! s:save_view(curdir) abort "{{{1
     endif
     let s:cache[a:curdir].pos = line('.')
     let s:cache[a:curdir].fdl = &l:fdl
+endfu
+
+fu! s:timer_stop() abort "{{{1
+    if exists('s:clean_cache_timer_id')
+        call timer_stop(s:clean_cache_timer_id)
+    endif
 endfu
 
 fu! s:use_cache(dir) abort "{{{1
