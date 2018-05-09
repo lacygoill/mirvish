@@ -49,9 +49,6 @@ let s:HELP = [
 
 " TODO: Sort hidden directories after non-hidden ones.
 
-" TODO: Implement `g?` to show mappings, and the complete `$ tree` command which
-" was used to generate the tree.
-
 " TODO: Study `syntax/` and infer some rules from it. Note them somewhere.
 " Also, refactor this file; it has become a little complex.
 " Split it into several files, or into several categories (interface, core, misc).
