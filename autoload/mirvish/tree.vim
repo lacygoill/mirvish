@@ -116,7 +116,7 @@ endfu
 
 fu! mirvish#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
-        1;/^[^"]/-d_
+        sil 1;/^[^"]/-d_
         return
     endif
 
@@ -133,6 +133,7 @@ fu! mirvish#tree#display_help() abort "{{{1
 
     call map(help, {i,v -> !empty(v) ? '" '.v : v})
     call append(0, help)
+    1
 endfu
 
 fu! mirvish#tree#edit(where) abort "{{{1
