@@ -117,9 +117,18 @@ endfu
 fu! mirvish#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
         sil 1;/^[^"]/-d_
+        setl smc<
         return
     endif
 
+    " Why?{{{
+    "
+    " The `$  tree` command might be  very long, making syntax  highlighting too
+    " time-consuming.
+    " Solution:
+    " Temporarily limit how far Vim can go to search for syntax items.
+    "}}}
+    setl smc=50
     let dir = matchstr(expand('%:p'), '/tree_explorer::\zs.*')
 
     let help = [
