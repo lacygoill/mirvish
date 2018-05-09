@@ -3,32 +3,6 @@ if exists('g:autoloaded_mirvish#tree')
 endif
 let g:autoloaded_mirvish#tree = 1
 
-let s:cache = {}
-let s:hide_dot_entries = 0
-let s:INDICATOR = '[/=*>|]'
-let s:BIG_DIR_PAT = '^/.*'
-
-let s:HELP = [
-           \   '   ===== Key Bindings =====',
-           \   '',
-           \   'C-w gf    edit file in new tab',
-           \   'C-w f     edit file in new split',
-           \   '!m        print current file''s metadata',
-           \   '!M        print current file''s metadata and update as the cursor moves',
-           \   '(         move cursor to previous directory',
-           \   ')         move cursor to next directory',
-           \   'R         reload directory hierarchy without using the cache',
-           \   'gh        toggle hidden files/directories visibility',
-           \   'g?        toggle this help',
-           \   'h         move to parent directory',
-           \   'l         move to child directory',
-           \   'p         preview current file/directory contents',
-           \   'q         close the window',
-           \   '{         preview previous file/directory',
-           \   '}         preview next file/directory',
-           \ ]
-
-
 " FIXME:
 "     :Tree ~/Dropbox/
 "     gg
@@ -88,6 +62,33 @@ let s:HELP = [
 
 " TODO:
 " Color special files (socket, ...).
+
+" Init {{{1
+
+let s:cache = {}
+let s:hide_dot_entries = 0
+let s:INDICATOR = '[/=*>|]'
+let s:BIG_DIR_PAT = '^/.*'
+
+let s:HELP = [
+           \   '   ===== Key Bindings =====',
+           \   '',
+           \   'C-w gf    edit file in new tab',
+           \   'C-w f     edit file in new split',
+           \   '!m        print current file''s metadata',
+           \   '!M        print current file''s metadata and update as the cursor moves',
+           \   '(         move cursor to previous directory',
+           \   ')         move cursor to next directory',
+           \   'R         reload directory hierarchy without using the cache',
+           \   'gh        toggle hidden files/directories visibility',
+           \   'g?        toggle this help',
+           \   'h         move to parent directory',
+           \   'l         move to child directory',
+           \   'p         preview current file/directory contents',
+           \   'q         close the window',
+           \   '{         preview previous file/directory',
+           \   '}         preview next file/directory',
+           \ ]
 
 fu! s:clean_cache() abort "{{{1
     let s:cache = {}
