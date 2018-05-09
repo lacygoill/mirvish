@@ -16,6 +16,7 @@ nno  <buffer><nowait><silent>  )  :<c-u>call search('.*/$')<cr>
 nno  <buffer><nowait><silent>  (  :<c-u>call search('.*/$', 'b')<cr>
 
 nno  <buffer><nowait><silent>  gh  :<c-u>call mirvish#tree#toggle_dot_entries()<cr>
+nno  <buffer><nowait><silent>  g?  :<c-u>call mirvish#tree#display_cmd()<cr>
 
 nno  <buffer><nowait><silent>  h  :<c-u>call mirvish#tree#relative_dir('parent')<cr>
 nno  <buffer><nowait><silent>  l  :<c-u>call mirvish#tree#relative_dir('child')<cr>
@@ -30,8 +31,6 @@ nno  <buffer><nowait><silent>  <c-w>gf  :<c-u>call mirvish#tree#edit('tab')<cr>
 
 nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
 nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
-
-nno  <buffer><nowait><silent>  g?  :<c-u>call mirvish#tree#display_cmd()<cr>
 
 " teardown {{{1
 
@@ -49,6 +48,7 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
 \                        | exe 'nunmap <buffer> <c-w>f'
 \                        | exe 'nunmap <buffer> <c-w>gf'
 \                        | exe 'nunmap <buffer> R'
+\                        | exe 'nunmap <buffer> g?'
 \                        | exe 'nunmap <buffer> gh'
 \                        | exe 'nunmap <buffer> h'
 \                        | exe 'nunmap <buffer> l'
