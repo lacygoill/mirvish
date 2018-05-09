@@ -90,7 +90,7 @@ let s:HELP = [
 " Color special files (socket, ...).
 
 fu! s:clean_cache() abort "{{{1
-    unlet! s:cache
+    let s:cache = {}
 endfu
 
 fu! mirvish#tree#close() abort "{{{1
