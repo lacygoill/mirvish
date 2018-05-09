@@ -372,11 +372,17 @@ fu! mirvish#tree#relative_dir(who) abort "{{{1
     let curdir = s:getcurdir()
 
     if a:who is# 'parent'
+        if getline('.') =~# '^"'
+            return feedkeys('h', 'int')
+        endif
         if curdir is# '/'
             return
         endif
         let new_dir = fnamemodify(substitute(curdir, '^\.', getcwd(), ''), ':h')
     else
+        if getline('.') =~# '^"'
+            return feedkeys('l', 'int')
+        endif
         "                                                   ┌ don't try to open an entry
         "                                                   │ for which `$ tree` encountered an error
         "                                                   │ (ends with a message in square brackets)
