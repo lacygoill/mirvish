@@ -73,10 +73,10 @@ let s:BIG_DIR_PAT = '^/.*'
 let s:HELP = [
            \   '   ===== Key Bindings =====',
            \   '',
-           \   '!M        print current file''s metadata and update as the cursor moves',
-           \   '!m        print current file''s metadata',
            \   '(         move cursor to previous directory',
            \   ')         move cursor to next directory',
+           \   '-M        print current file''s metadata and update as the cursor moves',
+           \   '-m        print current file''s metadata',
            \   'C-w f     edit file in new split',
            \   'C-w gf    edit file in new tab',
            \   '?         toggle this help',
