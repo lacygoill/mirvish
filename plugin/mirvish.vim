@@ -20,8 +20,8 @@ com! -bang -bar -complete=file -nargs=?  Tree  exe mirvish#tree#open(<q-args>, <
 
 " Mappings {{{1
 
-nno  <unique><silent>  -t  :<c-u>Tree<cr>
-nno  <unique><silent>  -T  :<c-u>exe 'Tree '.getcwd()<cr>
+nno  <unique><silent>  -T  :<c-u>Tree<cr>
+nno  <unique><silent>  -t  :<c-u>exe 'Tree '.getcwd()<cr>
 
 " We want Vim to automatically write a changed buffer before we hide it to
 " open a Dirvish buffer.
