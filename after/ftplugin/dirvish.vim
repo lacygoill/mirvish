@@ -1,4 +1,9 @@
 " Mappings {{{1
+" !m {{{2
+
+nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
+nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
+
 " C-n  C-p {{{2
 
 " Dirvish installs the mappings `C-n` and `C-p` to preview the contents
@@ -6,8 +11,8 @@
 " It clashes with our own `C-n` and `C-p` to move across tabpages.
 " Besides, we'll use `}` and `{` instead.
 
-sil nunmap  <buffer>  <c-n>
-sil nunmap  <buffer>  <c-p>
+nunmap  <buffer>  <c-n>
+nunmap  <buffer>  <c-p>
 
 " C-s {{{2
 
@@ -21,6 +26,14 @@ xno  <buffer><nowait><silent>  <c-t>  :call dirvish#open('tabedit', 1)<cr>
 " C-v C-v {{{2
 
 nno  <buffer><nowait><silent>  <c-v><c-v>  :<c-u>call dirvish#open('vsplit', 1)<cr>
+
+" ?    g? {{{2
+
+" Dirvish uses `g?` to read the help.
+" It clashes with our `g?` to read `:messages`.
+nunmap <buffer> g?
+" We'll use `?` instead.
+nno  <buffer><nowait><silent>  ?  :<c-u>help dirvish-mappings<cr>
 
 " gh {{{2
 
@@ -88,11 +101,6 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call mirvish#preview()<cr>
 xmap  <buffer>         x                            <plug>(mirvish_show_arg_pos)<plug>(dirvish_arg)
 xno   <buffer><expr>  <plug>(mirvish_show_arg_pos)  execute('let g:my_stl_list_position = 2')[0]
 
-" !m {{{2
-
-nno  <buffer><nowait><silent>  !m  :<c-u>call mirvish#show_metadata('manual')<cr>
-nno  <buffer><nowait><silent>  !M  :<c-u>call mirvish#show_metadata('auto')<cr>
-
 " Teardown {{{1
 
 let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
@@ -100,18 +108,19 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
                     \ ."
                     \   unlet! b:mirvish_last_line
                     \ | exe 'sil! au! dirvish_show_metadata * <buffer>'
+                    \ | exe 'nunmap <buffer> !M'
+                    \ | exe 'nunmap <buffer> !m'
                     \ | exe 'nunmap <buffer> <c-s>'
                     \ | exe 'nunmap <buffer> <c-t>'
-                    \ | exe 'xunmap <buffer> <c-t>'
                     \ | exe 'nunmap <buffer> <c-v><c-v>'
-                    \ | exe 'nunmap <buffer> }'
-                    \ | exe 'nunmap <buffer> {'
-                    \ | exe 'nunmap <buffer> p'
+                    \ | exe 'nunmap <buffer> ?'
+                    \ | exe 'nunmap <buffer> gh'
                     \ | exe 'nunmap <buffer> h'
                     \ | exe 'nunmap <buffer> l'
-                    \ | exe 'nunmap <buffer> gh'
-                    \ | exe 'nunmap <buffer> !m'
-                    \ | exe 'nunmap <buffer> !M'
+                    \ | exe 'nunmap <buffer> p'
+                    \ | exe 'nunmap <buffer> {'
+                    \ | exe 'nunmap <buffer> }'
+                    \ | exe 'xunmap <buffer> <c-t>'
                     \ | exe 'xunmap <buffer> x'
                     \  "
 
