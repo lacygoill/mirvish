@@ -69,7 +69,7 @@ fu! s:get_metadata(line, ...) abort "{{{1
     " In case we call this function from the tree explorer.
     "}}}
     if match(file, '─') != -1
-        let file = matchstr(file, '─\s\zs.*')
+        let file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
 
     let ftype = getftype(file)
