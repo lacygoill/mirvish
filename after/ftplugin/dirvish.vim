@@ -1,8 +1,9 @@
 " Mappings {{{1
 " -m {{{2
 
-nno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#show_metadata('manual')<cr>
-nno  <buffer><nowait><silent>  -M  :<c-u>call mirvish#show_metadata('auto')<cr>
+nno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#print_metadata('manual')<cr>
+xno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#print_metadata('manual', 'vis')<cr>
+nno  <buffer><nowait><silent>  -M  :<c-u>call mirvish#print_metadata('auto')<cr>
 
 " C-n  C-p {{{2
 
@@ -98,8 +99,8 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call mirvish#preview()<cr>
 
 " x {{{2
 
-xmap  <buffer>         x                            <plug>(mirvish_show_arg_pos)<plug>(dirvish_arg)
-xno   <buffer><expr>  <plug>(mirvish_show_arg_pos)  execute('let g:my_stl_list_position = 2')[0]
+xmap  <buffer>         x                            <plug>(mirvish_print_arg_pos)<plug>(dirvish_arg)
+xno   <buffer><expr>  <plug>(mirvish_print_arg_pos)  execute('let g:my_stl_list_position = 2')[0]
 
 " Teardown {{{1
 
@@ -107,9 +108,10 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
                     \ .(empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
                     \ ."
                     \   unlet! b:mirvish_last_line
-                    \ | exe 'sil! au! dirvish_show_metadata * <buffer>'
+                    \ | exe 'sil! au! dirvish_print_metadata * <buffer>'
                     \ | exe 'nunmap <buffer> -M'
                     \ | exe 'nunmap <buffer> -m'
+                    \ | exe 'xunmap <buffer> -m'
                     \ | exe 'nunmap <buffer> <c-s>'
                     \ | exe 'nunmap <buffer> <c-t>'
                     \ | exe 'nunmap <buffer> <c-v><c-v>'

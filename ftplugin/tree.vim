@@ -5,8 +5,9 @@ let b:did_ftplugin = 1
 nno  <buffer><nowait><silent>  (  :<c-u>call search('.*/$', 'b')<cr>
 nno  <buffer><nowait><silent>  )  :<c-u>call search('.*/$')<cr>
 
-nno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#show_metadata('manual')<cr>
-nno  <buffer><nowait><silent>  -M  :<c-u>call mirvish#show_metadata('auto')<cr>
+nno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#print_metadata('manual')<cr>
+xno  <buffer><nowait><silent>  -m  :<c-u>call mirvish#print_metadata('manual', 'vis')<cr>
+nno  <buffer><nowait><silent>  -M  :<c-u>call mirvish#print_metadata('auto')<cr>
 
 nno  <buffer><nowait><silent>  <c-w>F   :<c-u>call mirvish#tree#edit('split')<cr>
 nno  <buffer><nowait><silent>  <c-w>f   :<c-u>call mirvish#tree#edit('split')<cr>
@@ -19,7 +20,7 @@ nno  <buffer><nowait><silent>  gh  :<c-u>call mirvish#tree#toggle_dot_entries()<
 nno  <buffer><nowait><silent>  h  :<c-u>call mirvish#tree#relative_dir('parent')<cr>
 nno  <buffer><nowait><silent>  l  :<c-u>call mirvish#tree#relative_dir('child')<cr>
 nno  <buffer><nowait><silent>  p  :<c-u>call mirvish#tree#preview()<cr>
-nno  <buffer><nowait><silent>  q        :<c-u>call mirvish#tree#close()<cr>
+nno  <buffer><nowait><silent>  q  :<c-u>call mirvish#tree#close()<cr>
 
 nno  <buffer><nowait><silent>  {  k:call mirvish#tree#preview()<cr>
 nno  <buffer><nowait><silent>  }  j:call mirvish#tree#preview()<cr>
@@ -47,6 +48,7 @@ let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
 \                        | exe 'nunmap <buffer> )'
 \                        | exe 'nunmap <buffer> -M'
 \                        | exe 'nunmap <buffer> -m'
+\                        | exe 'xunmap <buffer> -m'
 \                        | exe 'nunmap <buffer> <c-w>F'
 \                        | exe 'nunmap <buffer> <c-w>f'
 \                        | exe 'nunmap <buffer> <c-w>gf'
