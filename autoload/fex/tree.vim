@@ -320,7 +320,11 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     endif
 
     "                                       ┌ `BufNewFile` won't be emitted
-    "                                       │  if the buffer name ends with a slash
+    "                                       │  if the buffer name ends with a slash.
+    "                                       │
+    "                                       │  Besides it  would raise  an error
+    "                                       │  when  `save#buffer()`   would  be
+    "                                       │  invoked (`:update` would fail).
     "                                       │
     let tempfile = tempname().'/fex_tree::'.(dir is# '/' ? '' : dir)
     if a:nosplit
