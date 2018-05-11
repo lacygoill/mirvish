@@ -81,7 +81,6 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call fex#preview()<cr>
 " Probably because `prevbuf`, `bufnr('%')` and `altbuf` have all the same value.
 "}}}
 " FIXME:{{{
-"
 " We shouldn't need to overwrite this simple dirvish mapping.
 " Submit a bug report.
 " Or re-implement dirvish.
