@@ -1,7 +1,7 @@
-if exists('g:autoloaded_mirvish')
+if exists('g:autoloaded_fex')
     finish
 endif
-let g:autoloaded_mirvish = 1
+let g:autoloaded_fex = 1
 
 " Why not hiding by default?{{{
 "
@@ -16,7 +16,7 @@ let g:autoloaded_mirvish = 1
 "}}}
 let s:hide_dot_entries = 0
 
-fu! mirvish#format_entries() abort "{{{1
+fu! fex#format_entries() abort "{{{1
     let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
     "                      ┌ remove the `$` anchor at the end,
     "                      │ we're going to re-add it, but outside the non-capturing group
@@ -106,7 +106,7 @@ fu! s:make_fsize_human_readable(fsize) abort "{{{1
     \ :        ''
 endfu
 
-fu! mirvish#preview() abort "{{{1
+fu! fex#preview() abort "{{{1
     let file = getline('.')
     if filereadable(file)
         exe 'pedit '.file
@@ -130,28 +130,28 @@ fu! mirvish#preview() abort "{{{1
     endif
 endfu
 
-fu! mirvish#print_metadata(how, ...) abort "{{{1
+fu! fex#print_metadata(how, ...) abort "{{{1
     " Automatically printing metadata in visual mode doesn't make sense.
     if a:how is# 'auto' && a:0
         return
     endif
 
     if a:how is# 'auto'
-        if !exists('#dirvish_print_metadata')
+        if !exists('#fex_print_metadata')
             " Install an autocmd to automatically print the metadata for the file
             " under the cursor.
             call s:auto_metadata()
             " Re-install it every time we enter a new directory.
-            augroup dirvish_print_metadata_and_persist
+            augroup fex_print_metadata_and_persist
                 au!
                 au FileType dirvish,tree call s:auto_metadata()
             augroup END
         else
-            unlet! b:mirvish_last_line
-            sil! au!  dirvish_print_metadata
-            sil! aug! dirvish_print_metadata
-            sil! au!  dirvish_print_metadata_and_persist
-            sil! aug! dirvish_print_metadata_and_persist
+            unlet! b:fex_last_line
+            sil! au!  fex_print_metadata
+            sil! aug! fex_print_metadata
+            sil! au!  fex_print_metadata_and_persist
+            sil! aug! fex_print_metadata_and_persist
             return
         endif
     endif
@@ -177,16 +177,16 @@ fu! mirvish#print_metadata(how, ...) abort "{{{1
 endfu
 
 fu! s:auto_metadata() abort "{{{1
-    augroup dirvish_print_metadata
+    augroup fex_print_metadata
         au! * <buffer>
-        au CursorMoved <buffer> if get(b:, 'mirvish_last_line', 0) !=# line('.')
-        \ |                         let b:mirvish_last_line = line('.')
-        \ |                         call mirvish#print_metadata('manual')
+        au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) !=# line('.')
+        \ |                         let b:fex_last_line = line('.')
+        \ |                         call fex#print_metadata('manual')
         \ |                     endif
     augroup END
 endfu
 
-fu! mirvish#toggle_dot_entries() abort "{{{1
+fu! fex#toggle_dot_entries() abort "{{{1
     let s:hide_dot_entries = !s:hide_dot_entries
     Dirvish %
 endfu

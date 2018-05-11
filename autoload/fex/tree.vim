@@ -1,7 +1,7 @@
-if exists('g:autoloaded_mirvish#tree')
+if exists('g:autoloaded_fex#tree')
     finish
 endif
-let g:autoloaded_mirvish#tree = 1
+let g:autoloaded_fex#tree = 1
 
 " FIXME:
 "     :Tree ~/Dropbox/
@@ -81,7 +81,7 @@ fu! s:clean_cache() abort "{{{1
     let s:cache = {}
 endfu
 
-fu! mirvish#tree#close() abort "{{{1
+fu! fex#tree#close() abort "{{{1
     let s:winwidth = winwidth(0)
 
     if exists('s:preview_winid')
@@ -109,7 +109,7 @@ fu! mirvish#tree#close() abort "{{{1
     close
 endfu
 
-fu! mirvish#tree#display_help() abort "{{{1
+fu! fex#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
         sil 1;/^[^"]/-d_
         setl smc< cole=3
@@ -143,7 +143,7 @@ fu! mirvish#tree#display_help() abort "{{{1
     1
 endfu
 
-fu! mirvish#tree#edit(where) abort "{{{1
+fu! fex#tree#edit(where) abort "{{{1
     let file = s:getfile()
     if a:where is# 'split'
         exe 'sp '.file
@@ -152,7 +152,7 @@ fu! mirvish#tree#edit(where) abort "{{{1
     endif
 endfu
 
-fu! mirvish#tree#fde() abort "{{{1
+fu! fex#tree#fde() abort "{{{1
     " Warning:{{{
     " This function is by far the slowest when we execute `:Tree`.
     " This is due to the `let idx =` and `if matchstr()` statements.
@@ -176,11 +176,11 @@ fu! mirvish#tree#fde() abort "{{{1
     return lvl
 endfu
 
-fu! mirvish#tree#fdl() abort "{{{1
+fu! fex#tree#fdl() abort "{{{1
     let &l:fdl = &foldclose is# 'all' ? 0 : 99
 endfu
 
-fu! mirvish#tree#fdt() abort "{{{1
+fu! fex#tree#fdt() abort "{{{1
     let pat = '\(.*─\s\)\(.*\)/'
     let l:Rep = {-> submatch(1).substitute(submatch(2), '.*/', '', '')}
     return (get(b:, 'foldtitle_full', 0) ? '['.(v:foldend - v:foldstart).']': '')
@@ -301,7 +301,7 @@ fu! s:matchdelete() abort "{{{1
     endif
 endfu
 
-fu! mirvish#tree#open(dir, nosplit) abort "{{{1
+fu! fex#tree#open(dir, nosplit) abort "{{{1
     if !executable('tree')
         return 'echoerr '.string('requires the tree shell command; currently not installed')
     endif
@@ -332,8 +332,8 @@ fu! mirvish#tree#open(dir, nosplit) abort "{{{1
     return ''
 endfu
 
-fu! mirvish#tree#populate(path) abort "{{{1
-    if exists('b:mirvish_curdir')
+fu! fex#tree#populate(path) abort "{{{1
+    if exists('b:fex_curdir')
         return
     endif
 
@@ -343,7 +343,7 @@ fu! mirvish#tree#populate(path) abort "{{{1
     endif
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
-    let b:mirvish_curdir = dir
+    let b:fex_curdir = dir
 
     " if there's an old match, delete it
     call s:matchdelete()
@@ -373,22 +373,22 @@ fu! mirvish#tree#populate(path) abort "{{{1
 
     " position cursor on current file
     if exists('s:current_file_pos')
-        augroup mirvish_current_file_pos
+        augroup fex_current_file_pos
             au! * <buffer>
             au BufWinEnter <buffer>  call search(s:current_file_pos)
                                  \ | unlet! s:current_file_pos
-                                 \ | exe 'au! mirvish_current_file_pos'
-                                 \ | aug! mirvish_current_file_pos
+                                 \ | exe 'au! fex_current_file_pos'
+                                 \ | aug! fex_current_file_pos
         augroup END
     endif
 endfu
 
-fu! mirvish#tree#preview() abort "{{{1
+fu! fex#tree#preview() abort "{{{1
     exe 'pedit '.s:getfile()
     let s:preview_winid = win_getid(winnr('#'))
 endfu
 
-fu! mirvish#tree#relative_dir(who) abort "{{{1
+fu! fex#tree#relative_dir(who) abort "{{{1
     let curdir = s:getcurdir()
 
     if a:who is# 'parent'
@@ -441,7 +441,7 @@ fu! mirvish#tree#relative_dir(who) abort "{{{1
     endif
 endfu
 
-fu! mirvish#tree#reload() abort "{{{1
+fu! fex#tree#reload() abort "{{{1
     " remove information in cache, so that  the reloading is forced to re-invoke
     " `$ tree`
     let cur_dir = s:getcurdir()
@@ -488,12 +488,12 @@ fu! s:use_cache(dir) abort "{{{1
         " Vim will  re-position the cursor  on the first line  afterwards (after
         " BufEnter).
         "}}}
-        augroup mirvish_restore_last_pos
+        augroup fex_restore_last_pos
             au! * <buffer>
             au BufWinEnter <buffer>   exe s:last_pos
                                   \ | unlet! s:last_pos
-                                  \ | exe 'au! mirvish_restore_last_pos'
-                                  \ | aug! mirvish_restore_last_pos
+                                  \ | exe 'au! fex_restore_last_pos'
+                                  \ | aug! fex_restore_last_pos
         augroup END
     endif
 
@@ -510,8 +510,8 @@ fu! s:use_cache(dir) abort "{{{1
     return ''
 endfu
 
-fu! mirvish#tree#toggle_dot_entries() abort "{{{1
+fu! fex#tree#toggle_dot_entries() abort "{{{1
     let s:hide_dot_entries = !s:hide_dot_entries
-    call mirvish#tree#reload()
+    call fex#tree#reload()
 endfu
 
