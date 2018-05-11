@@ -324,7 +324,7 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     "                                       │
     "                                       │  Besides it  would raise  an error
     "                                       │  when  `save#buffer()`   would  be
-    "                                       │  invoked (`:update` would fail).
+    "                                       │  invoked (`:update` would fail; E502).
     "                                       │
     let tempfile = tempname().'/fex_tree::'.(dir is# '/' ? '' : dir)
     if a:nosplit
