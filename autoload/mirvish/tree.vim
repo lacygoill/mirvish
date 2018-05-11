@@ -29,19 +29,6 @@ let g:autoloaded_mirvish#tree = 1
 " Also, try to make each function fit on one single screen (with folding).
 
 " TODO:
-" Remove the cache after a few minutes to prevent it from taking too much memory.
-" Or better,  find a  way to  measure its size,  and when  it exceeds  a certain
-" amount, only remove some keys (the biggest?, the oldest?).
-"
-" There's no function to get the size of a dictionary.
-" But we could do:
-"
-"         let size = strlen(string(dictionary))
-"
-" And after every display  of a layout, we would update a  key storing the total
-" size of the cache.
-
-" TODO:
 " Do you think the name of the buffer is right?
 "
 " In this plugin:
@@ -107,6 +94,17 @@ fu! mirvish#tree#close() abort "{{{1
     call s:save_view(curdir)
 
     call s:timer_stop()
+    " Why?{{{
+    "
+    " I wonder whether the cache could grow too much after some time:
+    "
+    "     $ tree -a ~ >/tmp/file
+    "     $ stat -c '%s' /tmp/file
+    "         → several megabyte
+    "
+    " So, we remove the cache after a  few minutes to prevent it from taking too
+    " much memory.
+    "}}}
     let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
     close
 endfu
