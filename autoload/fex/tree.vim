@@ -38,10 +38,10 @@ let g:autoloaded_fex#tree = 1
 "     editvar://{variable_name}
 "
 " If we followed the same scheme, we would use:
-"     tree_explorer:///path/to/file
+"     fex_tree:///path/to/file
 "
 " instead of:
-"     /tmp/v.../../tree_explorer::/path/to/file
+"     /tmp/v.../../fex_tree::/path/to/file
 "
 " What's the best choice?
 " Why using `tempname()`?
@@ -127,7 +127,7 @@ fu! fex#tree#display_help() abort "{{{1
     " So, we also temporarily disable conceal.
     "}}}
     setl smc=50 cole=0
-    let dir = matchstr(expand('%:p'), '/tree_explorer::\zs.*')
+    let dir = matchstr(expand('%:p'), '/fex_tree::\zs.*')
 
     let help = [
              \   '   ===== Tree Command =====',
@@ -268,7 +268,7 @@ fu! s:get_tree_cmd(dir) abort "{{{1
 endfu
 
 fu! s:getcurdir() abort "{{{1
-    let curdir = matchstr(expand('%:p'), 'tree_explorer::\zs.*')
+    let curdir = matchstr(expand('%:p'), 'fex_tree::\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
@@ -319,10 +319,10 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
         return 'echoerr '.string(dir.'/ is not a directory')
     endif
 
-    "                                            ┌ `BufNewFile` won't be emitted
-    "                                            │  if the buffer name ends with a slash
-    "                                            │
-    let tempfile = tempname().'/tree_explorer::'.(dir is# '/' ? '' : dir)
+    "                                       ┌ `BufNewFile` won't be emitted
+    "                                       │  if the buffer name ends with a slash
+    "                                       │
+    let tempfile = tempname().'/fex_tree::'.(dir is# '/' ? '' : dir)
     if a:nosplit
         exe 'e '.tempfile
     else
@@ -337,7 +337,7 @@ fu! fex#tree#populate(path) abort "{{{1
         return
     endif
 
-    let dir = matchstr(a:path, '/tree_explorer::\zs.*')
+    let dir = matchstr(a:path, '/fex_tree::\zs.*')
     if dir is# ''
         let dir = '/'
     endif
