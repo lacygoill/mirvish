@@ -11,7 +11,7 @@ let g:dirvish_mode = ':call fex#format_entries()'
 
 augroup fex_tree_populate
     au!
-    au BufNewFile  /tmp/*/fex_tree/*  call fex#tree#populate(expand('<amatch>'))
+    au BufNewFile  /tmp/*/fex_tree*  call fex#tree#populate(expand('<amatch>'))
 augroup END
 
 " Command {{{1

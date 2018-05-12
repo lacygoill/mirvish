@@ -108,7 +108,7 @@ fu! fex#tree#display_help() abort "{{{1
     " So, we also temporarily disable conceal.
     "}}}
     setl smc=50 cole=0
-    let dir = matchstr(expand('%:p'), '/fex_tree/\zs.*')
+    let dir = matchstr(expand('%:p'), '/fex_tree\zs.*')
 
     let help = [
              \   '   ===== Tree Command =====',
@@ -249,7 +249,7 @@ fu! s:get_tree_cmd(dir) abort "{{{1
 endfu
 
 fu! s:getcurdir() abort "{{{1
-    let curdir = matchstr(expand('%:p'), 'fex_tree/\zs.*')
+    let curdir = matchstr(expand('%:p'), 'fex_tree\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
@@ -300,14 +300,14 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
         return 'echoerr '.string(dir.'/ is not a directory')
     endif
 
-    "                                       ┌ `BufNewFile` won't be emitted
-    "                                       │  if the buffer name ends with a slash.
-    "                                       │
-    "                                       │  Besides it  would raise  an error
-    "                                       │  when  `save#buffer()`   would  be
-    "                                       │  invoked (`:update` would fail; E502).
-    "                                       │
-    let tempfile = tempname().'/fex_tree/'.(dir is# '/' ? '' : dir)
+    "                                      ┌ `BufNewFile` won't be emitted
+    "                                      │  if the buffer name ends with a slash.
+    "                                      │
+    "                                      │  Besides it  would raise  an error
+    "                                      │  when  `save#buffer()`   would  be
+    "                                      │  invoked (`:update` would fail; E502).
+    "                                      │
+    let tempfile = tempname().'/fex_tree'.(dir is# '/' ? '' : dir)
     if a:nosplit
         exe 'e '.tempfile
     else
@@ -322,7 +322,7 @@ fu! fex#tree#populate(path) abort "{{{1
         return
     endif
 
-    let dir = matchstr(a:path, '/fex_tree/\zs.*')
+    let dir = matchstr(a:path, '/fex_tree\zs.*')
     if dir is# ''
         let dir = '/'
     endif
