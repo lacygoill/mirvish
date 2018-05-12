@@ -29,24 +29,6 @@ let g:autoloaded_fex#tree = 1
 " Also, try to make each function fit on one single screen (with folding).
 
 " TODO:
-" Do you think the name of the buffer is right?
-"
-" In this plugin:
-"     https://github.com/thinca/vim-editvar/blob/master/plugin/editvar.vim
-"
-" The name of the special buffer is simply:
-"     editvar://{variable_name}
-"
-" If we followed the same scheme, we would use:
-"     fex_tree:///path/to/file
-"
-" instead of:
-"     /tmp/v.../../fex_tree//path/to/file
-"
-" What's the best choice?
-" Why using `tempname()`?
-
-" TODO:
 " Color special files (socket, ...).
 
 " Init {{{1
