@@ -41,11 +41,10 @@ let g:autoloaded_fex#tree = 1
 "     fex_tree:///path/to/file
 "
 " instead of:
-"     /tmp/v.../../fex_tree::/path/to/file
+"     /tmp/v.../../fex_tree//path/to/file
 "
 " What's the best choice?
 " Why using `tempname()`?
-" `::` vs `://`?
 
 " TODO:
 " Color special files (socket, ...).
@@ -127,7 +126,7 @@ fu! fex#tree#display_help() abort "{{{1
     " So, we also temporarily disable conceal.
     "}}}
     setl smc=50 cole=0
-    let dir = matchstr(expand('%:p'), '/fex_tree::\zs.*')
+    let dir = matchstr(expand('%:p'), '/fex_tree/\zs.*')
 
     let help = [
              \   '   ===== Tree Command =====',
@@ -268,7 +267,7 @@ fu! s:get_tree_cmd(dir) abort "{{{1
 endfu
 
 fu! s:getcurdir() abort "{{{1
-    let curdir = matchstr(expand('%:p'), 'fex_tree::\zs.*')
+    let curdir = matchstr(expand('%:p'), 'fex_tree/\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
@@ -326,7 +325,7 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     "                                       │  when  `save#buffer()`   would  be
     "                                       │  invoked (`:update` would fail; E502).
     "                                       │
-    let tempfile = tempname().'/fex_tree::'.(dir is# '/' ? '' : dir)
+    let tempfile = tempname().'/fex_tree/'.(dir is# '/' ? '' : dir)
     if a:nosplit
         exe 'e '.tempfile
     else
@@ -341,7 +340,7 @@ fu! fex#tree#populate(path) abort "{{{1
         return
     endif
 
-    let dir = matchstr(a:path, '/fex_tree::\zs.*')
+    let dir = matchstr(a:path, '/fex_tree/\zs.*')
     if dir is# ''
         let dir = '/'
     endif
