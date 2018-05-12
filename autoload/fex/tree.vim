@@ -290,7 +290,7 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     call s:timer_stop()
 
     " save current file name to position the cursor on it
-    if a:dir is# ''
+    if a:dir is# '' || a:dir is# getcwd()
         let s:current_file_pos = '\C\V─\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
     endif
 
