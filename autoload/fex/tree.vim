@@ -311,7 +311,7 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     if a:nosplit
         exe 'e '.tempfile
     else
-        exe 'lefta '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
+        exe 'to '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
     endif
 
     return ''
