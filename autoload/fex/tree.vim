@@ -63,11 +63,17 @@ fu! s:clean_cache() abort "{{{1
 endfu
 
 fu! fex#tree#close() abort "{{{1
-    let s:winwidth = winwidth(0)
+    let fex_winid = win_getid()
+    let t:fex_winwidth = winwidth(0)
 
-    if exists('s:preview_winid')
-        exe win_id2win(s:preview_winid).'wincmd c'
-        unlet s:preview_winid
+    if exists('t:fex_preview_winid')
+        let preview_winnr = win_id2win(t:fex_preview_winid)
+        " Make sure the preview window has not been already closed.
+        " If it has, `win_id2win()` will return 0.
+        if preview_winnr
+            exe preview_winnr.'wincmd c'
+            unlet t:fex_preview_winid
+        endif
     endif
 
     let curdir = s:getcurdir()
@@ -87,7 +93,10 @@ fu! fex#tree#close() abort "{{{1
     " much memory.
     "}}}
     let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
-    close
+    " make sure we're still in the fex window
+    if fex_winid ==# win_getid()
+        close
+    endif
 endfu
 
 fu! fex#tree#display_help() abort "{{{1
@@ -311,7 +320,7 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     if a:nosplit
         exe 'e '.tempfile
     else
-        exe 'to '.get(s:, 'winwidth', &columns/3).'vnew '.tempfile
+        exe 'to '.get(t:, 'fex_winwidth', &columns/3).'vnew '.tempfile
     endif
 
     return ''
@@ -370,7 +379,7 @@ endfu
 
 fu! fex#tree#preview() abort "{{{1
     exe 'pedit '.s:getfile()
-    let s:preview_winid = win_getid(winnr('#'))
+    let t:fex_preview_winid = win_getid(winnr('#'))
 endfu
 
 fu! fex#tree#relative_dir(who) abort "{{{1
