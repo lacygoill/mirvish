@@ -379,8 +379,10 @@ endfu
 
 fu! fex#tree#preview() abort "{{{1
     exe 'pedit '.s:getfile()
-    if getwinvar(winnr('#'), '&pvw', 0)
-        let t:fex_preview_winid = win_getid(winnr('#'))
+
+    let prev_winnr = winnr('#')
+    if getwinvar(prev_winnr, '&pvw', 0)
+        let t:fex_preview_winid = win_getid(prev_winnr)
     endif
 endfu
 
