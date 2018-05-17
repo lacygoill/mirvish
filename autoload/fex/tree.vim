@@ -379,7 +379,9 @@ endfu
 
 fu! fex#tree#preview() abort "{{{1
     exe 'pedit '.s:getfile()
-    let t:fex_preview_winid = win_getid(winnr('#'))
+    if getwinvar(winnr('#'), '&pvw', 0)
+        let t:fex_preview_winid = win_getid(winnr('#'))
+    endif
 endfu
 
 fu! fex#tree#relative_dir(who) abort "{{{1
