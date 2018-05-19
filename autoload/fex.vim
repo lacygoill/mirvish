@@ -90,7 +90,7 @@ fu! s:get_metadata(line, ...) abort "{{{1
        \        .' '.getfperm(file)
        \        .' '.strftime('%Y-%m-%d %H:%M',getftime(file))
        \        .' '.(fsize ==# -2 ? '[big]' : human_fsize))
-       \       .(ftype is# 'link' ? ' ->'.pathshorten(resolve(file)) : '')
+       \       .(ftype is# 'link' ? ' ->'.fnamemodify(resolve(file), ':~:.') : '')
        \       ."\n"
 endfu
 
