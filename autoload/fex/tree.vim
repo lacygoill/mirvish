@@ -172,7 +172,7 @@ endfu
 
 fu! fex#tree#fdt() abort "{{{1
     let pat = '\(.*─\s\)\(.*\)/'
-    let l:Rep = {-> submatch(1).substitute(submatch(2), '.*/', '', '')}
+    let l:Rep = {m -> m[1].substitute(m[2], '.*/', '', '')}
     return (get(b:, 'foldtitle_full', 0) ? '['.(v:foldend - v:foldstart).']': '')
     \      .substitute(getline(v:foldstart), pat, l:Rep, '')
 endfu
