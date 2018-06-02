@@ -18,10 +18,7 @@ let s:hide_dot_entries = 0
 
 fu! fex#format_entries() abort "{{{1
     let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
-    "                      ┌ remove the `$` anchor at the end,
-    "                      │ we're going to re-add it, but outside the non-capturing group
-    "               ┌──────┤
-    let pat = '\%('.pat[:-2].'\)$'
+    let pat = '\%('.pat.'\)$'
     sil! exe 'keepj keepp g:'.pat.':d_'
 
     if s:hide_dot_entries
