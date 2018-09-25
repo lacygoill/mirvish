@@ -39,24 +39,24 @@ let s:INDICATOR = '[/=*>|]'
 let s:BIG_DIR_PAT = '^/.*'
 
 let s:HELP = [
-           \   '   ===== Key Bindings =====',
-           \   '',
-           \   '(         move cursor to previous directory',
-           \   ')         move cursor to next directory',
-           \   '-M        print current file''s metadata and update as the cursor moves',
-           \   '-m        print current file''s metadata',
-           \   'C-w f     edit file in new split',
-           \   'C-w gf    edit file in new tab',
-           \   '?         toggle this help',
-           \   'R         reload directory hierarchy without using the cache',
-           \   'gh        toggle hidden files/directories visibility',
-           \   'h         move to parent directory',
-           \   'l         move to child directory',
-           \   'p         preview current file/directory contents',
-           \   'q         close the window',
-           \   '{         preview previous file/directory',
-           \   '}         preview next file/directory',
-           \ ]
+    \ '   ===== Key Bindings =====',
+    \ '',
+    \ '(         move cursor to previous directory',
+    \ ')         move cursor to next directory',
+    \ '-M        print current file''s metadata and update as the cursor moves',
+    \ '-m        print current file''s metadata',
+    \ 'C-w f     edit file in new split',
+    \ 'C-w gf    edit file in new tab',
+    \ '?         toggle this help',
+    \ 'R         reload directory hierarchy without using the cache',
+    \ 'gh        toggle hidden files/directories visibility',
+    \ 'h         move to parent directory',
+    \ 'l         move to child directory',
+    \ 'p         preview current file/directory contents',
+    \ 'q         close the window',
+    \ '{         preview previous file/directory',
+    \ '}         preview next file/directory',
+    \ ]
 
 fu! s:clean_cache() abort "{{{1
     let s:cache = {}
@@ -120,11 +120,11 @@ fu! fex#tree#display_help() abort "{{{1
     let dir = matchstr(expand('%:p'), '/fex_tree\zs.*')
 
     let help = [
-             \   '   ===== Tree Command =====',
-             \   '',
-             \   '$ '.s:get_tree_cmd(dir),
-             \   '',
-             \ ]
+        \ '   ===== Tree Command =====',
+        \ '',
+        \ '$ '.s:get_tree_cmd(dir),
+        \ '',
+        \ ]
 
     let help += s:HELP
 
