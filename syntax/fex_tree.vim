@@ -1,4 +1,6 @@
-let b:current_syntax = 'fex_tree'
+if exists('b:current_syntax')
+    finish
+endif
 
 " Syntax {{{1
 
@@ -43,3 +45,6 @@ hi       fexTreeLink            ctermfg=darkmagenta guifg=darkmagenta
 hi link  fexTreeLinkFile        Normal
 hi link  fexTreeLinkDirectory   Directory
 hi       fexTreeLinkExecutable  ctermfg=darkgreen guifg=darkgreen
+
+let b:current_syntax = 'fex_tree'
+
