@@ -1,7 +1,6 @@
 if exists('b:did_ftplugin')
     finish
 endif
-let b:did_ftplugin = 1
 
 " Mappings {{{1
 
@@ -38,6 +37,11 @@ augroup fex_tree
     \                            fde=fex#tree#fde() fdm=expr fdt=fex#tree#fdt()
     \                     | call fex#tree#fdl()
 augroup END
+
+
+" Variables {{{1
+
+let b:did_ftplugin = 1
 
 " teardown {{{1
 
