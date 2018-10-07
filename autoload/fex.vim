@@ -188,3 +188,8 @@ fu! fex#toggle_dot_entries() abort "{{{1
     Dirvish %
 endfu
 
+fu! fex#trash_put() abort "{{{1
+    call system('trash-put '.shellescape(getline('.')))
+    e
+endfu
+

@@ -96,10 +96,14 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call fex#preview()<cr>
 "      q
 "          →  closes the current window and tabpage (✘)
 
+" tp {{{2
+
+nno  <buffer><nowait><silent>  tp  :<c-u>call fex#trash_put()<cr>
+
 " x {{{2
 
-xmap  <buffer>         x                         <plug>(fex_print_arg_pos)<plug>(dirvish_arg)
-xno   <buffer><expr>  <plug>(fex_print_arg_pos)  execute('let g:my_stl_list_position = 2')[0]
+xmap  <buffer><nowait>  x                          <plug>(fex_print_arg_pos)<plug>(dirvish_arg)
+xno   <buffer><expr>    <plug>(fex_print_arg_pos)  execute('let g:my_stl_list_position = 2')[0]
 
 " Teardown {{{1
 
