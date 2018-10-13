@@ -139,6 +139,7 @@ fu! fex#tree#display_help() abort "{{{1
     " MWE:
     "     " ✘ the 123th line is printed on the command-line
     "     123 | sleep 1
+    "
     "     " ✔ nothing is printed
     "     exe '123' | sleep 1
     "}}}
