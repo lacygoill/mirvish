@@ -130,7 +130,13 @@ fu! fex#tree#display_help() abort "{{{1
 
     call map(help, {i,v -> !empty(v) ? '" '.v : v})
     call append(0, help)
-    1
+    " Why `:exe`?{{{
+    "
+    " If later  you add  a bar  after the  command, `1`  will be  interpreted as
+    " `:1p[rint]`.
+    " We don't want that side-effect.
+    "}}}
+    exe '1'
 endfu
 
 fu! fex#tree#edit(where) abort "{{{1
