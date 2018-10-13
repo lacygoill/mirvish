@@ -135,6 +135,12 @@ fu! fex#tree#display_help() abort "{{{1
     " If later  you add  a bar  after the  command, `1`  will be  interpreted as
     " `:1p[rint]`.
     " We don't want that side-effect.
+    "
+    " MWE:
+    "     " ✘ the 123th line is printed on the command-line
+    "     123 | sleep 1
+    "     " ✔ nothing is printed
+    "     exe '123' | sleep 1
     "}}}
     exe '1'
 endfu
