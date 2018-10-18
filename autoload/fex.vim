@@ -189,7 +189,7 @@ fu! fex#toggle_dot_entries() abort "{{{1
 endfu
 
 fu! fex#trash_put() abort "{{{1
-    call system('trash-put '.shellescape(getline('.')))
+    sil call system('trash-put '.shellescape(getline('.')))
     e
 endfu
 
