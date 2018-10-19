@@ -290,7 +290,7 @@ fu! s:getfile() abort "{{{1
 endfu
 
 fu! s:is_big_directory(dir) abort "{{{1
-    return a:dir is# '/'
+    sil return a:dir is# '/'
     \ ||   a:dir is# '/home'
     \ ||   a:dir =~# '^/home/[^/]\+/\?$'
     \ ||   systemlist('find '.a:dir.' -type f 2>/dev/null | wc -l')[0] > 10000
@@ -362,7 +362,7 @@ fu! fex#tree#populate(path) abort "{{{1
     endif
 
     let cmd = s:get_tree_cmd(dir)
-    call setline(1, systemlist(cmd))
+    sil call setline(1, systemlist(cmd))
     call s:format()
 
     if stridx(cmd, '-L 2 --filelimit 300') == -1

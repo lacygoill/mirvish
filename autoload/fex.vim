@@ -115,7 +115,7 @@ fu! fex#preview() abort "{{{1
         endif
 
     elseif isdirectory(file)
-        let ls = systemlist('ls '.shellescape(file))
+        sil let ls = systemlist('ls '.shellescape(file))
         let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         call writefile(ls, b:dirvish['preview_ls'])
         exe 'sil pedit '.b:dirvish['preview_ls']
