@@ -45,28 +45,28 @@ let b:did_ftplugin = 1
 
 " teardown {{{1
 
-let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
-\                     .(empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
-\                     ."
-\                          setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
-\                        | unlet! b:fex_curdir
-\                        | exe 'au! fex_tree * <buffer>'
-\                        | exe 'nunmap <buffer> ('
-\                        | exe 'nunmap <buffer> )'
-\                        | exe 'nunmap <buffer> -M'
-\                        | exe 'nunmap <buffer> -m'
-\                        | exe 'xunmap <buffer> -m'
-\                        | exe 'nunmap <buffer> <c-w>F'
-\                        | exe 'nunmap <buffer> <c-w>f'
-\                        | exe 'nunmap <buffer> <c-w>gf'
-\                        | exe 'nunmap <buffer> ?'
-\                        | exe 'nunmap <buffer> R'
-\                        | exe 'nunmap <buffer> gh'
-\                        | exe 'nunmap <buffer> h'
-\                        | exe 'nunmap <buffer> l'
-\                        | exe 'nunmap <buffer> p'
-\                        | exe 'nunmap <buffer> q'
-\                        | exe 'nunmap <buffer> {'
-\                        | exe 'nunmap <buffer> }'
-\                      "
+let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
+    \ . (empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
+    \ . 'setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<'
+    \ . '| unlet! b:fex_curdir'
+    \ . '| exe "au! fex_tree * <buffer>"'
+    \
+    \ . '| nunmap <buffer> -M'
+    \ . '| nunmap <buffer> -m'
+    \ . '| xunmap <buffer> -m'
+    \
+    \ . '| nunmap <buffer> ('
+    \ . '| nunmap <buffer> )'
+    \ . '| nunmap <buffer> <c-w>F'
+    \ . '| nunmap <buffer> <c-w>f'
+    \ . '| nunmap <buffer> <c-w>gf'
+    \ . '| nunmap <buffer> ?'
+    \ . '| nunmap <buffer> R'
+    \ . '| nunmap <buffer> gh'
+    \ . '| nunmap <buffer> h'
+    \ . '| nunmap <buffer> l'
+    \ . '| nunmap <buffer> p'
+    \ . '| nunmap <buffer> q'
+    \ . '| nunmap <buffer> {'
+    \ . '| nunmap <buffer> }'
 

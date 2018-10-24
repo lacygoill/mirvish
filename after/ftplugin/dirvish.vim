@@ -107,25 +107,26 @@ xno   <buffer><expr>    <plug>(fex_print_arg_pos)  execute('let g:my_stl_list_po
 
 " Teardown {{{1
 
-let b:undo_ftplugin =         get(b:, 'undo_ftplugin', '')
-                    \ .(empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
-                    \ ."
-                    \   unlet! b:fex_last_line
-                    \ | exe 'sil! au! fex_print_metadata * <buffer>'
-                    \ | exe 'nunmap <buffer> -M'
-                    \ | exe 'nunmap <buffer> -m'
-                    \ | exe 'xunmap <buffer> -m'
-                    \ | exe 'nunmap <buffer> <c-s>'
-                    \ | exe 'nunmap <buffer> <c-t>'
-                    \ | exe 'nunmap <buffer> <c-v><c-v>'
-                    \ | exe 'nunmap <buffer> ?'
-                    \ | exe 'nunmap <buffer> gh'
-                    \ | exe 'nunmap <buffer> h'
-                    \ | exe 'nunmap <buffer> l'
-                    \ | exe 'nunmap <buffer> p'
-                    \ | exe 'nunmap <buffer> {'
-                    \ | exe 'nunmap <buffer> }'
-                    \ | exe 'xunmap <buffer> <c-t>'
-                    \ | exe 'xunmap <buffer> x'
-                    \  "
+let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
+    \ . (empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
+    \ . 'unlet! b:fex_last_line'
+    \ . '| exe "sil! au! fex_print_metadata * <buffer>"'
+    \
+    \ . '| nunmap <buffer> -M'
+    \ . '| nunmap <buffer> -m'
+    \ . '| xunmap <buffer> -m'
+    \
+    \ . '| nunmap <buffer> <c-s>'
+    \ . '| nunmap <buffer> <c-t>'
+    \ . '| nunmap <buffer> <c-v><c-v>'
+    \ . '| nunmap <buffer> ?'
+    \ . '| nunmap <buffer> gh'
+    \ . '| nunmap <buffer> h'
+    \ . '| nunmap <buffer> l'
+    \ . '| nunmap <buffer> p'
+    \ . '| nunmap <buffer> {'
+    \ . '| nunmap <buffer> }'
+    \
+    \ . '| xunmap <buffer> <c-t>'
+    \ . '| xunmap <buffer> x'
 
