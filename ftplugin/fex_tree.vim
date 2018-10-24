@@ -47,26 +47,28 @@ let b:did_ftplugin = 1
 
 let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
     \ . (empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
-    \ . 'setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<'
-    \ . '| unlet! b:fex_curdir'
-    \ . '| exe "au! fex_tree * <buffer>"'
+    \ . "
+    \ setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
+    \|unlet! b:fex_curdir
+    \|exe 'au! fex_tree * <buffer>'
     \
-    \ . '| nunmap <buffer> -M'
-    \ . '| nunmap <buffer> -m'
-    \ . '| xunmap <buffer> -m'
+    \|nunmap <buffer> -M
+    \|nunmap <buffer> -m
+    \|xunmap <buffer> -m
     \
-    \ . '| nunmap <buffer> ('
-    \ . '| nunmap <buffer> )'
-    \ . '| nunmap <buffer> <c-w>F'
-    \ . '| nunmap <buffer> <c-w>f'
-    \ . '| nunmap <buffer> <c-w>gf'
-    \ . '| nunmap <buffer> ?'
-    \ . '| nunmap <buffer> R'
-    \ . '| nunmap <buffer> gh'
-    \ . '| nunmap <buffer> h'
-    \ . '| nunmap <buffer> l'
-    \ . '| nunmap <buffer> p'
-    \ . '| nunmap <buffer> q'
-    \ . '| nunmap <buffer> {'
-    \ . '| nunmap <buffer> }'
+    \|nunmap <buffer> (
+    \|nunmap <buffer> )
+    \|nunmap <buffer> <c-w>F
+    \|nunmap <buffer> <c-w>f
+    \|nunmap <buffer> <c-w>gf
+    \|nunmap <buffer> ?
+    \|nunmap <buffer> R
+    \|nunmap <buffer> gh
+    \|nunmap <buffer> h
+    \|nunmap <buffer> l
+    \|nunmap <buffer> p
+    \|nunmap <buffer> q
+    \|nunmap <buffer> {
+    \|nunmap <buffer> }
+    \"
 
