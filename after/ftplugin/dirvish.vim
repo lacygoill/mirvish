@@ -36,6 +36,15 @@ nunmap <buffer> g?
 " We'll use `?` instead.
 nno  <buffer><nowait><silent>  ?  :<c-u>help dirvish-mappings<cr>
 
+" C {{{2
+
+" dirvish  uses `c`  by default  to  populate the  command line  with a  `:Shdo`
+" command.
+" It shadows our `coc` mapping.
+" So, we use `C` instead of `c`.
+nno  <buffer><expr><nowait>  C  ':<c-u>Shdo'.(v:count>0 ? '!' : '').'  {}<left><left><left>'
+nunmap <buffer> c
+
 " gh {{{2
 
 " Map `gh` to toggle dot-prefixed entries.
@@ -105,6 +114,7 @@ nno  <buffer><nowait><silent>  tp  :<c-u>call fex#trash_put()<cr>
 xmap  <buffer><nowait>  x                          <plug>(fex_print_arg_pos)<plug>(dirvish_arg)
 xno   <buffer><expr>    <plug>(fex_print_arg_pos)  execute('let g:my_stl_list_position = 2')[0]
 
+"}}}1
 " Teardown {{{1
 
 let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
@@ -121,6 +131,7 @@ let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
     \|nunmap <buffer> <c-t>
     \|nunmap <buffer> <c-v><c-v>
     \|nunmap <buffer> ?
+    \|nunmap <buffer> C
     \|nunmap <buffer> gh
     \|nunmap <buffer> h
     \|nunmap <buffer> l
