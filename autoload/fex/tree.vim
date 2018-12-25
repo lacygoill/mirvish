@@ -280,8 +280,8 @@ fu! s:getfile() abort "{{{1
 
     return line =~# '\s->\s'
     \ ?        matchstr(line, '.*─\s\zs.*\ze\s->\s')
-    \ :        matchstr(line, '.*─\s\zs.*'.s:INDICATOR.'\@<!')
-    " Do NOT add the `$` anchor !                           ^{{{
+    \ :        matchstr(line, '.*─\s\zs.*'.s:INDICATOR.'\@1<!')
+    " Do NOT add the `$` anchor !                            ^{{{
     "
     " You don't want match until the end of the line.
     " You want to match  a maximum of text, so maybe until the  end of the line,

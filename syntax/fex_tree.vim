@@ -18,9 +18,9 @@ syn  match  fexTreeLink        '[^/]*\s->\s'
 "                                         /proc/11201/exe -> /usr/lib/firefox/firefox*
 "                                                     ^^^^^^^
 
-syn  match  fexTreeLinkFile        '\%(\s->\s\)\@<=.*[^*/]$'
-syn  match  fexTreeLinkDirectory   '\%(\s->\s\)\@<=.*/$'
-syn  match  fexTreeLinkExecutable  '\%(\s->\s\)\@<=.*\*$'
+syn  match  fexTreeLinkFile        '\%(\s->\s\)\@4<=.*[^*/]$'
+syn  match  fexTreeLinkDirectory   '\%(\s->\s\)\@4<=.*/$'
+syn  match  fexTreeLinkExecutable  '\%(\s->\s\)\@4<=.*\*$'
 
 syn  match  fexTreeWarning    '[^/]*/\=\ze\s\[.\{-}\]'
 syn  match  fexTreeHelp       '^"\s.*' contains=fexTreeHelpKey,fexTreeHelpTitle,fexTreeHelpCmd
