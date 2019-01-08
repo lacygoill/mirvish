@@ -87,7 +87,7 @@ fu! fex#tree#close() abort "{{{1
     "
     "     $ tree -a ~ >/tmp/file
     "     $ stat -c '%s' /tmp/file
-    "         → several megabyte
+    "     several megabytes~
     "
     " So, we remove the cache after a  few minutes to prevent it from taking too
     " much memory.

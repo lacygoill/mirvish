@@ -94,7 +94,7 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call fex#preview()<cr>
 "      :tabnew
 "      --
 "      q
-"          →  closes the current window and tabpage (✘)
+"      closes the current window and tabpage (✘)~
 
 " tp {{{2
 

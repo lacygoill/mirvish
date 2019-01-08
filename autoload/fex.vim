@@ -37,12 +37,12 @@ fu! s:get_metadata(line, ...) abort "{{{1
     "     $ ln -s tmux-1000 test
     "
     "     $ ls -ld test/
-    "         → drwx------ 2 user user 4096 May  2 09:54 test/
-    "         ✘
+    "     drwx------ 2 user user 4096 May  2 09:54 test/~
+    "     ✘
     "
     "     $ ls -ld test
-    "         → lrwxrwxrwx 1 user user 9 May  2 17:37 test -> tmux-1000
-    "         ✔
+    "     lrwxrwxrwx 1 user user 9 May  2 17:37 test -> tmux-1000~
+    "     ✔
     "
     " If:
     "     • a symlink points to a directory
