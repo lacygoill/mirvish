@@ -143,14 +143,14 @@ fu! fex#print_metadata(how, ...) abort "{{{1
                 au!
                 au FileType dirvish,tree call s:auto_metadata()
             augroup END
-        else
-            unlet! b:fex_last_line
-            sil! au!  fex_print_metadata
-            sil! aug! fex_print_metadata
-            sil! au!  fex_print_metadata_and_persist
-            sil! aug! fex_print_metadata_and_persist
-            return
         endif
+    else
+        sil! au!  fex_print_metadata
+        sil! aug! fex_print_metadata
+        sil! au!  fex_print_metadata_and_persist
+        sil! aug! fex_print_metadata_and_persist
+        unlet! b:fex_last_line
+        return
     endif
 
     let lines = a:0 ? getline(line("'<"), line("'>")) : [getline('.')]
