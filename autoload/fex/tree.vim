@@ -382,9 +382,9 @@ fu! fex#tree#populate(path) abort "{{{1
     if exists('s:current_file_pos')
         augroup fex_current_file_pos
             au! * <buffer>
-            au BufWinEnter <buffer>  call search(s:current_file_pos)
+            au BufWinEnter <buffer>  sil! call search(s:current_file_pos)
                 \ | unlet! s:current_file_pos
-            au BufWinEnter <buffer>  exe 'au! fex_current_file_pos' | aug! fex_current_file_pos
+                \ | exe 'au! fex_current_file_pos' | aug! fex_current_file_pos
         augroup END
     endif
 endfu
@@ -500,9 +500,9 @@ fu! s:use_cache(dir) abort "{{{1
         "}}}
         augroup fex_restore_last_pos
             au! * <buffer>
-            au BufWinEnter <buffer>   exe s:last_pos
+            au BufWinEnter <buffer>   sil! exe s:last_pos
                                   \ | unlet! s:last_pos
-            au BufWinEnter <buffer>  exe 'au! fex_restore_last_pos' | aug! fex_restore_last_pos
+                                  \ | exe 'au! fex_restore_last_pos' | aug! fex_restore_last_pos
         augroup END
     endif
 
