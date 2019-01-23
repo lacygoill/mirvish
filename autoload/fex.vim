@@ -45,9 +45,9 @@ fu! s:get_metadata(line, ...) abort "{{{1
     "     ✔
     "
     " If:
-    "     • a symlink points to a directory
-    "     • you give it to `$ ls -ld`
-    "     • you append a slash to the symlink
+    "     - a symlink points to a directory
+    "     - you give it to `$ ls -ld`
+    "     - you append a slash to the symlink
     "
     " `$ ls`  will print  the info  about the target  directory, instead  of the
     " symlink itself.
