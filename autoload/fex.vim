@@ -165,7 +165,7 @@ fu! fex#print_metadata(how, ...) abort "{{{1
         endfor
     endif
     " Flush any delayed screen updates before printing the metadata.
-    " See :h :echo-redraw
+    " See `:h :echo-redraw`.
     redraw
     echo metadata[:-2]
     "              ^
