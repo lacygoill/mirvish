@@ -29,7 +29,7 @@ nno  <buffer><nowait><silent>  }  j:call fex#tree#preview()<cr>
 
 " Options {{{1
 
-setl bh=delete bt=nofile nobl noswf nowrap
+setl bh=delete bt=nofile nobl cul noswf nowrap
 
 augroup fex_tree
     au! * <buffer>

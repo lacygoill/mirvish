@@ -14,11 +14,6 @@ let g:autoloaded_fex#tree = 1
 " It's slow, and consumes 30% of cpu.
 " Profile and optimize syntax highlighting.
 
-" FIXME:
-" Enable 'cursorline' in the filetype plugin.
-" Issue:
-" It makes Vim slow and consume too much cpu when we move the cursor fast.
-
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
 " TODO: Sort hidden directories after non-hidden ones.
