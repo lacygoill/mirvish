@@ -150,12 +150,14 @@ fu! fex#print_metadata(how, ...) abort "{{{1
         sil! au!  fex_print_metadata_and_persist
         sil! aug! fex_print_metadata_and_persist
         unlet! b:fex_last_line
-        return
     endif
+    call s:print_metadata(a:0)
+endfu
 
-    let lines = a:0 ? getline(line("'<"), line("'>")) : [getline('.')]
+fu! s:print_metadata(vis) abort "{{{1
+    let lines = a:vis ? getline(line("'<"), line("'>")) : [getline('.')]
     let metadata = ''
-    if a:0
+    if a:vis
         for line in lines
             let metadata .= s:get_metadata(line, 1)
         endfor
@@ -178,7 +180,7 @@ fu! s:auto_metadata() abort "{{{1
         au! * <buffer>
         au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) !=# line('.')
         \ |                         let b:fex_last_line = line('.')
-        \ |                         call fex#print_metadata('manual')
+        \ |                         call s:print_metadata(0)
         \ |                     endif
     augroup END
 endfu
