@@ -375,12 +375,8 @@ fu! fex#tree#populate(path) abort "{{{1
 
     " position cursor on current file
     if exists('s:current_file_pos')
-        augroup fex_current_file_pos
-            au! * <buffer>
-            au BufWinEnter <buffer>  sil! call search(s:current_file_pos)
-                \ | unlet! s:current_file_pos
-                \ | exe 'au! fex_current_file_pos' | aug! fex_current_file_pos
-        augroup END
+        au BufWinEnter <buffer> ++once sil! call search(s:current_file_pos)
+            \ | unlet! s:current_file_pos
     endif
 endfu
 
@@ -493,12 +489,7 @@ fu! s:use_cache(dir) abort "{{{1
         " Vim will  re-position the cursor  on the first line  afterwards (after
         " BufEnter).
         "}}}
-        augroup fex_restore_last_pos
-            au! * <buffer>
-            au BufWinEnter <buffer>   sil! exe s:last_pos
-                                  \ | unlet! s:last_pos
-                                  \ | exe 'au! fex_restore_last_pos' | aug! fex_restore_last_pos
-        augroup END
+        au BufWinEnter <buffer>  ++once sil! exe s:last_pos | unlet! s:last_pos
     endif
 
     " restore last foldlevel if one was saved
