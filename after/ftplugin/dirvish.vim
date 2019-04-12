@@ -108,10 +108,9 @@ xno   <buffer><expr>    <plug>(fex_print_arg_pos)  execute('let g:my_stl_list_po
 "}}}1
 " Teardown {{{1
 
-let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
-    \ . (empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
+let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
     \ . "
-    \   unlet! b:fex_last_line
+    \ | unlet! b:fex_last_line
     \ | exe 'sil! au! fex_print_metadata * <buffer>'
     \
     \ | exe 'nunmap <buffer> -M'

@@ -45,10 +45,9 @@ let b:did_ftplugin = 1
 
 " teardown {{{1
 
-let b:undo_ftplugin = get(b:, 'undo_ftplugin', '')
-    \ . (empty(get(b:, 'undo_ftplugin', '')) ? '' : '|')
+let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
     \ . "
-    \   setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
+    \ | setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
     \ | unlet! b:fex_curdir
     \ | exe 'au! fex_tree * <buffer>'
     \
