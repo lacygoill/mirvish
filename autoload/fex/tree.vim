@@ -58,6 +58,10 @@ fu! s:clean_cache() abort "{{{1
 endfu
 
 fu! fex#tree#close() abort "{{{1
+    if reg_recording() isnot# ''
+        return feedkeys('q', 'int')[-1]
+    endif
+
     let fex_winid = win_getid()
     let t:fex_winwidth = winwidth(0)
 
