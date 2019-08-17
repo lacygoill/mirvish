@@ -59,7 +59,7 @@ endfu
 
 fu! fex#tree#close() abort "{{{1
     if reg_recording() isnot# ''
-        return feedkeys('q', 'int')[-1]
+        return feedkeys('q', 'in')[-1]
     endif
 
     let fex_winid = win_getid()
