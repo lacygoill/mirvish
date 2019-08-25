@@ -59,16 +59,13 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call fex#preview()<cr>
 "
 " MWE:
 "
-"     $ cat /tmp/vimrc
-"
-"         set rtp^=~/.vim/plugged/vim-dirvish
-"         filetype plugin indent on
-"
-"     $ vim -Nu /tmp/vimrc
-"     :tabnew
-"     :e /etc/apt
-"     q
-"         ✘ nothing happens
+"     $ vim -Nu <(cat <<'EOF'
+"     set rtp^=~/.vim/plugged/vim-dirvish
+"     filetype plugin on
+"     EOF
+"     ) +tabnew +e\ /tmp
+"     gq " yes, now by default, dirvish uses `gq` to quit, instead of `q`
+"     " nothing happens ✘
 "
 " The issue comes from this file:
 "
@@ -85,16 +82,7 @@ nno  <buffer><nowait><silent>  {  k:<c-u>call fex#preview()<cr>
 " Submit a bug report.
 " Or re-implement dirvish.
 "}}}
-"       nno  <buffer><nowait><silent>  q  :<c-u>bd<cr>
-"
-" Update:
-" I've commented the mapping, because of this:
-"
-"      $ vim file
-"      :tabnew
-"      --
-"      q
-"      closes the current window and tabpage (✘)~
+nno  <buffer><nowait><silent>  q  :<c-u>bd<cr>
 
 " tp {{{2
 
@@ -125,6 +113,7 @@ let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
     \ | exe 'nunmap <buffer> h'
     \ | exe 'nunmap <buffer> l'
     \ | exe 'nunmap <buffer> p'
+    \ | exe 'nunmap <buffer> q'
     \ | exe 'nunmap <buffer> {'
     \ | exe 'nunmap <buffer> }'
     \
