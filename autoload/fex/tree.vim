@@ -127,7 +127,7 @@ fu! fex#tree#display_help() abort "{{{1
 
     let help += s:HELP
 
-    call map(help, {i,v -> !empty(v) ? '" '.v : v})
+    call map(help, {_,v -> !empty(v) ? '" '.v : v})
     call append(0, help)
     " Why `:exe`?{{{
     "
@@ -234,13 +234,13 @@ fu! s:get_ignore_pat() abort "{{{1
     "                   │            │                ┌ to match `tags`
     "          ┌────────┤      ┌─────┤        ┌───────┤
     let pat = '\*[^/]\+\|\*/\zs[^*/]\+\ze/\*\|^[^*/]\+$'
-    let ignore_pat = map(split(&wig, ','), {i,v -> matchstr(v, pat)})
+    let ignore_pat = map(split(&wig, ','), {_,v -> matchstr(v, pat)})
     " We may get empty matches, or sth like `*.*` because of (in vimrc):
     "
     "         let &wig .= ','.&undodir.'/*.*'
     "
     " We must eliminate those.
-    call filter(ignore_pat, {i,v -> !empty(v) && v !~# '^[.*/]\+$'})
+    call filter(ignore_pat, {_,v -> !empty(v) && v !~# '^[.*/]\+$'})
     let ignore_pat = join(ignore_pat, '|')
 
     return printf('-I "%s"', ignore_pat)
@@ -297,7 +297,7 @@ endfu
 
 fu! s:matchdelete() abort "{{{1
     let id = get(get(filter(getmatches(),
-    \            {i,v -> v.pattern is# s:BIG_DIR_PAT}), 0, []), 'id', 0)
+    \            {_,v -> v.pattern is# s:BIG_DIR_PAT}), 0, []), 'id', 0)
     if id
         call matchdelete(id)
     endif
