@@ -43,7 +43,7 @@ nno  <buffer><nowait><silent>  gh  :<c-u>call fex#toggle_dot_entries()<cr>
 
 " h    l {{{2
 
-nmap  <buffer><nowait><silent>  h  <plug>(fex_update)<plug>(dirvish_up)
+nmap  <buffer><nowait><silent>  h  <plug>(dirvish_up)
 nmap  <buffer><nowait><silent>  l  <cr>
 
 " p } { {{{2

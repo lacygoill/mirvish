@@ -29,7 +29,7 @@ nno  <buffer><nowait><silent>  }  j:call fex#tree#preview()<cr>
 
 " Options {{{1
 
-setl bh=delete bt=nofile nobl cul noswf nowrap
+setl bh=delete bt=nofile nobl cul noswf wfw nowrap
 
 augroup fex_tree
     au! * <buffer>
@@ -37,7 +37,6 @@ augroup fex_tree
     \                            fde=fex#tree#fde() fdm=expr fdt=fex#tree#fdt()
     \                     | call fex#tree#fdl()
 augroup END
-
 
 " Variables {{{1
 
@@ -47,7 +46,7 @@ let b:did_ftplugin = 1
 
 let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
     \ . "
-    \ | setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wrap<
+    \ | setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wfw< wrap<
     \ | unlet! b:fex_curdir
     \ | exe 'au! fex_tree * <buffer>'
     \

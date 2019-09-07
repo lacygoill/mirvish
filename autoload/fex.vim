@@ -195,3 +195,38 @@ fu! fex#trash_put() abort "{{{1
     e
 endfu
 
+fu! fex#dirvish_up() abort "{{{1
+    sil! update
+    let file = expand('%:p')
+    let dir = fnamemodify(file, ':h')
+    " Make sure the directory of the current file exists.{{{
+    "
+    " Maybe it does not (e.g. `:FreeKeys`, `:Tree`, ...).
+    " And if it does not, `:Dirvish %:p:h` will fail.
+    " We handle this special case by falling back on `:Dirvish`.
+    "}}}
+    if file isnot# '' && ! isdirectory(dir)
+        " Why `:silent`?{{{
+        "
+        " Without, in some buffers, you'll get an error message such as:
+        "
+        "     dirvish: invalid directory: '/tmp/vTMT2KK/1'
+        "
+        " This happens for example in `:FreeKeys` and `:Tree`.
+        "
+        " MWE:
+        "
+        "     :e /tmp/new_dir/file
+        "     :Dirvish
+        "
+        " The issue comes from:
+        "
+        "     " ~/.vim/plugged/vim-dirvish/autoload/dirvish.vim:28
+        "     call s:msg_error("invalid directory: '".a:dir."'")
+        "}}}
+        sil Dirvish
+        return
+    endif
+    exe 'Dirvish %:p'..repeat(':h', v:count1)
+endfu
+

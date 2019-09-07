@@ -3,17 +3,6 @@ if exists('g:autoloaded_fex#tree')
 endif
 let g:autoloaded_fex#tree = 1
 
-" FIXME:
-"     :Tree ~/Dropbox/
-"     gg
-"     L
-"     C-l
-"     Z C-l or Z C-h
-"     smash ; and ,
-"
-" It's slow, and consumes 30% of cpu.
-" Profile and optimize syntax highlighting.
-
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
 " TODO: Sort hidden directories after non-hidden ones.
@@ -23,8 +12,7 @@ let g:autoloaded_fex#tree = 1
 " Split it into several files, or into several categories (interface, core, misc).
 " Also, try to make each function fit on one single screen (with folding).
 
-" TODO:
-" Color special files (socket, ...).
+" TODO: Color special files (socket, ...).
 
 " Init {{{1
 
@@ -32,6 +20,7 @@ let s:cache = {}
 let s:hide_dot_entries = 0
 let s:INDICATOR = '[/=*>|]'
 let s:BIG_DIR_PAT = '^/.*'
+let s:BIG_DIR_SIZE = 10000
 
 let s:HELP = [
     \ '   ===== Key Bindings =====',
@@ -94,7 +83,7 @@ fu! fex#tree#close() abort "{{{1
     let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
     " make sure we're still in the fex window
     if fex_winid ==# win_getid()
-        close
+        q
     endif
 endfu
 
@@ -161,14 +150,14 @@ fu! fex#tree#fde() abort "{{{1
     "
     " As a result, `:Tree /proc` is slow the first time:
     "
-    "         $ vim --cmd 'prof  start /tmp/script.profile' \
-    "               --cmd 'prof! file  */tree.vim' \
-    "               -c    ':Tree /proc' \
-    "               -cq
+    "     $ vim --cmd 'prof  start /tmp/script.profile' \
+    "           --cmd 'prof! file  */tree.vim' \
+    "           -c    ':Tree /proc' \
+    "           -cq
     "
-    "         :q
+    "     :q
     "
-    "         $ vim /tmp/script.profile
+    "     $ vim /tmp/script.profile
     "}}}
     let idx = strchars(matchstr(getline(v:lnum), '.\{-}[├└]'))-1
     let lvl = idx/4
@@ -292,7 +281,7 @@ fu! s:is_big_directory(dir) abort "{{{1
     sil return a:dir is# '/'
     \ ||   a:dir is# '/home'
     \ ||   a:dir =~# '^/home/[^/]\+/\?$'
-    \ ||   systemlist('find '.a:dir.' -type f 2>/dev/null | wc -l')[0] > 10000
+    \ ||   systemlist('find '.a:dir.' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
 endfu
 
 fu! s:matchdelete() abort "{{{1
@@ -339,14 +328,10 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
 endfu
 
 fu! fex#tree#populate(path) abort "{{{1
-    if exists('b:fex_curdir')
-        return
-    endif
+    if exists('b:fex_curdir') | return | endif
 
     let dir = matchstr(a:path, '/fex_tree\zs.*')
-    if dir is# ''
-        let dir = '/'
-    endif
+    if dir is# '' | let dir = '/' | endif
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
     let b:fex_curdir = dir
@@ -447,14 +432,13 @@ fu! fex#tree#relative_dir(who) abort "{{{1
 endfu
 
 fu! fex#tree#reload() abort "{{{1
-    " remove information in cache, so that  the reloading is forced to re-invoke
-    " `$ tree`
+    " remove information in cache, so that the reloading is forced to re-invoke `$ tree`
     let cur_dir = s:getcurdir()
     if has_key(s:cache, cur_dir)
         call remove(s:cache, cur_dir)
     endif
 
-    " grab current line; necessary to restore position later
+    " save current line; necessary to restore position later
     let line = getline('.')
 
     " reload

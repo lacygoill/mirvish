@@ -10,6 +10,6 @@ if exists('did_load_filetypes')
 endif
 
 augroup filetypedetect
-    au! BufRead,BufNewFile  /tmp/*/fex_tree*  setf fex_tree
+    au! BufRead,BufNewFile /tmp/*/fex_tree* setf fex_tree
 augroup END
 
