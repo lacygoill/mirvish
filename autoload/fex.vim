@@ -45,18 +45,18 @@ fu! s:get_metadata(line, ...) abort "{{{1
     "     ✔
     "
     " If:
-    "     - a symlink points to a directory
-    "     - you give it to `$ ls -ld`
-    "     - you append a slash to the symlink
+    "    - a symlink points to a directory
+    "    - you give it to `$ ls -ld`
+    "    - you append a slash to the symlink
     "
-    " `$ ls`  will print  the info  about the target  directory, instead  of the
+    " `ls(1)` will  print the info  about the  target directory, instead  of the
     " symlink itself.
     " This is not what we want.
     " We want the info about the symlink.
     " So, we remove any possible slash at the end.
     "
     " Update:
-    " We do  not use `$ ls`  anymore to get the  metadata of a file,  however we
+    " We do not  use `ls(1)` anymore to  get the metadata of a  file, however we
     " still remove useless ending slashes. They  may interfere if we use another
     " shell utility to get some info.
     "}}}

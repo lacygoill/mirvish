@@ -96,7 +96,7 @@ fu! fex#tree#display_help() abort "{{{1
 
     " Why?{{{
     "
-    " The `$  tree` command might be  very long, making syntax  highlighting too
+    " The `tree(1)` command  might be very long, making  syntax highlighting too
     " time-consuming.
     " Solution:
     " Temporarily limit how far Vim can go to search for syntax items.
@@ -179,7 +179,7 @@ fu! fex#tree#fdt() abort "{{{1
 endfu
 
 fu! s:format() abort "{{{1
-    " `$  tree` makes  the paths  begin with  an initial  dot to  stand for  the
+    " `tree(1)`  makes the  paths begin  with an  initial dot  to stand  for the
     " working directory.
     " But the  latter could change after  we change the focus  to another window
     " (`vim-cwd`).
@@ -192,20 +192,20 @@ fu! s:format() abort "{{{1
     "
     " We  may have  created a  symbolic link  whose target  is a  directory, and
     " during the creation we may have appended a slash at the end.
-    " If that's the case, because of the `-F` option, `$ tree` will add a second
-    " slash.  We'll end up with two  slashes, which will give unexpected results
-    " regarding the syntax highlighting.
+    " If  that's the  case, because  of the  `-F` option,  `tree(1)` will  add a
+    " second slash.  We'll  end up with two slashes, which  will give unexpected
+    " results regarding the syntax highlighting.
     "}}}
     sil! keepj keepp %s:/\ze/$::
 endfu
 
 fu! s:get_ignore_pat() abort "{{{1
     " Purpose:
-    " Build a FILE pattern to pass to `$ tree`, so that it ignores certain entries.
+    " Build a FILE pattern to pass to `tree(1)`, so that it ignores certain entries.
     " We use 'wig' to decide what to ignore.
 
     " 'wig' can contain patterns matching directories.
-    " But  `$ tree`  compares the  patterns we  pass to  `-I` to  the LAST  path
+    " But  `tree(1)` compares  the patterns  we pass  to `-I`  to the  LAST path
     " component of the entries (files/directories).
     " So, you can't do this:
     "
@@ -339,7 +339,7 @@ fu! fex#tree#populate(path) abort "{{{1
     " if there's an old match, delete it
     call s:matchdelete()
 
-    " If we've already visited this directory, no need to re-invoke `$ tree`.
+    " If we've already visited this directory, no need to re-invoke `tree(1)`.
     " Just use the cache.
     if has_key(s:cache, dir) && has_key(s:cache[dir], 'contents')
         return s:use_cache(dir)
@@ -395,10 +395,10 @@ fu! fex#tree#relative_dir(who) abort "{{{1
             norm! l
             return
         endif
-        "                                 ┌ don't try to open an entry
-        "                                 │ for which `$ tree` encountered an error
-        "                                 │ (ends with a message in square brackets)
-        "                    ┌────────────┤
+        "                    ┌ don't try to open an entry               
+        "                    │ for which `tree(1)` encountered an error
+        "                    │ (ends with a message in square brackets) 
+        "                    ├────────────┐
         if getline('.') =~# '\s\[.\{-}\]$\|^/\|^$'
             return
         endif
@@ -432,7 +432,7 @@ fu! fex#tree#relative_dir(who) abort "{{{1
 endfu
 
 fu! fex#tree#reload() abort "{{{1
-    " remove information in cache, so that the reloading is forced to re-invoke `$ tree`
+    " remove information in cache, so that the reloading is forced to re-invoke `tree(1)`
     let cur_dir = s:getcurdir()
     if has_key(s:cache, cur_dir)
         call remove(s:cache, cur_dir)
