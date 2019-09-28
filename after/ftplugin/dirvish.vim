@@ -28,14 +28,6 @@ xno  <buffer><nowait><silent>  <c-t>  :call dirvish#open('tabedit', 1)<cr>
 
 nno  <buffer><nowait><silent>  <c-v><c-v>  :<c-u>call dirvish#open('vsplit', 1)<cr>
 
-" ?    g? {{{2
-
-" Dirvish uses `g?` to read the help.
-" It clashes with our `g?` to read `:messages`.
-nunmap <buffer> g?
-" We'll use `?` instead.
-nno  <buffer><nowait><silent>  ?  :<c-u>help dirvish-mappings<cr>
-
 " gh {{{2
 
 " Map `gh` to toggle dot-prefixed entries.

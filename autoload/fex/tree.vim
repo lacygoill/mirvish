@@ -215,13 +215,13 @@ fu! s:get_ignore_pat() abort "{{{1
     "
     "         $ tree -I '__pycache__' ~/.vim/pythonx/
 
-    "                   ┌ to match `*.bak` in `&wig`
-    "                   │ (no dot in the pattern to also match `*~`)
-    "                   │
-    "                   │            ┌ to match `*/pycache/*`
-    "                   │            │
-    "                   │            │                ┌ to match `tags`
-    "          ┌────────┤      ┌─────┤        ┌───────┤
+    "          ┌ to match `*.bak` in `&wig`
+    "          │ (no dot in the pattern to also match `*~`)
+    "          │
+    "          │               ┌ to match `*/pycache/*`
+    "          │               │
+    "          │               │              ┌ to match `tags`
+    "          ├────────┐      ├─────┐        ├───────┐
     let pat = '\*[^/]\+\|\*/\zs[^*/]\+\ze/\*\|^[^*/]\+$'
     let ignore_pat = map(split(&wig, ','), {_,v -> matchstr(v, pat)})
     " We may get empty matches, or sth like `*.*` because of (in vimrc):

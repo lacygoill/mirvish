@@ -15,7 +15,7 @@ nno  <buffer><nowait><silent>  <c-w>F   :<c-u>call fex#tree#edit('split')<cr>
 nno  <buffer><nowait><silent>  <c-w>f   :<c-u>call fex#tree#edit('split')<cr>
 nno  <buffer><nowait><silent>  <c-w>gf  :<c-u>call fex#tree#edit('tab')<cr>
 
-nno  <buffer><nowait><silent>  ?   :<c-u>call fex#tree#display_help()<cr>
+nno  <buffer><nowait><silent>  g?  :<c-u>call fex#tree#display_help()<cr>
 nno  <buffer><nowait><silent>  R   :<c-u>call fex#tree#reload()<cr>
 nno  <buffer><nowait><silent>  gh  :<c-u>call fex#tree#toggle_dot_entries()<cr>
 
@@ -31,12 +31,12 @@ nno  <buffer><nowait><silent>  }  j:call fex#tree#preview()<cr>
 
 setl bh=delete bt=nofile nobl cul noswf wfw nowrap
 
-augroup fex_tree
-    au! * <buffer>
-    au BufWinEnter <buffer> setl cocu=nc cole=3
-    \                            fde=fex#tree#fde() fdm=expr fdt=fex#tree#fdt()
-    \                     | call fex#tree#fdl()
-augroup END
+setl cocu=nc
+setl cole=3
+setl fde=fex#tree#fde()
+setl fdm=expr
+setl fdt=fex#tree#fdt()
+call fex#tree#fdl()
 
 " Variables {{{1
 
@@ -48,7 +48,6 @@ let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
     \ . "
     \ | setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wfw< wrap<
     \ | unlet! b:fex_curdir
-    \ | exe 'au! fex_tree * <buffer>'
     \
     \ | exe 'nunmap <buffer> -M'
     \ | exe 'nunmap <buffer> -m'
