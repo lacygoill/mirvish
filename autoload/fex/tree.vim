@@ -82,7 +82,7 @@ fu! fex#tree#close() abort "{{{1
     "}}}
     let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
     " make sure we're still in the fex window
-    if fex_winid ==# win_getid()
+    if fex_winid == win_getid()
         q
     endif
 endfu
@@ -226,7 +226,7 @@ fu! s:get_ignore_pat() abort "{{{1
     let ignore_pat = map(split(&wig, ','), {_,v -> matchstr(v, pat)})
     " We may get empty matches, or sth like `*.*` because of (in vimrc):
     "
-    "         let &wig .= ','.&undodir.'/*.*'
+    "         let &wig ..= ','.&undodir.'/*.*'
     "
     " We must eliminate those.
     call filter(ignore_pat, {_,v -> !empty(v) && v !~# '^[.*/]\+$'})
@@ -477,7 +477,7 @@ fu! s:use_cache(dir) abort "{{{1
         " Vim will  re-position the cursor  on the first line  afterwards (after
         " BufEnter).
         "}}}
-        au BufWinEnter <buffer>  ++once sil! exe s:last_pos | unlet! s:last_pos
+        au BufWinEnter <buffer> ++once sil! exe s:last_pos | unlet! s:last_pos
     endif
 
     " restore last foldlevel if one was saved

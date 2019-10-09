@@ -80,13 +80,13 @@ fu! s:get_metadata(line, ...) abort "{{{1
         let human_fsize = s:make_fsize_human_readable(fsize)
     endif
 
-    return fsize ==# -1
+    return fsize == -1
        \ ?     '?'."\n"
        \ :     ((a:0 ? printf('%12.12s ', fnamemodify(file, ':t')) : '')
        \        .ftype[0]
        \        .' '.getfperm(file)
        \        .' '.strftime('%Y-%m-%d %H:%M',getftime(file))
-       \        .' '.(fsize ==# -2 ? '[big]' : human_fsize))
+       \        .' '.(fsize == -2 ? '[big]' : human_fsize))
        \       .(ftype is# 'link' ? ' ->'.fnamemodify(resolve(file), ':~:.') : '')
        \       ."\n"
 endfu
@@ -159,11 +159,11 @@ fu! s:print_metadata(vis) abort "{{{1
     let metadata = ''
     if a:vis
         for line in lines
-            let metadata .= s:get_metadata(line, 1)
+            let metadata ..= s:get_metadata(line, 1)
         endfor
     else
         for line in lines
-            let metadata .= s:get_metadata(line)
+            let metadata ..= s:get_metadata(line)
         endfor
     endif
     " Flush any delayed screen updates before printing the metadata.
@@ -178,7 +178,7 @@ endfu
 fu! s:auto_metadata() abort "{{{1
     augroup fex_print_metadata
         au! * <buffer>
-        au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) !=# line('.')
+        au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) != line('.')
         \ |                         let b:fex_last_line = line('.')
         \ |                         call s:print_metadata(0)
         \ |                     endif
