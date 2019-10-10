@@ -38,12 +38,11 @@ nno  <buffer><nowait><silent>  gh  :<c-u>call fex#toggle_dot_entries()<cr>
 nmap  <buffer><nowait><silent>  h  <plug>(dirvish_up)
 nmap  <buffer><nowait><silent>  l  <cr>
 
-" p } { {{{2
+" p ) ( {{{2
 
-nno  <buffer><nowait><silent>  p  :<c-u>call fex#preview()<cr>
-
-nno  <buffer><nowait><silent>  }  j:<c-u>call fex#preview()<cr>
-nno  <buffer><nowait><silent>  {  k:<c-u>call fex#preview()<cr>
+nno <buffer><nowait><silent> p :<c-u>call fex#preview()<cr>
+nno <buffer><nowait><silent> ) j:<c-u>call fex#preview()<cr>
+nno <buffer><nowait><silent> ( k:<c-u>call fex#preview()<cr>
 
 " q {{{2
 
@@ -106,8 +105,8 @@ let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
     \ | exe 'nunmap <buffer> l'
     \ | exe 'nunmap <buffer> p'
     \ | exe 'nunmap <buffer> q'
-    \ | exe 'nunmap <buffer> {'
-    \ | exe 'nunmap <buffer> }'
+    \ | exe 'nunmap <buffer> ('
+    \ | exe 'nunmap <buffer> )'
     \
     \ | exe 'xunmap <buffer> <c-t>'
     \ | exe 'xunmap <buffer> x'

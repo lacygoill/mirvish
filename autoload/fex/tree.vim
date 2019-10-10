@@ -80,7 +80,7 @@ fu! fex#tree#close() abort "{{{1
     " So, we remove the cache after a  few minutes to prevent it from taking too
     " much memory.
     "}}}
-    let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
+    let s:clean_cache_timer_id = timer_start(60000, {_ -> s:clean_cache()})
     " make sure we're still in the fex window
     if fex_winid == win_getid()
         q
