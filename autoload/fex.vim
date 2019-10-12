@@ -60,7 +60,7 @@ fu s:get_metadata(line, ...) abort "{{{1
     " still remove useless ending slashes. They  may interfere if we use another
     " shell utility to get some info.
     "}}}
-    let file = substitute(file, '/\+$', '', '')
+    let file = trim(file, '/')
     " Why?{{{
     "
     " In case we call this function from the tree explorer.
