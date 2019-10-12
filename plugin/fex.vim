@@ -5,7 +5,7 @@ let g:loaded_fex = 1
 
 " Variable {{{1
 
-let g:dirvish_mode = ':call fex#format_entries()'
+const g:dirvish_mode = ':call fex#format_entries()'
 
 " Autocommand {{{1
 
@@ -16,7 +16,7 @@ augroup END
 
 " Command {{{1
 
-com! -bang -bar -complete=file -nargs=?  Tree  exe fex#tree#open(<q-args>, <bang>0)
+com -bang -bar -complete=file -nargs=?  Tree  exe fex#tree#open(<q-args>, <bang>0)
 
 " Mappings {{{1
 

@@ -18,35 +18,35 @@ let g:autoloaded_fex#tree = 1
 
 let s:cache = {}
 let s:hide_dot_entries = 0
-let s:INDICATOR = '[/=*>|]'
-let s:BIG_DIR_PAT = '^/.*'
-let s:BIG_DIR_SIZE = 10000
+const s:INDICATOR = '[/=*>|]'
+const s:BIG_DIR_PAT = '^/.*'
+const s:BIG_DIR_SIZE = 10000
 
-let s:HELP = [
-    \ '   ===== Key Bindings =====',
-    \ '',
-    \ '(         move cursor to previous directory',
-    \ ')         move cursor to next directory',
-    \ '-M        print current file''s metadata and update as the cursor moves',
-    \ '-m        print current file''s metadata',
-    \ 'C-w f     edit file in new split',
-    \ 'C-w gf    edit file in new tab',
-    \ '?         toggle this help',
-    \ 'R         reload directory hierarchy without using the cache',
-    \ 'gh        toggle hidden files/directories visibility',
-    \ 'h         move to parent directory',
-    \ 'l         move to child directory',
-    \ 'p         preview current file/directory contents',
-    \ 'q         close the window',
-    \ '{         preview previous file/directory',
-    \ '}         preview next file/directory',
-    \ ]
+const s:HELP =<< trim END
+       ===== Key Bindings =====
 
-fu! s:clean_cache() abort "{{{1
+    (         move cursor to previous directory
+    )         move cursor to next directory
+    -M        print current file's metadata and update as the cursor moves
+    -m        print current file's metadata
+    C-w f     edit file in new split
+    C-w gf    edit file in new tab
+    ?         toggle this help
+    R         reload directory hierarchy without using the cache
+    gh        toggle hidden files/directories visibility
+    h         move to parent directory
+    l         move to child directory
+    p         preview current file/directory contents
+    q         close the window
+    {         preview previous file/directory
+    }         preview next file/directory
+END
+
+fu s:clean_cache() abort "{{{1
     let s:cache = {}
 endfu
 
-fu! fex#tree#close() abort "{{{1
+fu fex#tree#close() abort "{{{1
     if reg_recording() isnot# ''
         return feedkeys('q', 'in')[-1]
     endif
@@ -87,7 +87,7 @@ fu! fex#tree#close() abort "{{{1
     endif
 endfu
 
-fu! fex#tree#display_help() abort "{{{1
+fu fex#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
         sil 1;/^[^"]/-d_
         setl smc< cole=3
@@ -134,7 +134,7 @@ fu! fex#tree#display_help() abort "{{{1
     exe '1'
 endfu
 
-fu! fex#tree#edit(where) abort "{{{1
+fu fex#tree#edit(where) abort "{{{1
     let file = s:getfile()
     if a:where is# 'split'
         exe 'sp '.file
@@ -143,7 +143,7 @@ fu! fex#tree#edit(where) abort "{{{1
     endif
 endfu
 
-fu! fex#tree#fde() abort "{{{1
+fu fex#tree#fde() abort "{{{1
     " Warning:{{{
     " This function is by far the slowest when we execute `:Tree`.
     " This is due to the `let idx =` and `if matchstr()` statements.
@@ -167,18 +167,18 @@ fu! fex#tree#fde() abort "{{{1
     return lvl
 endfu
 
-fu! fex#tree#fdl() abort "{{{1
+fu fex#tree#fdl() abort "{{{1
     let &l:fdl = &foldclose is# 'all' ? 0 : 99
 endfu
 
-fu! fex#tree#fdt() abort "{{{1
+fu fex#tree#fdt() abort "{{{1
     let pat = '\(.*─\s\)\(.*\)/'
     let l:Rep = {m -> m[1].substitute(m[2], '.*/', '', '')}
     return (get(b:, 'foldtitle_full', 0) ? '['.(v:foldend - v:foldstart).']': '')
     \      .substitute(getline(v:foldstart), pat, l:Rep, '')
 endfu
 
-fu! s:format() abort "{{{1
+fu s:format() abort "{{{1
     " `tree(1)`  makes the  paths begin  with an  initial dot  to stand  for the
     " working directory.
     " But the  latter could change after  we change the focus  to another window
@@ -199,7 +199,7 @@ fu! s:format() abort "{{{1
     sil! keepj keepp %s:/\ze/$::
 endfu
 
-fu! s:get_ignore_pat() abort "{{{1
+fu s:get_ignore_pat() abort "{{{1
     " Purpose:
     " Build a FILE pattern to pass to `tree(1)`, so that it ignores certain entries.
     " We use 'wig' to decide what to ignore.
@@ -235,7 +235,7 @@ fu! s:get_ignore_pat() abort "{{{1
     return printf('-I "%s"', ignore_pat)
 endfu
 
-fu! s:get_tree_cmd(dir) abort "{{{1
+fu s:get_tree_cmd(dir) abort "{{{1
     "                     ┌ print the full path for each entry (necessary for `gf` &friends)
     "                     │┌ append a `/' for directories, a `*' for executable file, ...
     "                     ││┌ turn colorization off
@@ -258,12 +258,12 @@ fu! s:get_tree_cmd(dir) abort "{{{1
     return 'tree '.short_options.' '.long_options.' '.limit.' '.ignore_pat.' '.shellescape(a:dir,1)
 endfu
 
-fu! s:getcurdir() abort "{{{1
+fu s:getcurdir() abort "{{{1
     let curdir = matchstr(expand('%:p'), 'fex_tree\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
-fu! s:getfile() abort "{{{1
+fu s:getfile() abort "{{{1
     let line = getline('.')
 
     return line =~# '\s->\s'
@@ -277,14 +277,14 @@ fu! s:getfile() abort "{{{1
     "}}}
 endfu
 
-fu! s:is_big_directory(dir) abort "{{{1
+fu s:is_big_directory(dir) abort "{{{1
     sil return a:dir is# '/'
     \ ||   a:dir is# '/home'
     \ ||   a:dir =~# '^/home/[^/]\+/\?$'
     \ ||   systemlist('find '.a:dir.' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
 endfu
 
-fu! s:matchdelete() abort "{{{1
+fu s:matchdelete() abort "{{{1
     let id = get(get(filter(getmatches(),
     \            {_,v -> v.pattern is# s:BIG_DIR_PAT}), 0, []), 'id', 0)
     if id
@@ -292,7 +292,7 @@ fu! s:matchdelete() abort "{{{1
     endif
 endfu
 
-fu! fex#tree#open(dir, nosplit) abort "{{{1
+fu fex#tree#open(dir, nosplit) abort "{{{1
     if !executable('tree')
         return 'echoerr '.string('requires the tree shell command; currently not installed')
     endif
@@ -327,7 +327,7 @@ fu! fex#tree#open(dir, nosplit) abort "{{{1
     return ''
 endfu
 
-fu! fex#tree#populate(path) abort "{{{1
+fu fex#tree#populate(path) abort "{{{1
     if exists('b:fex_curdir') | return | endif
 
     let dir = matchstr(a:path, '/fex_tree\zs.*')
@@ -369,7 +369,7 @@ fu! fex#tree#populate(path) abort "{{{1
     endif
 endfu
 
-fu! fex#tree#preview() abort "{{{1
+fu fex#tree#preview() abort "{{{1
     exe 'pedit '.s:getfile()
 
     let prev_winnr = winnr('#')
@@ -378,7 +378,7 @@ fu! fex#tree#preview() abort "{{{1
     endif
 endfu
 
-fu! fex#tree#relative_dir(who) abort "{{{1
+fu fex#tree#relative_dir(who) abort "{{{1
     let curdir = s:getcurdir()
 
     if a:who is# 'parent'
@@ -431,7 +431,7 @@ fu! fex#tree#relative_dir(who) abort "{{{1
     endif
 endfu
 
-fu! fex#tree#reload() abort "{{{1
+fu fex#tree#reload() abort "{{{1
     " remove information in cache, so that the reloading is forced to re-invoke `tree(1)`
     let cur_dir = s:getcurdir()
     if has_key(s:cache, cur_dir)
@@ -450,7 +450,7 @@ fu! fex#tree#reload() abort "{{{1
     call search(pat)
 endfu
 
-fu! s:save_view(curdir) abort "{{{1
+fu s:save_view(curdir) abort "{{{1
     if !has_key(s:cache, a:curdir)
         return
     endif
@@ -458,13 +458,13 @@ fu! s:save_view(curdir) abort "{{{1
     let s:cache[a:curdir].fdl = &l:fdl
 endfu
 
-fu! s:timer_stop() abort "{{{1
+fu s:timer_stop() abort "{{{1
     if exists('s:clean_cache_timer_id')
         call timer_stop(s:clean_cache_timer_id)
     endif
 endfu
 
-fu! s:use_cache(dir) abort "{{{1
+fu s:use_cache(dir) abort "{{{1
     call setline(1, s:cache[a:dir].contents)
 
     " restore last position if one was saved
@@ -493,7 +493,7 @@ fu! s:use_cache(dir) abort "{{{1
     return ''
 endfu
 
-fu! fex#tree#toggle_dot_entries() abort "{{{1
+fu fex#tree#toggle_dot_entries() abort "{{{1
     let s:hide_dot_entries = !s:hide_dot_entries
     call fex#tree#reload()
 endfu

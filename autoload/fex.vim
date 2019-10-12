@@ -16,7 +16,7 @@ let g:autoloaded_fex = 1
 "}}}
 let s:hide_dot_entries = 0
 
-fu! fex#format_entries() abort "{{{1
+fu fex#format_entries() abort "{{{1
     let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
     let pat = '\%('.pat.'\)$'
     sil! exe 'keepj keepp g:'.pat.':d_'
@@ -28,7 +28,7 @@ fu! fex#format_entries() abort "{{{1
     sort :^.*[\/]:
 endfu
 
-fu! s:get_metadata(line, ...) abort "{{{1
+fu s:get_metadata(line, ...) abort "{{{1
     let file = a:line
     " Why?{{{
     "
@@ -91,7 +91,7 @@ fu! s:get_metadata(line, ...) abort "{{{1
        \       ."\n"
 endfu
 
-fu! s:make_fsize_human_readable(fsize) abort "{{{1
+fu s:make_fsize_human_readable(fsize) abort "{{{1
     return a:fsize >= 1073741824
     \ ?        (a:fsize/1073741824).','.string(a:fsize % 1073741824)[0].'G'
     \ :    a:fsize >= 1048576
@@ -103,7 +103,7 @@ fu! s:make_fsize_human_readable(fsize) abort "{{{1
     \ :        ''
 endfu
 
-fu! fex#preview() abort "{{{1
+fu fex#preview() abort "{{{1
     let file = getline('.')
     if filereadable(file)
         exe 'pedit '.file
@@ -127,7 +127,7 @@ fu! fex#preview() abort "{{{1
     endif
 endfu
 
-fu! fex#print_metadata(how, ...) abort "{{{1
+fu fex#print_metadata(how, ...) abort "{{{1
     " Automatically printing metadata in visual mode doesn't make sense.
     if a:how is# 'auto' && a:0
         return
@@ -154,7 +154,7 @@ fu! fex#print_metadata(how, ...) abort "{{{1
     call s:print_metadata(a:0)
 endfu
 
-fu! s:print_metadata(vis) abort "{{{1
+fu s:print_metadata(vis) abort "{{{1
     let lines = a:vis ? getline(line("'<"), line("'>")) : [getline('.')]
     let metadata = ''
     if a:vis
@@ -175,7 +175,7 @@ fu! s:print_metadata(vis) abort "{{{1
     "              when we only ask the metadata of a single file
 endfu
 
-fu! s:auto_metadata() abort "{{{1
+fu s:auto_metadata() abort "{{{1
     augroup fex_print_metadata
         au! * <buffer>
         au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) != line('.')
@@ -185,17 +185,17 @@ fu! s:auto_metadata() abort "{{{1
     augroup END
 endfu
 
-fu! fex#toggle_dot_entries() abort "{{{1
+fu fex#toggle_dot_entries() abort "{{{1
     let s:hide_dot_entries = !s:hide_dot_entries
     Dirvish %
 endfu
 
-fu! fex#trash_put() abort "{{{1
+fu fex#trash_put() abort "{{{1
     sil call system('trash-put '.shellescape(getline('.')))
     e
 endfu
 
-fu! fex#dirvish_up() abort "{{{1
+fu fex#dirvish_up() abort "{{{1
     sil! update
     let file = expand('%:p')
     let dir = fnamemodify(file, ':h')
