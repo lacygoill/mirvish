@@ -45,27 +45,27 @@ let b:did_ftplugin = 1
 " teardown {{{1
 
 let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
-    \ . "
+    \ ..'
     \ | setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wfw< wrap<
     \ | unlet! b:fex_curdir
     \
-    \ | exe 'nunmap <buffer> -M'
-    \ | exe 'nunmap <buffer> -m'
-    \ | exe 'xunmap <buffer> -m'
+    \ | exe "nunmap <buffer> -M"
+    \ | exe "nunmap <buffer> -m"
+    \ | exe "xunmap <buffer> -m"
     \
-    \ | exe 'nunmap <buffer> ('
-    \ | exe 'nunmap <buffer> )'
-    \ | exe 'nunmap <buffer> [['
-    \ | exe 'nunmap <buffer> ]]'
-    \ | exe 'nunmap <buffer> <c-w>F'
-    \ | exe 'nunmap <buffer> <c-w>f'
-    \ | exe 'nunmap <buffer> <c-w>gf'
-    \ | exe 'nunmap <buffer> ?'
-    \ | exe 'nunmap <buffer> R'
-    \ | exe 'nunmap <buffer> gh'
-    \ | exe 'nunmap <buffer> h'
-    \ | exe 'nunmap <buffer> l'
-    \ | exe 'nunmap <buffer> p'
-    \ | exe 'nunmap <buffer> q'
-    \ "
+    \ | exe "nunmap <buffer> ("
+    \ | exe "nunmap <buffer> )"
+    \ | exe "nunmap <buffer> [["
+    \ | exe "nunmap <buffer> ]]"
+    \ | exe "nunmap <buffer> <c-w>F"
+    \ | exe "nunmap <buffer> <c-w>f"
+    \ | exe "nunmap <buffer> <c-w>gf"
+    \ | exe "nunmap <buffer> ?"
+    \ | exe "nunmap <buffer> R"
+    \ | exe "nunmap <buffer> gh"
+    \ | exe "nunmap <buffer> h"
+    \ | exe "nunmap <buffer> l"
+    \ | exe "nunmap <buffer> p"
+    \ | exe "nunmap <buffer> q"
+    \ '
 
