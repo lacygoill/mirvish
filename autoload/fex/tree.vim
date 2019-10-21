@@ -23,23 +23,23 @@ const s:BIG_DIR_PAT = '^/.*'
 const s:BIG_DIR_SIZE = 10000
 
 const s:HELP =<< trim END
-   ===== Key Bindings =====
+       ===== Key Bindings =====
 
-(         move cursor to previous directory
-)         move cursor to next directory
--M        print current file's metadata and update as the cursor moves
--m        print current file's metadata
-C-w f     edit file in new split
-C-w gf    edit file in new tab
-?         toggle this help
-R         reload directory hierarchy without using the cache
-gh        toggle hidden files/directories visibility
-h         move to parent directory
-l         move to child directory
-p         preview current file/directory contents
-q         close the window
-{         preview previous file/directory
-}         preview next file/directory
+    (         move cursor to previous directory
+    )         move cursor to next directory
+    -M        print current file's metadata and update as the cursor moves
+    -m        print current file's metadata
+    C-w f     edit file in new split
+    C-w gf    edit file in new tab
+    ?         toggle this help
+    R         reload directory hierarchy without using the cache
+    gh        toggle hidden files/directories visibility
+    h         move to parent directory
+    l         move to child directory
+    p         preview current file/directory contents
+    q         close the window
+    {         preview previous file/directory
+    }         preview next file/directory
 END
 
 fu s:clean_cache() abort "{{{1
@@ -273,7 +273,7 @@ fu s:getfile() abort "{{{1
     "
     " You don't want match until the end of the line.
     " You want to match  a maximum of text, so maybe until the  end of the line,
-    " but with the condition that it doesn't finish with [/=*>|].
+    " but with the condition that it doesn't finish with `[/=*>|]`.
     "}}}
 endfu
 

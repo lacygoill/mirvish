@@ -46,34 +46,7 @@ nno <buffer><nowait><silent> ( k:<c-u>call fex#preview()<cr>
 
 " q {{{2
 
-" Why?{{{
-"
-" MWE:
-"
-"     $ vim -Nu <(cat <<'EOF'
-"     set rtp^=~/.vim/plugged/vim-dirvish
-"     filetype plugin on
-"     EOF
-"     ) +tabnew +e\ /tmp
-"     gq " yes, now by default, dirvish uses `gq` to quit, instead of `q`
-"     " nothing happens ✘
-"
-" The issue comes from this file:
-"
-"     ~/.vim/plugged/vim-dirvish/autoload/dirvish.vim:204
-"
-" More specifically from this line:
-"
-"     \ && (1 == bufnr('%') || (prevbuf != bufnr('%') && altbuf != bufnr('%')))
-"
-" Probably because `prevbuf`, `bufnr('%')` and `altbuf` have all the same value.
-"}}}
-" FIXME:{{{
-" We shouldn't need to overwrite this simple dirvish mapping.
-" Submit a bug report.
-" Or re-implement dirvish.
-"}}}
-nno <buffer><nowait><silent> q :<c-u>bd<cr>
+nmap <buffer><nowait><silent> q gq
 
 " tp {{{2
 
