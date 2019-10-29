@@ -395,9 +395,9 @@ fu fex#tree#relative_dir(who) abort "{{{1
             norm! l
             return
         endif
-        "                    ┌ don't try to open an entry               
+        "                    ┌ don't try to open an entry
         "                    │ for which `tree(1)` encountered an error
-        "                    │ (ends with a message in square brackets) 
+        "                    │ (ends with a message in square brackets)
         "                    ├────────────┐
         if getline('.') =~# '\s\[.\{-}\]$\|^/\|^$'
             return

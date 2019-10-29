@@ -61,27 +61,5 @@ xno  <buffer><expr>   <plug>(fex_print_arg_pos) execute('let g:my_stl_list_posit
 " Teardown {{{1
 
 let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
-    \ ..'
-    \ | unlet! b:fex_last_line
-    \ | exe "sil! au! fex_print_metadata * <buffer>"
-    \
-    \ | exe "nunmap <buffer> -M"
-    \ | exe "nunmap <buffer> -m"
-    \ | exe "xunmap <buffer> -m"
-    \
-    \ | exe "nunmap <buffer> <c-s>"
-    \ | exe "nunmap <buffer> <c-t>"
-    \ | exe "nunmap <buffer> <c-v><c-v>"
-    \ | exe "nunmap <buffer> ?"
-    \ | exe "nunmap <buffer> gh"
-    \ | exe "nunmap <buffer> h"
-    \ | exe "nunmap <buffer> l"
-    \ | exe "nunmap <buffer> p"
-    \ | exe "nunmap <buffer> q"
-    \ | exe "nunmap <buffer> ("
-    \ | exe "nunmap <buffer> )"
-    \
-    \ | exe "xunmap <buffer> <c-t>"
-    \ | exe "xunmap <buffer> x"
-    \ '
+    \ ..'| call fex#dirvish#undo_ftplugin()'
 

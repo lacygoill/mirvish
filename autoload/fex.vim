@@ -107,23 +107,15 @@ fu fex#preview() abort "{{{1
     let file = getline('.')
     if filereadable(file)
         exe 'pedit '.file
-        noa wincmd P
-        if &l:pvw
-            norm! zv
-            wincmd L
-            noa wincmd p
-        endif
-
+        let winid = lg#win_getid('P')
+        noa call lg#win_execute(winid, 'wincmd L | norm! zv')
     elseif isdirectory(file)
         sil let ls = systemlist('ls '.shellescape(file))
         let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         call writefile(ls, b:dirvish['preview_ls'])
         exe 'sil pedit '.b:dirvish['preview_ls']
-        noa wincmd P
-        if &l:pvw
-            wincmd L
-            noa wincmd p
-        endif
+        let winid = lg#win_getid('P')
+        noa call lg#win_execute(winid, 'wincmd L')
     endif
 endfu
 
@@ -228,5 +220,29 @@ fu fex#dirvish_up() abort "{{{1
         return
     endif
     exe 'Dirvish %:p'..repeat(':h', v:count1)
+endfu
+
+fu fex#undo_ftplugin() abort "{{{1
+    setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wfw< wrap<
+    unlet! b:fex_curdir
+
+    nunmap <buffer> -M
+    nunmap <buffer> -m
+    xunmap <buffer> -m
+
+    nunmap <buffer> (
+    nunmap <buffer> )
+    nunmap <buffer> [[
+    nunmap <buffer> ]]
+    nunmap <buffer> <c-w>F
+    nunmap <buffer> <c-w>f
+    nunmap <buffer> <c-w>gf
+    nunmap <buffer> g?
+    nunmap <buffer> R
+    nunmap <buffer> gh
+    nunmap <buffer> h
+    nunmap <buffer> l
+    nunmap <buffer> p
+    nunmap <buffer> q
 endfu
 
