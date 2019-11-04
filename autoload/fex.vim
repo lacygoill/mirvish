@@ -230,6 +230,7 @@ fu fex#undo_ftplugin() abort "{{{1
     nunmap <buffer> -m
     xunmap <buffer> -m
 
+    nunmap <buffer> <c-l>
     nunmap <buffer> (
     nunmap <buffer> )
     nunmap <buffer> [[

@@ -4,6 +4,8 @@ endif
 
 " Mappings {{{1
 
+nno <buffer><nowait><silent> <c-l> :<c-u>call lg#window#focus_previous_if_on_right()<cr>
+
 nno <buffer><nowait><silent> -m :<c-u>call fex#print_metadata('manual')<cr>
 xno <buffer><nowait><silent> -m :<c-u>call fex#print_metadata('manual', 'vis')<cr>
 nno <buffer><nowait><silent> -M :<c-u>call fex#print_metadata('auto')<cr>

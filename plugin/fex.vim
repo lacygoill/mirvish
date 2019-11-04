@@ -16,7 +16,7 @@ augroup END
 
 " Command {{{1
 
-com -bang -bar -complete=file -nargs=?  Tree  exe fex#tree#open(<q-args>, <bang>0)
+com -bang -bar -complete=file -nargs=? Tree exe fex#tree#open(<q-args>, <bang>0)
 
 " Mappings {{{1
 

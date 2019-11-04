@@ -59,7 +59,7 @@ fu fex#tree#close() abort "{{{1
         " Make sure the preview window has not been already closed.
         " If it has, `win_id2win()` will return 0.
         if preview_winnr
-            exe preview_winnr.'wincmd c'
+            exe preview_winnr..'wincmd c'
             unlet t:fex_preview_winid
         endif
     endif
@@ -83,7 +83,8 @@ fu fex#tree#close() abort "{{{1
     let s:clean_cache_timer_id = timer_start(60000, {_ -> s:clean_cache()})
     " make sure we're still in the fex window
     if fex_winid == win_getid()
-        q
+        wincmd p
+        exe winnr('#')..'q'
     endif
 endfu
 
@@ -110,7 +111,7 @@ fu fex#tree#display_help() abort "{{{1
     let help = [
         \ '   ===== Tree Command =====',
         \ '',
-        \ '$ '.s:get_tree_cmd(dir),
+        \ '$ '..s:get_tree_cmd(dir),
         \ '',
         \ ]
 
@@ -137,9 +138,9 @@ endfu
 fu fex#tree#edit(where) abort "{{{1
     let file = s:getfile()
     if a:where is# 'split'
-        exe 'sp '.file
+        exe 'sp '..file
     else
-        exe 'tabedit '.file
+        exe 'tabedit '..file
     endif
 endfu
 
@@ -161,8 +162,8 @@ fu fex#tree#fde() abort "{{{1
     "}}}
     let idx = strchars(matchstr(getline(v:lnum), '.\{-}[├└]'))-1
     let lvl = idx/4
-    if matchstr(getline(v:lnum + 1), '\%'.(idx+5).'v.') =~# '[├└]'
-        return '>'.(lvl + 1)
+    if matchstr(getline(v:lnum + 1), '\%'..(idx+5)..'v.') =~# '[├└]'
+        return '>'..(lvl + 1)
     endif
     return lvl
 endfu
@@ -173,9 +174,9 @@ endfu
 
 fu fex#tree#fdt() abort "{{{1
     let pat = '\(.*─\s\)\(.*\)/'
-    let l:Rep = {m -> m[1].substitute(m[2], '.*/', '', '')}
-    return (get(b:, 'foldtitle_full', 0) ? '['.(v:foldend - v:foldstart).']': '')
-    \      .substitute(getline(v:foldstart), pat, l:Rep, '')
+    let l:Rep = {m -> m[1]..substitute(m[2], '.*/', '', '')}
+    return (get(b:, 'foldtitle_full', 0) ? '['..(v:foldend - v:foldstart)..']': '')
+    \ ..substitute(getline(v:foldstart), pat, l:Rep, '')
 endfu
 
 fu s:format() abort "{{{1
@@ -240,7 +241,7 @@ fu s:get_tree_cmd(dir) abort "{{{1
     "                     │┌ append a `/' for directories, a `*' for executable file, ...
     "                     ││┌ turn colorization off
     "                     │││
-    let short_options = '-fFn'.(s:hide_dot_entries ? '' : ' -a')
+    let short_options = '-fFn'..(s:hide_dot_entries ? '' : ' -a')
     let long_options = '--dirsfirst --noreport'
     "                     │           │
     "                     │           └ don't print the file and directory report at the end
@@ -248,14 +249,14 @@ fu s:get_tree_cmd(dir) abort "{{{1
 
     let ignore_pat = s:get_ignore_pat()
 
-    let limit = '-L '.(s:is_big_directory(a:dir) ? 2 : 10).' --filelimit 300'
+    let limit = '-L '..(s:is_big_directory(a:dir) ? 2 : 10)..' --filelimit 300'
     "             │                                            │
     "             │                                            └ do not descend directories
     "             │                                              that contain more than 300 entries
     "             │
     "             └ don't display directories whose depth is greater than 2 or 10
 
-    return 'tree '.short_options.' '.long_options.' '.limit.' '.ignore_pat.' '.shellescape(a:dir,1)
+    return 'tree '..short_options..' '..long_options..' '..limit..' '..ignore_pat..' '..shellescape(a:dir,1)
 endfu
 
 fu s:getcurdir() abort "{{{1
@@ -268,8 +269,8 @@ fu s:getfile() abort "{{{1
 
     return line =~# '\s->\s'
     \ ?        matchstr(line, '.*─\s\zs.*\ze\s->\s')
-    \ :        matchstr(line, '.*─\s\zs.*'.s:INDICATOR.'\@1<!')
-    " Do NOT add the `$` anchor !                            ^{{{
+    \ :        matchstr(line, '.*─\s\zs.*'..s:INDICATOR..'\@1<!')
+    " Do NOT add the `$` anchor !                              ^{{{
     "
     " You don't want match until the end of the line.
     " You want to match  a maximum of text, so maybe until the  end of the line,
@@ -281,7 +282,7 @@ fu s:is_big_directory(dir) abort "{{{1
     sil return a:dir is# '/'
     \ ||   a:dir is# '/home'
     \ ||   a:dir =~# '^/home/[^/]\+/\?$'
-    \ ||   systemlist('find '.a:dir.' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
+    \ ||   systemlist('find '..a:dir..' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
 endfu
 
 fu s:matchdelete() abort "{{{1
@@ -294,34 +295,34 @@ endfu
 
 fu fex#tree#open(dir, nosplit) abort "{{{1
     if !executable('tree')
-        return 'echoerr '.string('requires the tree shell command; currently not installed')
+        return 'echoerr '..string('requires the tree shell command; currently not installed')
     endif
 
     call s:timer_stop()
 
     " save current file name to position the cursor on it
     if a:dir is# '' || a:dir is# getcwd()
-        let s:current_file_pos = '\C\V─\s'.expand('%:p').'\m\%('.s:INDICATOR.'\|\s->\s\|$\)'
+        let s:current_file_pos = '\C\V─\s'..expand('%:p')..'\m\%('..s:INDICATOR..'\|\s->\s\|$\)'
     endif
 
     let dir = !empty(a:dir) ? expand(a:dir) : expand('%:p:h')
     let dir = substitute(dir, '.\{-1,}\zs/\+$', '', '')
     if !isdirectory(dir)
-        return 'echoerr '.string(dir.'/ is not a directory')
+        return 'echoerr '..string(dir..'/ is not a directory')
     endif
 
-    "                                      ┌ `BufNewFile` won't be emitted
-    "                                      │  if the buffer name ends with a slash.
-    "                                      │
-    "                                      │  Besides it  would raise  an error
-    "                                      │  when  `save#buffer()`   would  be
-    "                                      │  invoked (`:update` would fail; E502).
-    "                                      │
-    let tempfile = tempname().'/fex_tree'.(dir is# '/' ? '' : dir)
+    "                                        ┌ `BufNewFile` won't be emitted
+    "                                        │  if the buffer name ends with a slash.
+    "                                        │
+    "                                        │  Besides it  would raise  an error
+    "                                        │  when  `save#buffer()`   would  be
+    "                                        │  invoked (`:update` would fail; E502).
+    "                                        │
+    let tempfile = tempname()..'/fex_tree'..(dir is# '/' ? '' : dir)
     if a:nosplit
-        exe 'e '.tempfile
+        exe 'e '..tempfile
     else
-        exe 'to '.get(t:, 'fex_winwidth', &columns/3).'vnew '.tempfile
+        exe 'to '..get(t:, 'fex_winwidth', &columns/3)..'vnew '..tempfile
     endif
 
     return ''
@@ -370,7 +371,7 @@ fu fex#tree#populate(path) abort "{{{1
 endfu
 
 fu fex#tree#preview() abort "{{{1
-    exe 'pedit '.s:getfile()
+    exe 'pedit '..s:getfile()
 
     let prev_winnr = winnr('#')
     if getwinvar(prev_winnr, '&pvw', 0)
@@ -411,7 +412,7 @@ fu fex#tree#relative_dir(who) abort "{{{1
             if new_dir isnot# expand('%:p')
                 " E36: Not enough room
                 try
-                    exe 'sp '.new_dir
+                    exe 'sp '..new_dir
                     norm! zv
                 catch
                     return lg#catch_error()
@@ -423,11 +424,11 @@ fu fex#tree#relative_dir(who) abort "{{{1
     endif
 
     call s:save_view(curdir)
-    exe 'Tree! '.new_dir
+    exe 'Tree! '..new_dir
 
     " If we go up the tree, position the cursor on the directory we come from.
     if exists('curdir')
-        call search('\C\V─\s'.curdir.'\m\%(\s->\s\|/$\)')
+        call search('\C\V─\s'..curdir..'\m\%(\s->\s\|/$\)')
     endif
 endfu
 
@@ -442,10 +443,10 @@ fu fex#tree#reload() abort "{{{1
     let line = getline('.')
 
     " reload
-    exe 'Tree! '.cur_dir
+    exe 'Tree! '..cur_dir
 
     " restore position
-    let pat = '\C\V\^'.escape(line, '\').'\$'
+    let pat = '\C\V\^'..escape(line, '\')..'\$'
     let pat = substitute(pat, '[├└]', '\\m[├└]\\V', 'g')
     call search(pat)
 endfu
