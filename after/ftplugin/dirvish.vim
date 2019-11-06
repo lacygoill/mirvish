@@ -15,19 +15,6 @@ nno <buffer><nowait><silent> -M :<c-u>call fex#print_metadata('auto')<cr>
 nunmap <buffer> <c-n>
 nunmap <buffer> <c-p>
 
-" C-s {{{2
-
-nno <buffer><nowait><silent> <c-s> :<c-u>call dirvish#open('split', 1)<cr>
-
-" C-t {{{2
-
-nno <buffer><nowait><silent> <c-t> :<c-u>call dirvish#open('tabedit', 1)<cr>
-xno <buffer><nowait><silent> <c-t> :call dirvish#open('tabedit', 1)<cr>
-
-" C-v C-v {{{2
-
-nno <buffer><nowait><silent> <c-v><c-v> :<c-u>call dirvish#open('vsplit', 1)<cr>
-
 " gh {{{2
 
 " Map `gh` to toggle dot-prefixed entries.

@@ -6,9 +6,6 @@ fu fex#dirvish#undo_ftplugin() abort
     nunmap <buffer> -m
     xunmap <buffer> -m
 
-    nunmap <buffer> <c-s>
-    nunmap <buffer> <c-t>
-    nunmap <buffer> <c-v><c-v>
     nunmap <buffer> ?
     nunmap <buffer> gh
     nunmap <buffer> h
@@ -18,7 +15,6 @@ fu fex#dirvish#undo_ftplugin() abort
     nunmap <buffer> (
     nunmap <buffer> )
 
-    xunmap <buffer> <c-t>
     xunmap <buffer> x
 endfu
 
