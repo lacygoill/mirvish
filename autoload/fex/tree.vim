@@ -83,8 +83,9 @@ fu fex#tree#close() abort "{{{1
     let s:clean_cache_timer_id = timer_start(60000, {_ -> s:clean_cache()})
     " make sure we're still in the fex window
     if fex_winid == win_getid()
-        wincmd p
-        exe winnr('#')..'q'
+        let winid = lg#win_getid('#')
+        close
+        call win_gotoid(winid)
     endif
 endfu
 

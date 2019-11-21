@@ -9,9 +9,11 @@ const g:dirvish_mode = ':call fex#format_entries()'
 
 " Autocommand {{{1
 
-augroup fex_tree_populate
+augroup my_fex_tree
     au!
     au BufNewFile /tmp/*/fex_tree* call fex#tree#populate(expand('<amatch>'))
+    au User MyFlags call statusline#hoist('buffer', '%{fex#statusline#buffer()}', 0, {'ft': 'fex_tree'})
+    au User MyFlags call statusline#hoist('window', '%-8(%l,%c%) %p%% ', 0, {'ft': 'fex_tree'})
 augroup END
 
 " Command {{{1
