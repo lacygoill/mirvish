@@ -46,5 +46,5 @@ hi link  fexTreeLinkFile        Normal
 hi link  fexTreeLinkDirectory   Directory
 hi       fexTreeLinkExecutable  ctermfg=darkgreen guifg=darkgreen
 
-let b:current_syntax = 'fex_tree'
+let b:current_syntax = 'fex'
 

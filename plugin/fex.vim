@@ -9,10 +9,12 @@ const g:dirvish_mode = ':call fex#format_entries()'
 
 " Autocommand {{{1
 
-augroup my_fex_tree
+augroup my_fex
     au!
-    au BufNewFile /tmp/*/fex_tree* call fex#tree#populate(expand('<amatch>'))
-    au FileType fex_tree call lg#set_stl('fex_tree', '%{fex#statusline#buffer()}%=%-8(%l,%c%) %p%% ')
+    au BufNewFile /tmp/*/fex* call fex#tree#populate(expand('<amatch>'))
+    au FileType fex call lg#set_stl(
+        \ '%y%{fex#statusline#buffer()}%=%-8(%l,%c%) %p%% ',
+        \ '%y%{fex#statusline#buffer()}')
 augroup END
 
 " Command {{{1
@@ -22,7 +24,7 @@ com -bang -bar -complete=file -nargs=? Tree exe fex#tree#open(<q-args>, <bang>0)
 " Mappings {{{1
 
 nno <unique><silent> -T :<c-u>Tree<cr>
-" TODO: If you press `-t` several times in the same tab page, several `fex_tree` windows are opened.{{{
+" TODO: If you press `-t` several times in the same tab page, several `fex` windows are opened.{{{
 "
 " I think it would be better if there was always at most one window.
 " IOW, try to close an existing window before opening a new one.
@@ -31,9 +33,9 @@ nno <unique><silent> -T :<c-u>Tree<cr>
 "
 " The same issue  applies to `-T`; although, for some  reason, to reproduce, you
 " need to  always press `-T`  from a regular buffer,  because if you  press `-T`
-" from a `fex_tree` buffer, an error is raised:
+" from a `fex` buffer, an error is raised:
 "
-"     /tmp/v3cl1c7/366/fex_tree/home/user/.vim/plugged/vim-fex/ is not a directory
+"     /tmp/v3cl1c7/366/fex/home/user/.vim/plugged/vim-fex/ is not a directory
 "}}}
 nno <unique><silent> -t :<c-u>exe 'Tree '.getcwd()<cr>
 nno <unique><silent> -- :<c-u>call fex#dirvish_up()<cr>

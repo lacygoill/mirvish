@@ -14,6 +14,20 @@ let g:autoloaded_fex#tree = 1
 
 " TODO: Color special files (socket, ...).
 
+" TODO: Suppose we are viewing the contents of `a/`.
+" Among other files/directories, `a/` contains the subdirectory `a/b/c/`.
+" You move the cursor on the line `a/b/c` then press `l` to view its contents.
+" Finally, you press `h` to get back where you were: you end up viewing `a/b/`.
+" I would expect to view the contents of `a/`.
+"
+" The issue may repeat itself; e.g. now  that you are viewing `a/b/c/`, you move
+" the cursor on `a/b/c/d/e/` and press `l`:  when we press `h` I would expect to
+" view `a/b/c/`, and when pressing `h` again, I would expect to view `a/`.
+"
+" Maybe we should implement a stack of previous viewed directories; we would put
+" a directory  onto the  top of  the stack when  pressing `l`,  and pop  the top
+" directory when pressing `h`.
+
 " Init {{{1
 
 let s:cache = {}
@@ -107,7 +121,7 @@ fu fex#tree#display_help() abort "{{{1
     " So, we also temporarily disable conceal.
     "}}}
     setl smc=50 cole=0
-    let dir = matchstr(expand('%:p'), '/fex_tree\zs.*')
+    let dir = matchstr(expand('%:p'), '/fex\zs.*')
 
     let help = [
         \ '   ===== Tree Command =====',
@@ -261,7 +275,7 @@ fu s:get_tree_cmd(dir) abort "{{{1
 endfu
 
 fu s:getcurdir() abort "{{{1
-    let curdir = matchstr(expand('%:p'), 'fex_tree\zs.*')
+    let curdir = matchstr(expand('%:p'), 'fex\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
@@ -312,14 +326,14 @@ fu fex#tree#open(dir, nosplit) abort "{{{1
         return 'echoerr '..string(dir..'/ is not a directory')
     endif
 
-    "                                        ┌ `BufNewFile` won't be emitted
-    "                                        │  if the buffer name ends with a slash.
-    "                                        │
-    "                                        │  Besides it  would raise  an error
-    "                                        │  when  `save#buffer()`   would  be
-    "                                        │  invoked (`:update` would fail; E502).
-    "                                        │
-    let tempfile = tempname()..'/fex_tree'..(dir is# '/' ? '' : dir)
+    "                                   ┌ `BufNewFile` won't be emitted
+    "                                   │  if the buffer name ends with a slash.
+    "                                   │
+    "                                   │  Besides it  would raise  an error
+    "                                   │  when  `save#buffer()`   would  be
+    "                                   │  invoked (`:update` would fail; E502).
+    "                                   │
+    let tempfile = tempname()..'/fex'..(dir is# '/' ? '' : dir)
     if a:nosplit
         exe 'e '..tempfile
     else
@@ -332,7 +346,7 @@ endfu
 fu fex#tree#populate(path) abort "{{{1
     if exists('b:fex_curdir') | return | endif
 
-    let dir = matchstr(a:path, '/fex_tree\zs.*')
+    let dir = matchstr(a:path, '/fex\zs.*')
     if dir is# '' | let dir = '/' | endif
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
