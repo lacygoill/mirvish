@@ -12,9 +12,6 @@ const g:dirvish_mode = ':call fex#format_entries()'
 augroup my_fex
     au!
     au BufNewFile /tmp/*/fex* call fex#tree#populate(expand('<amatch>'))
-    au FileType fex call lg#set_stl(
-        \ '%y%{fex#statusline#buffer()}%=%-8(%l,%c%) %p%% ',
-        \ '%y%{fex#statusline#buffer()}')
 augroup END
 
 " Command {{{1

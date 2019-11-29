@@ -38,6 +38,10 @@ setl fdm=expr
 setl fdt=fex#tree#fdt()
 call fex#tree#fdl()
 
+call lg#set_stl(
+    \ '%y %{fex#statusline#buffer()}%<%=%-'..winwidth(0)/8..'(%l/%L%) ',
+    \ '%y %{fex#statusline#buffer()}')
+
 " Variables {{{1
 
 let b:did_ftplugin = 1
