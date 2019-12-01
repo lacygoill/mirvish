@@ -226,20 +226,24 @@ fu fex#undo_ftplugin() abort "{{{1
     setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wfw< wrap<
     unlet! b:fex_curdir
 
-    nunmap <buffer> -M
-    nunmap <buffer> -m
-    xunmap <buffer> -m
+    nunmap <buffer> <c-s>
+    nunmap <buffer> <c-w>F
+    nunmap <buffer> <c-w>f
+    nunmap <buffer> <c-w>gf
 
     nunmap <buffer> (
     nunmap <buffer> )
     nunmap <buffer> [[
     nunmap <buffer> ]]
-    nunmap <buffer> <c-w>F
-    nunmap <buffer> <c-w>f
-    nunmap <buffer> <c-w>gf
-    nunmap <buffer> g?
+
+    nunmap <buffer> -M
+    nunmap <buffer> -m
+    xunmap <buffer> -m
+
     nunmap <buffer> R
+    nunmap <buffer> g?
     nunmap <buffer> gh
+
     nunmap <buffer> h
     nunmap <buffer> l
     nunmap <buffer> p

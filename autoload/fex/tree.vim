@@ -98,6 +98,7 @@ fu fex#tree#close() abort "{{{1
     " make sure we're still in the fex window
     if fex_winid == win_getid()
         let winid = lg#win_getid('#')
+        " FIXME: `E444` if the fex window is the last one.
         close
         call win_gotoid(winid)
     endif
@@ -150,13 +151,31 @@ fu fex#tree#display_help() abort "{{{1
     exe '1'
 endfu
 
-fu fex#tree#edit(where) abort "{{{1
+fu fex#tree#split(...) abort "{{{1
     let file = s:getfile()
-    if a:where is# 'split'
-        exe 'sp '..file
-    else
+    if a:0 && a:1 is# 'tabedit'
         exe 'tabedit '..file
+    else
+        exe 'sp '..file
     endif
+endfu
+
+fu fex#tree#edit() abort "{{{1
+    let file = s:getfile()
+    if ! filereadable(file) | return | endif
+    let id = win_getid()
+    wincmd p
+    " if we keep pressing `C-s` on a file, we don't want to keep opening splits forever
+    if file is# expand('%:p') | call win_gotoid(id) | endif
+    " E36: Not enough room
+    try
+        exe 'sp '..file
+        norm! zv
+    catch
+        return lg#catch_error()
+    finally
+        call win_gotoid(id)
+    endtry
 endfu
 
 fu fex#tree#fde() abort "{{{1
@@ -420,20 +439,6 @@ fu fex#tree#relative_dir(who) abort "{{{1
         endif
         let new_dir = s:getfile()
         if !isdirectory(new_dir)
-            let id = win_getid()
-            wincmd p
-            " If we keep pressing  `l` on a file, we don't  want to keep opening
-            " splits forever.
-            if new_dir isnot# expand('%:p')
-                " E36: Not enough room
-                try
-                    exe 'sp '..new_dir
-                    norm! zv
-                catch
-                    return lg#catch_error()
-                endtry
-            endif
-            call win_gotoid(id)
             return
         endif
     endif
