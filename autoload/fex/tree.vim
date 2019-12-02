@@ -45,7 +45,7 @@ const s:HELP =<< trim END
     -m        print current file's metadata
     C-w f     edit file in new split
     C-w gf    edit file in new tab
-    ?         toggle this help
+    g?        toggle this help
     R         reload directory hierarchy without using the cache
     gh        toggle hidden files/directories visibility
     h         move to parent directory
@@ -133,7 +133,7 @@ fu fex#tree#display_help() abort "{{{1
 
     let help += s:HELP
 
-    call map(help, {_,v -> !empty(v) ? '" '.v : v})
+    call map(help, {_,v -> !empty(v) ? '" '..v : v})
     call append(0, help)
     " Why `:exe`?{{{
     "
@@ -244,11 +244,11 @@ fu s:get_ignore_pat() abort "{{{1
     " component of the entries (files/directories).
     " So, you can't do this:
     "
-    "         $ tree -I '*/__pycache__/*' ~/.vim/pythonx/
+    "     $ tree -I '*/__pycache__/*' ~/.vim/pythonx/
     "
     " Instead, you must do this:
     "
-    "         $ tree -I '__pycache__' ~/.vim/pythonx/
+    "     $ tree -I '__pycache__' ~/.vim/pythonx/
 
     "          ┌ to match `*.bak` in `&wig`
     "          │ (no dot in the pattern to also match `*~`)
@@ -261,7 +261,7 @@ fu s:get_ignore_pat() abort "{{{1
     let ignore_pat = map(split(&wig, ','), {_,v -> matchstr(v, pat)})
     " We may get empty matches, or sth like `*.*` because of (in vimrc):
     "
-    "         let &wig ..= ','.&undodir.'/*.*'
+    "     let &wig ..= ','.&undodir.'/*.*'
     "
     " We must eliminate those.
     call filter(ignore_pat, {_,v -> !empty(v) && v !~# '^[.*/]\+$'})
@@ -290,7 +290,7 @@ fu s:get_tree_cmd(dir) abort "{{{1
     "             │
     "             └ don't display directories whose depth is greater than 2 or 10
 
-    return 'tree '..short_options..' '..long_options..' '..limit..' '..ignore_pat..' '..shellescape(a:dir,1)
+    return 'tree '..short_options..' '..long_options..' '..limit..' '..ignore_pat..' '..shellescape(a:dir)
 endfu
 
 fu s:getcurdir() abort "{{{1
@@ -316,7 +316,7 @@ fu s:is_big_directory(dir) abort "{{{1
     sil return a:dir is# '/'
     \ ||   a:dir is# '/home'
     \ ||   a:dir =~# '^/home/[^/]\+/\?$'
-    \ ||   systemlist('find '..a:dir..' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
+    \ ||   systemlist('find '..shellescape(a:dir)..' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
 endfu
 
 fu s:matchdelete() abort "{{{1

@@ -106,14 +106,14 @@ endfu
 fu fex#preview() abort "{{{1
     let file = getline('.')
     if filereadable(file)
-        exe 'pedit '.file
+        exe 'pedit '..file
         let winid = lg#win_getid('P')
         noa call lg#win_execute(winid, 'wincmd L | norm! zv')
     elseif isdirectory(file)
-        sil let ls = systemlist('ls '.shellescape(file))
+        sil let ls = systemlist('ls '..shellescape(file))
         let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         call writefile(ls, b:dirvish['preview_ls'])
-        exe 'sil pedit '.b:dirvish['preview_ls']
+        exe 'sil pedit '..b:dirvish['preview_ls']
         let winid = lg#win_getid('P')
         noa call lg#win_execute(winid, 'wincmd L')
     endif
@@ -183,7 +183,7 @@ fu fex#toggle_dot_entries() abort "{{{1
 endfu
 
 fu fex#trash_put() abort "{{{1
-    sil call system('trash-put '.shellescape(getline('.')))
+    sil call system('trash-put '..shellescape(getline('.')))
     e
 endfu
 
