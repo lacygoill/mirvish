@@ -18,11 +18,11 @@ let s:hide_dot_entries = 0
 
 fu fex#format_entries() abort "{{{1
     let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
-    let pat = '\%('.pat.'\)$'
-    sil! exe 'keepj keepp g:'.pat.':d_'
+    let pat = '\%('..pat..'\)$'
+    sil! exe 'keepj keepp g:'..pat..':d_'
 
     if s:hide_dot_entries
-        sil! noa keepj keepp g:\v/\.[^\/]+/?$:d_
+        sil! keepj keepp g:\v/\.[^\/]+/?$:d_
     endif
 
     sort :^.*[\/]:
@@ -72,34 +72,40 @@ fu s:get_metadata(line, ...) abort "{{{1
     let ftype = getftype(file)
     let fsize = getfsize(file)
     if ftype is# 'dir'
-        " Warning:
-        " May be slow on a big directory (`$ time du -sh big_directory/`).
-        " Especially noticeable in automatic mode.
-        let human_fsize = matchstr(expand('`du -sh '.shellescape(file).'`'), '\S\+')
+        let human_fsize = ''
+        " Why don't you compute the size of a directory?{{{
+        "
+        " The only way I can think of is using `du(1)`:
+        "
+        "     let human_fsize = matchstr(expand('`du -sh '..shellescape(file)..'`'), '\S\+')
+        "
+        " But it would be too slow on a big directory (`$ time du -sh big_directory/`).
+        " It would be especially noticeable in automatic mode.
+        "}}}
     else
         let human_fsize = s:make_fsize_human_readable(fsize)
     endif
 
     return fsize == -1
-       \ ?     '?'."\n"
-       \ :     ((a:0 ? printf('%12.12s ', fnamemodify(file, ':t')) : '')
-       \        .ftype[0]
-       \        .' '.getfperm(file)
-       \        .' '.strftime('%Y-%m-%d %H:%M',getftime(file))
-       \        .' '.(fsize == -2 ? '[big]' : human_fsize))
-       \       .(ftype is# 'link' ? ' ->'.fnamemodify(resolve(file), ':~:.') : '')
-       \       ."\n"
+       \ ? '?'.."\n"
+       \ : ((a:0 ? printf('%12.12s ', fnamemodify(file, ':t')) : '')
+       \ ..ftype[0]
+       \ ..' '..getfperm(file)
+       \ ..' '..strftime('%Y-%m-%d %H:%M',getftime(file))
+       \ ..' '..(fsize == -2 ? '[big]' : human_fsize))
+       \ ..(ftype is# 'link' ? ' ->'..fnamemodify(resolve(file), ':~:.') : '')
+       \ .."\n"
 endfu
 
 fu s:make_fsize_human_readable(fsize) abort "{{{1
     return a:fsize >= 1073741824
-    \ ?        (a:fsize/1073741824).','.string(a:fsize % 1073741824)[0].'G'
+    \ ?        (a:fsize/1073741824)..','..string(a:fsize % 1073741824)[0]..'G'
     \ :    a:fsize >= 1048576
-    \ ?        (a:fsize/1048576).','.string(a:fsize % 1048576)[0].'M'
+    \ ?        (a:fsize/1048576)..','..string(a:fsize % 1048576)[0]..'M'
     \ :    a:fsize >= 1024
-    \ ?        (a:fsize/1024).','.string(a:fsize % 1024)[0].'K'
+    \ ?        (a:fsize/1024)..','..string(a:fsize % 1024)[0]..'K'
     \ :    a:fsize > 0
-    \ ?        a:fsize.'B'
+    \ ?        a:fsize..'B'
     \ :        ''
 endfu
 

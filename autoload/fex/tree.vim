@@ -222,7 +222,7 @@ fu s:format() abort "{{{1
     "
     " We need to translate the dot into the current working directory.
     let cwd = getcwd()
-    sil! exe keepj keepp %s:─\s\zs\.\ze/:\=cwd:
+    sil keepj keepp %s:─\s\zs\.\ze/:\=cwd:e
     " Why?{{{
     "
     " We  may have  created a  symbolic link  whose target  is a  directory, and
@@ -231,7 +231,7 @@ fu s:format() abort "{{{1
     " second slash.  We'll  end up with two slashes, which  will give unexpected
     " results regarding the syntax highlighting.
     "}}}
-    sil! keepj keepp %s:/\ze/$::
+    sil keepj keepp %s:/\ze/$::e
 endfu
 
 fu s:get_ignore_pat() abort "{{{1
@@ -399,7 +399,7 @@ fu fex#tree#populate(path) abort "{{{1
 
     " position cursor on current file
     if exists('s:current_file_pos')
-        au BufWinEnter <buffer> ++once sil! call search(s:current_file_pos)
+        au BufWinEnter <buffer> ++once call search(s:current_file_pos)
             \ | unlet! s:current_file_pos
     endif
 endfu
@@ -498,7 +498,7 @@ fu s:use_cache(dir) abort "{{{1
         " Vim will  re-position the cursor  on the first line  afterwards (after
         " BufEnter).
         "}}}
-        au BufWinEnter <buffer> ++once sil! exe s:last_pos | unlet! s:last_pos
+        au BufWinEnter <buffer> ++once exe s:last_pos | unlet! s:last_pos
     endif
 
     " restore last foldlevel if one was saved

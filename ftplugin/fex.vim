@@ -2,6 +2,21 @@ if exists('b:did_ftplugin')
     finish
 endif
 
+" Options {{{1
+
+setl bh=delete bt=nofile nobl cul noswf wfw nowrap
+
+setl cocu=nc
+setl cole=3
+setl fde=fex#tree#fde()
+setl fdm=expr
+setl fdt=fex#tree#fdt()
+call fex#tree#fdl()
+
+call lg#set_stl(
+    \ '%y %{fex#statusline#curdir()}%<%=%l/%L ',
+    \ '%y %{fex#statusline#curdir()}')
+
 " Mappings {{{1
 
 " FIXME: Press `C-s` twice. The second time, a vertical split is created.
@@ -34,21 +49,6 @@ nno <buffer><nowait><silent> h :<c-u>call fex#tree#relative_dir('parent')<cr>
 nno <buffer><nowait><silent> l :<c-u>call fex#tree#relative_dir('child')<cr>
 nno <buffer><nowait><silent> p :<c-u>call fex#tree#preview()<cr>
 nno <buffer><nowait><silent> q :<c-u>call fex#tree#close()<cr>
-
-" Options {{{1
-
-setl bh=delete bt=nofile nobl cul noswf wfw nowrap
-
-setl cocu=nc
-setl cole=3
-setl fde=fex#tree#fde()
-setl fdm=expr
-setl fdt=fex#tree#fdt()
-call fex#tree#fdl()
-
-call lg#set_stl(
-    \ '%y %{fex#statusline#curdir()}%<%=%l/%L ',
-    \ '%y %{fex#statusline#curdir()}')
 
 " Variables {{{1
 
