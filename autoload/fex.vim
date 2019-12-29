@@ -19,10 +19,10 @@ let s:hide_dot_entries = 0
 fu fex#format_entries() abort "{{{1
     let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
     let pat = '\%('..pat..'\)$'
-    sil! exe 'keepj keepp g:'..pat..':d_'
+    sil exe 'keepj keepp g:'..pat..':d_'
 
     if s:hide_dot_entries
-        sil! keepj keepp g:\v/\.[^\/]+/?$:d_
+        sil keepj keepp g:/\.[^\/]\+/\=$:d_
     endif
 
     sort :^.*[\/]:
@@ -142,7 +142,7 @@ fu fex#print_metadata(how, ...) abort "{{{1
                 au FileType dirvish,tree call s:auto_metadata()
             augroup END
         endif
-    else
+    elseif a:how is# 'manual'
         sil! au!  fex_print_metadata
         sil! aug! fex_print_metadata
         sil! au!  fex_print_metadata_and_persist
