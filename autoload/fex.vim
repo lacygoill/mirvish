@@ -203,7 +203,7 @@ fu fex#dirvish_up() abort "{{{1
     " And if it does not, `:Dirvish %:p:h` will fail.
     " We handle this special case by falling back on `:Dirvish`.
     "}}}
-    if file isnot# '' && ! isdirectory(dir)
+    if file isnot# '' && !isdirectory(dir)
         " Why `:silent`?{{{
         "
         " Without, in some buffers, you'll get an error message such as:

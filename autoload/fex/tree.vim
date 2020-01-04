@@ -162,7 +162,7 @@ endfu
 
 fu fex#tree#edit() abort "{{{1
     let file = s:getfile()
-    if ! filereadable(file) | return | endif
+    if !filereadable(file) | return | endif
     let id = win_getid()
     wincmd p
     " if we keep pressing `C-s` on a file, we don't want to keep opening splits forever
@@ -304,7 +304,7 @@ fu s:getfile() abort "{{{1
     return line =~# '\s->\s'
     \ ?        matchstr(line, '.*─\s\zs.*\ze\s->\s')
     \ :        matchstr(line, '.*─\s\zs.*'..s:INDICATOR..'\@1<!')
-    " Do NOT add the `$` anchor !                              ^{{{
+    " Do *not* add the `$` anchor!                              ^{{{
     "
     " You don't want match until the end of the line.
     " You want to match  a maximum of text, so maybe until the  end of the line,
