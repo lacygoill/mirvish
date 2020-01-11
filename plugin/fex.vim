@@ -3,10 +3,6 @@ if exists('g:loaded_fex')
 endif
 let g:loaded_fex = 1
 
-" Variable {{{1
-
-const g:dirvish_mode = ':call fex#format_entries()'
-
 " Autocommand {{{1
 
 augroup my_fex

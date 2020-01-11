@@ -13,7 +13,7 @@ setl fdm=expr
 setl fdt=fex#tree#fdt()
 call fex#tree#fdl()
 
-call lg#set_stl(
+sil! call lg#set_stl(
     \ '%y %{fex#statusline#curdir()}%<%=%l/%L ',
     \ '%y %{fex#statusline#curdir()}')
 
