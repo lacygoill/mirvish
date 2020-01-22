@@ -194,9 +194,10 @@ fu fex#trash_put() abort "{{{1
 endfu
 
 fu fex#dirvish_up() abort "{{{1
-    sil! update
+    let cnt = v:count1
     let file = expand('%:p')
     let dir = fnamemodify(file, ':h')
+    sil! update
     " Make sure the directory of the current file exists.{{{
     "
     " Maybe it does not (e.g. `:FreeKeys`, `:Tree`, ...).
@@ -225,7 +226,7 @@ fu fex#dirvish_up() abort "{{{1
         sil Dirvish
         return
     endif
-    exe 'Dirvish %:p'..repeat(':h', v:count1)
+    exe 'Dirvish %:p'..repeat(':h', cnt)
 endfu
 
 fu fex#undo_ftplugin() abort "{{{1
