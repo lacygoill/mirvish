@@ -114,7 +114,7 @@ fu fex#preview() abort "{{{1
     if filereadable(file)
         exe 'pedit '..file
         let winid = lg#win_getid('P')
-        noa call lg#win_execute(winid, 'wincmd L | norm! zv')
+        noa call lg#win_execute(winid, ['wincmd L', 'norm! zv'])
     elseif isdirectory(file)
         sil let ls = systemlist('ls '..shellescape(file))
         let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
