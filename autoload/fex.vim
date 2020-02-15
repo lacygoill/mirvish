@@ -77,7 +77,7 @@ fu s:get_metadata(line, ...) abort "{{{1
         "
         " The only way I can think of is using `du(1)`:
         "
-        "     let human_fsize = matchstr(expand('`du -sh '..shellescape(file)..'`'), '\S\+')
+        "     let human_fsize = matchstr(system('du -sh '..shellescape(file))[:-2], '\S\+')
         "
         " But it would be too slow on a big directory (`$ time du -sh big_directory/`).
         " It would be especially noticeable in automatic mode.
