@@ -172,7 +172,7 @@ fu fex#tree#edit() abort "{{{1
         exe 'sp '..file
         norm! zv
     catch
-        return lg#catch_error()
+        return lg#catch()
     finally
         call win_gotoid(id)
     endtry
