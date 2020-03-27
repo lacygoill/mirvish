@@ -7,7 +7,7 @@ let g:loaded_fex = 1
 
 augroup my_fex
     au!
-    au BufNewFile /tmp/*/fex* call fex#tree#populate(expand('<amatch>'))
+    au BufNewFile /tmp/*/fex* call fex#tree#populate(expand('<afile>:p'))
 augroup END
 
 " Command {{{1
