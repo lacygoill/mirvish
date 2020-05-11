@@ -137,8 +137,7 @@ fu fex#print_metadata(how, ...) abort "{{{1
             " under the cursor.
             call s:auto_metadata()
             " Re-install it every time we enter a new directory.
-            augroup fex_print_metadata_and_persist
-                au!
+            augroup fex_print_metadata_and_persist | au!
                 au FileType dirvish,tree call s:auto_metadata()
             augroup END
         endif
