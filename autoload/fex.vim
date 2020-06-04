@@ -29,48 +29,30 @@ fu fex#format_entries() abort "{{{1
 endfu
 
 fu s:get_metadata(line, ...) abort "{{{1
+    " Nvim doesn't support `readdirex()` atm
+    if has('nvim') | return '' | endif
+
     let file = a:line
-    " Why?{{{
-    "
-    " MWE:
-    "     $ cd /tmp
-    "     $ ln -s tmux-1000 test
-    "
-    "     $ ls -ld test/
-    "     drwx------ 2 user user 4096 May  2 09:54 test/~
-    "     ✘
-    "
-    "     $ ls -ld test
-    "     lrwxrwxrwx 1 user user 9 May  2 17:37 test -> tmux-1000~
-    "     ✔
-    "
-    " If:
-    "    - a symlink points to a directory
-    "    - you give it to `$ ls -ld`
-    "    - you append a slash to the symlink
-    "
-    " `ls(1)` will  print the info  about the  target directory, instead  of the
-    " symlink itself.
-    " This is not what we want.
-    " We want the info about the symlink.
-    " So, we remove any possible slash at the end.
-    "
-    " Update:
-    " We do not  use `ls(1)` anymore to  get the metadata of a  file, however we
-    " still remove useless ending slashes. They  may interfere if we use another
-    " shell utility to get some info.
-    "}}}
-    let file = substitute(file, '/\+$', '', '')
-    " Why?{{{
-    "
-    " In case we call this function from the tree explorer.
-    "}}}
+
+    " normalize name (important for when we filter output of `readdirex()`)
+    let file = trim(file, '/')
+    " if it's a dir, we just need the last path component
+    let file = fnamemodify(file, ':t')
+
+    " in case we call this function from the tree explorer
     if match(file, '─') != -1
         let file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
+    let metadata = get(readdirex(expand('%:p'), {e -> e.name is# file}), 0, {})
+    if empty(metadata) | return '' | endif
 
-    let ftype = getftype(file)
-    let fsize = getfsize(file)
+    let fsize = metadata.size
+    let ftype = metadata.type
+    let group = metadata.group
+    let perm = metadata.perm
+    let time = metadata.time
+    let owner = metadata.user
+
     if ftype is# 'dir'
         let human_fsize = ''
         " Why don't you compute the size of a directory?{{{
@@ -89,11 +71,10 @@ fu s:get_metadata(line, ...) abort "{{{1
     return fsize == -1
        \ ? '?'.."\n"
        \ : ((a:0 ? printf('%12.12s ', fnamemodify(file, ':t')) : '')
-       \ ..ftype[0]
-       \ ..' '..getfperm(file)
-       \ ..' '..strftime('%Y-%m-%d %H:%M',getftime(file))
+       \ ..ftype[0]..' '..perm..' '..owner..' '..group
+       \ ..' '..strftime('%Y-%m-%d %H:%M', time)
        \ ..' '..(fsize == -2 ? '[big]' : human_fsize))
-       \ ..(ftype is# 'link' ? ' ->'..fnamemodify(resolve(file), ':~:.') : '')
+       \ ..(ftype =~# '^linkd\=$' ? ' ->'..fnamemodify(resolve(file), ':~:.') : '')
        \ .."\n"
 endfu
 
@@ -140,6 +121,10 @@ fu fex#print_metadata(how, ...) abort "{{{1
             augroup fex_print_metadata_and_persist | au!
                 au FileType dirvish,tree call s:auto_metadata()
             augroup END
+        else
+            " if on, then toggle off
+            sil! au!  fex_print_metadata
+            sil! aug! fex_print_metadata
         endif
     elseif a:how is# 'manual'
         sil! au!  fex_print_metadata
