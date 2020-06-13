@@ -29,9 +29,6 @@ fu fex#format_entries() abort "{{{1
 endfu
 
 fu s:get_metadata(line, ...) abort "{{{1
-    " Nvim doesn't support `readdirex()` atm
-    if has('nvim') | return '' | endif
-
     let file = a:line
 
     " normalize name (important for when we filter output of `readdirex()`)
@@ -95,14 +92,14 @@ fu fex#preview() abort "{{{1
     if filereadable(file)
         exe 'pedit '..file
         let winid = lg#win_getid('P')
-        noa call lg#win_execute(winid, ['wincmd L', 'norm! zv'])
+        noa call win_execute(winid, ['wincmd L', 'norm! zv'])
     elseif isdirectory(file)
         sil let ls = systemlist('ls '..shellescape(file))
         let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         call writefile(ls, b:dirvish['preview_ls'])
         exe 'sil pedit '..b:dirvish['preview_ls']
         let winid = lg#win_getid('P')
-        noa call lg#win_execute(winid, 'wincmd L')
+        noa call win_execute(winid, 'wincmd L')
     endif
 endfu
 
@@ -214,7 +211,7 @@ fu fex#dirvish_up() abort "{{{1
 endfu
 
 fu fex#undo_ftplugin() abort "{{{1
-    setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< swf< wfw< wrap<
+    setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< stl< swf< wfw< wrap<
     unlet! b:fex_curdir
 
     nunmap <buffer> <c-s>

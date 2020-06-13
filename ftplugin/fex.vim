@@ -13,9 +13,9 @@ setl fdm=expr
 setl fdt=fex#tree#fdt()
 call fex#tree#fdl()
 
-sil! call lg#set_stl(
-    \ '%y %{fex#statusline#curdir()}%<%=%l/%L ',
-    \ '%y %{fex#statusline#curdir()}')
+let &l:stl = '%!g:statusline_winid == win_getid()'
+    \ ..' ? "%y %{fex#statusline#curdir()}%<%=%l/%L "'
+    \ ..' : "%y %{fex#statusline#curdir()}"'
 
 " Mappings {{{1
 
