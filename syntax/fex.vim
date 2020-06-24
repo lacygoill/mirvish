@@ -16,7 +16,7 @@ syn match fexTreeLink '[^/]*\s->\s'
 "                      └ last path component of a symlink:
 "
 "                                /proc/11201/exe -> /usr/lib/firefox/firefox*
-"                                            ^^^^^^^
+"                                            ^-----^
 
 syn match fexTreeLinkFile       '\%(\s->\s\)\@4<=.*[^*/]$'
 syn match fexTreeLinkDirectory  '\%(\s->\s\)\@4<=.*/$'
