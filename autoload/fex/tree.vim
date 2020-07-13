@@ -106,7 +106,7 @@ endfu
 
 fu fex#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
-        sil 1;/^[^"]/-d_
+        sil keepj 1;/^[^"]/-d_
         setl smc< cole=3
         return
     endif
