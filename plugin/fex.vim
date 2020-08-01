@@ -29,6 +29,6 @@ nno <unique><silent> -T :<c-u>Tree<cr>
 "
 "     /tmp/v3cl1c7/366/fex/home/user/.vim/plugged/vim-fex/ is not a directory
 "}}}
-nno <unique><silent> -t :<c-u>exe 'Tree '.getcwd()<cr>
+nno <unique><silent> -t :<c-u>exe 'Tree ' .. getcwd()<cr>
 nno <unique><silent> -- :<c-u>call fex#dirvish_up()<cr>
 

@@ -3,6 +3,10 @@ if exists('g:autoloaded_fex#tree')
 endif
 let g:autoloaded_fex#tree = 1
 
+" TODO: Make the plugin async (faster in big directories).
+" Look for `system()` and `systemlist()` everywhere in the plugin.
+" Inspiration: https://github.com/lambdalisue/fern.vim
+
 " TODO: Implement `yy`, `dd`, `tp`, to copy, cut, delete (trash-put) a file.
 
 " TODO: Sort hidden directories after non-hidden ones.
