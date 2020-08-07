@@ -3,6 +3,8 @@ if exists('g:autoloaded_fex')
 endif
 let g:autoloaded_fex = 1
 
+import Win_getid from 'lg.vim'
+
 " Why not hiding by default?{{{
 "
 " If you hide dot entries, when you go up the tree from a hidden directory, your
@@ -17,9 +19,9 @@ let g:autoloaded_fex = 1
 let s:hide_dot_entries = 0
 
 fu fex#format_entries() abort "{{{1
-    let pat = substitute(glob2regpat(&wig), ',', '\\|', 'g')
-    let pat = '\%('..pat..'\)$'
-    sil exe 'keepj keepp g:'..pat..':d_'
+    let pat = glob2regpat(&wig)->substitute(',', '\\|', 'g')
+    let pat = '\%(' .. pat .. '\)$'
+    sil exe 'keepj keepp g:' .. pat .. ':d_'
 
     if s:hide_dot_entries
         sil keepj keepp g:/\.[^\/]\+/\=$:d_
@@ -40,7 +42,7 @@ fu s:get_metadata(line, ...) abort "{{{1
     if match(file, '─') != -1
         let file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
-    let metadata = get(readdirex(expand('%:p'), {e -> e.name is# file}), 0, {})
+    let metadata = expand('%:p')->readdirex({e -> e.name is# file})->get(0, {})
     if empty(metadata) | return '' | endif
 
     let fsize = metadata.size
@@ -56,7 +58,9 @@ fu s:get_metadata(line, ...) abort "{{{1
         "
         " The only way I can think of is using `du(1)`:
         "
-        "     let human_fsize = matchstr(system('du -sh '..shellescape(file))[:-2], '\S\+')
+        "     let human_fsize = system('du -sh ' .. shellescape(file))
+        "         \ ->trim("\n", 2)
+        "         \ ->matchstr('\S\+')
         "
         " But it would be too slow on a big directory (`$ time du -sh big_directory/`).
         " It would be especially noticeable in automatic mode.
@@ -66,39 +70,39 @@ fu s:get_metadata(line, ...) abort "{{{1
     endif
 
     return fsize == -1
-       \ ? '?'.."\n"
-       \ : ((a:0 ? printf('%12.12s ', fnamemodify(file, ':t')) : '')
-       \ ..ftype[0]..' '..perm..' '..owner..' '..group
-       \ ..' '..strftime('%Y-%m-%d %H:%M', time)
-       \ ..' '..(fsize == -2 ? '[big]' : human_fsize))
-       \ ..(ftype =~# '^linkd\=$' ? ' ->'..fnamemodify(resolve(file), ':~:.') : '')
-       \ .."\n"
+        \ ? '?' .. "\n"
+        \ : ((a:0 ? fnamemodify(file, ':t')->printf('%12.12s ') : '')
+        \ .. ftype[0] .. ' ' .. perm .. ' ' .. owner .. ' ' .. group
+        \ .. ' ' .. strftime('%Y-%m-%d %H:%M', time)
+        \ .. ' ' .. (fsize == -2 ? '[big]' : human_fsize))
+        \ .. (ftype =~# '^linkd\=$' ? ' ->' .. resolve(file)->fnamemodify(':~:.') : '')
+        \ .. "\n"
 endfu
 
 fu s:make_fsize_human_readable(fsize) abort "{{{1
     return a:fsize >= 1073741824
-    \ ?        (a:fsize/1073741824)..','..string(a:fsize % 1073741824)[0]..'G'
-    \ :    a:fsize >= 1048576
-    \ ?        (a:fsize/1048576)..','..string(a:fsize % 1048576)[0]..'M'
-    \ :    a:fsize >= 1024
-    \ ?        (a:fsize/1024)..','..string(a:fsize % 1024)[0]..'K'
-    \ :    a:fsize > 0
-    \ ?        a:fsize..'B'
-    \ :        ''
+        \ ?        (a:fsize/1073741824) .. ',' .. string(a:fsize % 1073741824)[0] .. 'G'
+        \ :    a:fsize >= 1048576
+        \ ?        (a:fsize/1048576) .. ',' .. string(a:fsize % 1048576)[0] .. 'M'
+        \ :    a:fsize >= 1024
+        \ ?        (a:fsize/1024) .. ',' .. string(a:fsize % 1024)[0] .. 'K'
+        \ :    a:fsize > 0
+        \ ?        a:fsize .. 'B'
+        \ :        ''
 endfu
 
 fu fex#preview() abort "{{{1
     let file = getline('.')
     if filereadable(file)
-        exe 'pedit '..file
-        let winid = lg#win_getid('P')
+        exe 'pedit ' .. file
+        let winid = s:Win_getid('P')
         noa call win_execute(winid, ['wincmd L', 'norm! zv'])
     elseif isdirectory(file)
-        sil let ls = systemlist('ls '..shellescape(file))
+        sil let ls = systemlist('ls ' .. shellescape(file))
         let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         call writefile(ls, b:dirvish['preview_ls'])
-        exe 'sil pedit '..b:dirvish['preview_ls']
-        let winid = lg#win_getid('P')
+        exe 'sil pedit ' .. b:dirvish['preview_ls']
+        let winid = s:Win_getid('P')
         noa call win_execute(winid, 'wincmd L')
     endif
 endfu
@@ -134,7 +138,7 @@ fu fex#print_metadata(how, ...) abort "{{{1
 endfu
 
 fu s:print_metadata(vis) abort "{{{1
-    let lines = a:vis ? getline(line("'<"), line("'>")) : [getline('.')]
+    let lines = a:vis ? getline("'<", "'>") : [getline('.')]
     let metadata = ''
     if a:vis
         for line in lines
@@ -148,19 +152,18 @@ fu s:print_metadata(vis) abort "{{{1
     " Flush any delayed screen updates before printing the metadata.
     " See `:h :echo-redraw`.
     redraw
-    echo metadata[:-2]
-    "              ^
-    "              the last newline causes an undesired hit-enter prompt
-    "              when we only ask the metadata of a single file
+    " The last newline causes an undesired hit-enter prompt when we only ask the
+    " metadata of a single file.
+    echo trim(metadata, "\n", 2)
 endfu
 
 fu s:auto_metadata() abort "{{{1
     augroup fex_print_metadata
         au! * <buffer>
         au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) != line('.')
-        \ |                         let b:fex_last_line = line('.')
-        \ |                         call s:print_metadata(0)
-        \ |                     endif
+            \ |     let b:fex_last_line = line('.')
+            \ |     call s:print_metadata(0)
+            \ | endif
     augroup END
 endfu
 
@@ -170,7 +173,7 @@ fu fex#toggle_dot_entries() abort "{{{1
 endfu
 
 fu fex#trash_put() abort "{{{1
-    sil call system('trash-put '..shellescape(getline('.')))
+    sil call system('trash-put ' .. getline('.')->shellescape())
     e
 endfu
 
@@ -185,7 +188,7 @@ fu fex#dirvish_up() abort "{{{1
     " And if it does not, `:Dirvish %:p:h` will fail.
     " We handle this special case by falling back on `:Dirvish`.
     "}}}
-    if file isnot# '' && !isdirectory(dir)
+    if file != '' && !isdirectory(dir)
         " Why `:silent`?{{{
         "
         " Without, in some buffers, you'll get an error message such as:
@@ -207,7 +210,7 @@ fu fex#dirvish_up() abort "{{{1
         sil Dirvish
         return
     endif
-    exe 'Dirvish %:p'..repeat(':h', cnt)
+    exe 'Dirvish %:p' .. repeat(':h', cnt)
 endfu
 
 fu fex#undo_ftplugin() abort "{{{1

@@ -14,12 +14,12 @@ setl fdt=fex#tree#fdt()
 call fex#tree#fdl()
 
 let &l:stl = '%!g:statusline_winid == win_getid()'
-    \ ..' ? "%y %{fex#statusline#curdir()}%<%=%l/%L "'
-    \ ..' : "%y %{fex#statusline#curdir()}"'
+    \ .. ' ? "%y %{fex#statusline#curdir()}%<%=%l/%L "'
+    \ .. ' : "%y %{fex#statusline#curdir()}"'
 
 " Mappings {{{1
 
-" FIXME: Press `C-s` twice. The second time, a vertical split is created.
+" FIXME: Press `C-s` twice.  The second time, a vertical split is created.
 " Nothing should happen.
 " If the file is already displayed in the tab page, don't open it.
 "
@@ -27,13 +27,13 @@ let &l:stl = '%!g:statusline_winid == win_getid()'
 " the desired result (we want a new  large horizontal split; not a vertical one,
 " which we would probably get if the  previous window is a vertical split opened
 " via `C-w f`).
-nno <buffer><nowait><silent> <c-s>   :<c-u>call fex#tree#edit()<cr>
-nno <buffer><nowait><silent> <c-w>F  :<c-u>call fex#tree#split()<cr>
-nno <buffer><nowait><silent> <c-w>f  :<c-u>call fex#tree#split()<cr>
+nno <buffer><nowait><silent> <c-s> :<c-u>call fex#tree#edit()<cr>
+nno <buffer><nowait><silent> <c-w>F :<c-u>call fex#tree#split()<cr>
+nno <buffer><nowait><silent> <c-w>f :<c-u>call fex#tree#split()<cr>
 nno <buffer><nowait><silent> <c-w>gf :<c-u>call fex#tree#split('tabedit')<cr>
 
-nno <buffer><nowait><silent> (  k:call fex#tree#preview()<cr>
-nno <buffer><nowait><silent> )  j:call fex#tree#preview()<cr>
+nno <buffer><nowait><silent> ( k:call fex#tree#preview()<cr>
+nno <buffer><nowait><silent> ) j:call fex#tree#preview()<cr>
 nno <buffer><nowait><silent> [[ :<c-u>call search('.*/$', 'b')<cr>
 nno <buffer><nowait><silent> ]] :<c-u>call search('.*/$')<cr>
 
@@ -41,7 +41,7 @@ nno <buffer><nowait><silent> -M :<c-u>call fex#print_metadata('auto')<cr>
 nno <buffer><nowait><silent> -m :<c-u>call fex#print_metadata('manual')<cr>
 xno <buffer><nowait><silent> -m :<c-u>call fex#print_metadata('manual', 'vis')<cr>
 
-nno <buffer><nowait><silent> R  :<c-u>call fex#tree#reload()<cr>
+nno <buffer><nowait><silent> R :<c-u>call fex#tree#reload()<cr>
 nno <buffer><nowait><silent> g? :<c-u>call fex#tree#display_help()<cr>
 nno <buffer><nowait><silent> gh :<c-u>call fex#tree#toggle_dot_entries()<cr>
 
@@ -57,5 +57,5 @@ let b:did_ftplugin = 1
 " Teardown {{{1
 
 let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
-    \ ..'| call fex#undo_ftplugin()'
+    \ .. '| call fex#undo_ftplugin()'
 

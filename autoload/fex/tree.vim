@@ -3,6 +3,9 @@ if exists('g:autoloaded_fex#tree')
 endif
 let g:autoloaded_fex#tree = 1
 
+import Catch from 'lg.vim'
+import Win_getid from 'lg.vim'
+
 " TODO: Make the plugin async (faster in big directories).
 " Look for `system()` and `systemlist()` everywhere in the plugin.
 " Inspiration: https://github.com/lambdalisue/fern.vim
@@ -11,7 +14,7 @@ let g:autoloaded_fex#tree = 1
 
 " TODO: Sort hidden directories after non-hidden ones.
 
-" TODO: Study `syntax/` and infer some rules from it. Note them somewhere.
+" TODO: Study `syntax/` and infer some rules from it.  Note them somewhere.
 " Also, refactor this file; it has become a little complex.
 " Split it into several files, or into several categories (interface, core, misc).
 " Also, try to make each function fit on one single screen (with folding).
@@ -65,7 +68,7 @@ fu s:clean_cache() abort "{{{1
 endfu
 
 fu fex#tree#close() abort "{{{1
-    if reg_recording() isnot# ''
+    if reg_recording() != ''
         return feedkeys('q', 'in')[-1]
     endif
 
@@ -77,7 +80,7 @@ fu fex#tree#close() abort "{{{1
         " Make sure the preview window has not been already closed.
         " If it has, `win_id2win()` will return 0.
         if preview_winnr
-            exe preview_winnr..'wincmd c'
+            exe preview_winnr .. 'wincmd c'
             unlet t:fex_preview_winid
         endif
     endif
@@ -101,7 +104,7 @@ fu fex#tree#close() abort "{{{1
     let s:clean_cache_timer_id = timer_start(60000, {-> s:clean_cache()})
     " make sure we're still in the fex window
     if fex_winid == win_getid()
-        let winid = lg#win_getid('#')
+        let winid = s:Win_getid('#')
         " FIXME: `E444` if the fex window is the last one.
         close
         call win_gotoid(winid)
@@ -126,18 +129,18 @@ fu fex#tree#display_help() abort "{{{1
     " So, we also temporarily disable conceal.
     "}}}
     setl smc=50 cole=0
-    let dir = matchstr(expand('%:p'), '/fex\zs.*')
+    let dir = expand('%:p')->matchstr('/fex\zs.*')
 
     let help = [
         \ '   ===== Tree Command =====',
         \ '',
-        \ '$ '..s:get_tree_cmd(dir),
+        \ '$ ' .. s:get_tree_cmd(dir),
         \ '',
         \ ]
 
     let help += s:HELP
 
-    call map(help, {_,v -> !empty(v) ? '" '..v : v})
+    call map(help, {_, v -> !empty(v) ? '" ' .. v : v})
     call append(0, help)
     " Why `:exe`?{{{
     "
@@ -158,9 +161,9 @@ endfu
 fu fex#tree#split(...) abort "{{{1
     let file = s:getfile()
     if a:0 && a:1 is# 'tabedit'
-        exe 'tabedit '..file
+        exe 'tabedit ' .. file
     else
-        exe 'sp '..file
+        exe 'sp ' .. file
     endif
 endfu
 
@@ -173,10 +176,10 @@ fu fex#tree#edit() abort "{{{1
     if file is# expand('%:p') | call win_gotoid(id) | endif
     " E36: Not enough room
     try
-        exe 'sp '..file
+        exe 'sp ' .. file
         norm! zv
     catch
-        return lg#catch()
+        return s:Catch()
     finally
         call win_gotoid(id)
     endtry
@@ -198,10 +201,10 @@ fu fex#tree#fde() abort "{{{1
     "
     "     $ vim /tmp/script.profile
     "}}}
-    let idx = strchars(matchstr(getline(v:lnum), '.\{-}[├└]'))-1
-    let lvl = idx/4
-    if matchstr(getline(v:lnum + 1), '\%'..(idx+5)..'v.') =~# '[├└]'
-        return '>'..(lvl + 1)
+    let idx = getline(v:lnum)->matchstr('.\{-}[├└]')->strchars() - 1
+    let lvl = idx / 4
+    if getline(v:lnum + 1)->matchstr('\%' .. (idx + 5) .. 'v.') =~# '[├└]'
+        return '>' .. (lvl + 1)
     endif
     return lvl
 endfu
@@ -212,9 +215,9 @@ endfu
 
 fu fex#tree#fdt() abort "{{{1
     let pat = '\(.*─\s\)\(.*\)/'
-    let l:Rep = {m -> m[1]..substitute(m[2], '.*/', '', '')}
-    return (get(b:, 'foldtitle_full', 0) ? '['..(v:foldend - v:foldstart)..']': '')
-    \ ..substitute(getline(v:foldstart), pat, l:Rep, '')
+    let l:Rep = {m -> m[1] .. substitute(m[2], '.*/', '', '')}
+    return (get(b:, 'foldtitle_full', 0) ? '[' .. (v:foldend - v:foldstart) .. ']': '')
+        \ .. getline(v:foldstart)->substitute(pat, l:Rep, '')
 endfu
 
 fu s:format() abort "{{{1
@@ -262,13 +265,13 @@ fu s:get_ignore_pat() abort "{{{1
     "          │               │              ┌ to match `tags`
     "          ├────────┐      ├─────┐        ├───────┐
     let pat = '\*[^/]\+\|\*/\zs[^*/]\+\ze/\*\|^[^*/]\+$'
-    let ignore_pat = map(split(&wig, ','), {_,v -> matchstr(v, pat)})
+    let ignore_pat = split(&wig, ',')->map({_, v -> matchstr(v, pat)})
     " We may get empty matches, or sth like `*.*` because of (in vimrc):
     "
-    "     let &wig ..= ','.&undodir.'/*.*'
+    "     let &wig ..= ',' .. &undodir .. '/*.*'
     "
     " We must eliminate those.
-    call filter(ignore_pat, {_,v -> !empty(v) && v !~# '^[.*/]\+$'})
+    call filter(ignore_pat, {_, v -> !empty(v) && v !~# '^[.*/]\+$'})
     let ignore_pat = join(ignore_pat, '|')
 
     return printf('-I "%s"', ignore_pat)
@@ -279,7 +282,7 @@ fu s:get_tree_cmd(dir) abort "{{{1
     "                     │┌ append a `/' for directories, a `*' for executable file, ...
     "                     ││┌ turn colorization off
     "                     │││
-    let short_options = '-fFn'..(s:hide_dot_entries ? '' : ' -a')
+    let short_options = '-fFn' .. (s:hide_dot_entries ? '' : ' -a')
     let long_options = '--dirsfirst --noreport'
     "                     │           │
     "                     │           └ don't print the file and directory report at the end
@@ -287,18 +290,18 @@ fu s:get_tree_cmd(dir) abort "{{{1
 
     let ignore_pat = s:get_ignore_pat()
 
-    let limit = '-L '..(s:is_big_directory(a:dir) ? 2 : 10)..' --filelimit 300'
-    "             │                                            │
-    "             │                                            └ do not descend directories
-    "             │                                              that contain more than 300 entries
+    let limit = '-L ' .. (s:is_big_directory(a:dir) ? 2 : 10) .. ' --filelimit 300'
+    "             │                                                │
+    "             │                                                └ do not descend directories
+    "             │                                                  that contain more than 300 entries
     "             │
     "             └ don't display directories whose depth is greater than 2 or 10
 
-    return 'tree '..short_options..' '..long_options..' '..limit..' '..ignore_pat..' '..shellescape(a:dir)
+    return 'tree ' .. short_options .. ' ' .. long_options .. ' ' .. limit .. ' ' .. ignore_pat .. ' ' .. shellescape(a:dir)
 endfu
 
 fu s:getcurdir() abort "{{{1
-    let curdir = matchstr(expand('%:p'), 'fex\zs.*')
+    let curdir = expand('%:p')->matchstr('fex\zs.*')
     return empty(curdir) ? '/' : curdir
 endfu
 
@@ -306,9 +309,9 @@ fu s:getfile() abort "{{{1
     let line = getline('.')
 
     return line =~# '\s->\s'
-    \ ?        matchstr(line, '.*─\s\zs.*\ze\s->\s')
-    \ :        matchstr(line, '.*─\s\zs.*'..s:INDICATOR..'\@1<!')
-    " Do *not* add the `$` anchor!                              ^{{{
+        \ ?     matchstr(line, '.*─\s\zs.*\ze\s->\s')
+        \ :     matchstr(line, '.*─\s\zs.*' .. s:INDICATOR .. '\@1<!')
+    " Do *not* add the `$` anchor!                                  ^{{{
     "
     " You don't want match until the end of the line.
     " You want to match  a maximum of text, so maybe until the  end of the line,
@@ -318,14 +321,16 @@ endfu
 
 fu s:is_big_directory(dir) abort "{{{1
     sil return a:dir is# '/'
-    \ ||   a:dir is# '/home'
-    \ ||   a:dir =~# '^/home/[^/]\+/\?$'
-    \ ||   systemlist('find '..shellescape(a:dir)..' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
+        \ ||   a:dir is# '/home'
+        \ ||   a:dir =~# '^/home/[^/]\+/\=$'
+        \ ||   systemlist('find ' .. shellescape(a:dir) .. ' -type f 2>/dev/null | wc -l')[0] > s:BIG_DIR_SIZE
 endfu
 
 fu s:matchdelete() abort "{{{1
-    let id = get(get(filter(getmatches(),
-    \            {_,v -> v.pattern is# s:BIG_DIR_PAT}), 0, []), 'id', 0)
+    let id = getmatches()
+        \ ->filter({_, v -> v.pattern is# s:BIG_DIR_PAT})
+        \ ->get(0, [])
+        \ ->get('id', 0)
     if id
         call matchdelete(id)
     endif
@@ -333,34 +338,34 @@ endfu
 
 fu fex#tree#open(dir, nosplit) abort "{{{1
     if !executable('tree')
-        return 'echoerr '..string('requires the tree shell command; currently not installed')
+        return 'echoerr ' .. string('requires the tree shell command; currently not installed')
     endif
 
     call s:timer_stop()
 
     " save current file name to position the cursor on it
-    if a:dir is# '' || a:dir is# getcwd()
-        let s:current_file_pos = '\C\V─\s'..expand('%:p')..'\m\%('..s:INDICATOR..'\|\s->\s\|$\)'
+    if a:dir == '' || a:dir is# getcwd()
+        let s:current_file_pos = '\C\V─\s' .. expand('%:p') .. '\m\%(' .. s:INDICATOR .. '\|\s->\s\|$\)'
     endif
 
     let dir = !empty(a:dir) ? expand(a:dir) : expand('%:p:h')
     let dir = substitute(dir, '.\{-1,}\zs/\+$', '', '')
     if !isdirectory(dir)
-        return 'echoerr '..string(dir..'/ is not a directory')
+        return 'echoerr ' .. string(dir .. '/ is not a directory')
     endif
 
-    "                                   ┌ `BufNewFile` won't be emitted
-    "                                   │  if the buffer name ends with a slash.
-    "                                   │
-    "                                   │  Besides it  would raise  an error
-    "                                   │  when  `save#buffer()`   would  be
-    "                                   │  invoked (`:update` would fail; E502).
-    "                                   │
-    let tempfile = tempname()..'/fex'..(dir is# '/' ? '' : dir)
+    "                                       ┌ `BufNewFile` won't be emitted
+    "                                       │  if the buffer name ends with a slash.
+    "                                       │
+    "                                       │  Besides it  would raise  an error
+    "                                       │  when  `save#buffer()`   would  be
+    "                                       │  invoked (`:update` would fail; E502).
+    "                                       │
+    let tempfile = tempname() .. '/fex' .. (dir is# '/' ? '' : dir)
     if a:nosplit
-        exe 'e '..tempfile
+        exe 'e ' .. tempfile
     else
-        exe 'to '..get(t:, 'fex_winwidth', &columns/3)..'vnew '..tempfile
+        exe 'to ' .. get(t:, 'fex_winwidth', &columns/3) .. 'vnew ' .. tempfile
     endif
 
     return ''
@@ -370,7 +375,7 @@ fu fex#tree#populate(path) abort "{{{1
     if exists('b:fex_curdir') | return | endif
 
     let dir = matchstr(a:path, '/fex\zs.*')
-    if dir is# '' | let dir = '/' | endif
+    if dir == '' | let dir = '/' | endif
     " Can be used  by `vim-statusline` to get the directory  viewed in a focused
     " `tree` window.
     let b:fex_curdir = dir
@@ -385,7 +390,7 @@ fu fex#tree#populate(path) abort "{{{1
     endif
 
     let cmd = s:get_tree_cmd(dir)
-    sil call setline(1, systemlist(cmd))
+    sil call systemlist(cmd)->setline(1)
     call s:format()
 
     if stridx(cmd, '-L 2 --filelimit 300') == -1
@@ -409,7 +414,7 @@ fu fex#tree#populate(path) abort "{{{1
 endfu
 
 fu fex#tree#preview() abort "{{{1
-    exe 'pedit '..s:getfile()
+    exe 'pedit ' .. s:getfile()
 
     let prev_winnr = winnr('#')
     if getwinvar(prev_winnr, '&pvw', 0)
@@ -428,7 +433,7 @@ fu fex#tree#relative_dir(who) abort "{{{1
         if curdir is# '/'
             return
         endif
-        let new_dir = fnamemodify(substitute(curdir, '^\.', getcwd(), ''), ':h')
+        let new_dir = substitute(curdir, '^\.', getcwd(), '')->fnamemodify(':h')
     else
         if getline('.') =~# '^"\|^$'
             norm! l
@@ -448,11 +453,11 @@ fu fex#tree#relative_dir(who) abort "{{{1
     endif
 
     call s:save_view(curdir)
-    exe 'Tree! '..new_dir
+    exe 'Tree! ' .. new_dir
 
     " If we go up the tree, position the cursor on the directory we come from.
     if exists('curdir')
-        call search('\C\V─\s'..curdir..'\m\%(\s->\s\|/$\)')
+        call search('\C\V─\s' .. curdir .. '\m\%(\s->\s\|/$\)')
     endif
 endfu
 
@@ -467,10 +472,10 @@ fu fex#tree#reload() abort "{{{1
     let line = getline('.')
 
     " reload
-    exe 'Tree! '..cur_dir
+    exe 'Tree! ' .. cur_dir
 
     " restore position
-    let pat = '^\C\V'..escape(line, '\')..'\m$'
+    let pat = '^\C\V' .. escape(line, '\') .. '\m$'
     let pat = substitute(pat, '[├└]', '\\m[├└]\\V', 'g')
     call search(pat)
 endfu
