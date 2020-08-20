@@ -214,7 +214,7 @@ fu fex#dirvish_up() abort "{{{1
 endfu
 
 fu fex#undo_ftplugin() abort "{{{1
-    setl bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< stl< swf< wfw< wrap<
+    set bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< stl< swf< wfw< wrap<
     unlet! b:fex_curdir
 
     nunmap <buffer> <c-s>

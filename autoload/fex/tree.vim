@@ -3,9 +3,6 @@ if exists('g:autoloaded_fex#tree')
 endif
 let g:autoloaded_fex#tree = 1
 
-import Catch from 'lg.vim'
-import Win_getid from 'lg.vim'
-
 " TODO: Make the plugin async (faster in big directories).
 " Look for `system()` and `systemlist()` everywhere in the plugin.
 " Inspiration: https://github.com/lambdalisue/fern.vim
@@ -36,6 +33,8 @@ import Win_getid from 'lg.vim'
 " directory when pressing `h`.
 
 " Init {{{1
+
+import {Catch, Win_getid} from 'lg.vim'
 
 let s:cache = {}
 let s:hide_dot_entries = 0
@@ -114,7 +113,7 @@ endfu
 fu fex#tree#display_help() abort "{{{1
     if getline(1) =~# '"'
         sil keepj 1;/^[^"]/-d_
-        setl smc< cole=3
+        set cole=3 smc<
         return
     endif
 
