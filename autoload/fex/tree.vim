@@ -396,7 +396,7 @@ fu fex#tree#populate(path) abort "{{{1
         " save the contents of the buffer in a cache, for quicker access in the future
         call extend(s:cache, {dir : {'contents': getline(1, '$'), 'big': 0}})
     else
-        call matchadd('WarningMsg', s:BIG_DIR_PAT)
+        call matchadd('WarningMsg', s:BIG_DIR_PAT, 0)
         call extend(s:cache, {dir : {'contents': getline(1, '$'), 'big': 1}})
         "                                                                ^
         " When an entry of the cache contains a non-zero 'big' key, it means the
@@ -517,7 +517,7 @@ fu s:use_cache(dir) abort "{{{1
     " if the  directory is big, and  not all its contents  can be displayed,
     " highlight its path on the first line as an indicator
     if get(s:cache[a:dir], 'big', 0)
-        call matchadd('WarningMsg', s:BIG_DIR_PAT)
+        call matchadd('WarningMsg', s:BIG_DIR_PAT, 0)
     endif
     return ''
 endfu
