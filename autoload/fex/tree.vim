@@ -216,7 +216,7 @@ fu fex#tree#fdt() abort "{{{1
     let pat = '\(.*─\s\)\(.*\)/'
     let l:Rep = {m -> m[1] .. substitute(m[2], '.*/', '', '')}
     return (get(b:, 'foldtitle_full', 0) ? '[' .. (v:foldend - v:foldstart) .. ']': '')
-        \ .. getline(v:foldstart)->substitute(pat, l:Rep, '')
+        \ .. getline(v:foldstart)->substitute(pat, Rep, '')
 endfu
 
 fu s:format() abort "{{{1
