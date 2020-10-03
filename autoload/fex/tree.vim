@@ -80,7 +80,7 @@ fu fex#tree#close() abort "{{{1
         " If it has, `win_id2win()` will return 0.
         if preview_winnr
             exe preview_winnr .. 'wincmd c'
-            unlet t:fex_preview_winid
+            unlet! t:fex_preview_winid
         endif
     endif
 
