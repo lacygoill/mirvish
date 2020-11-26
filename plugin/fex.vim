@@ -15,7 +15,7 @@ com -bang -bar -nargs=? -complete=file Tree exe fex#tree#open(<q-args>, <bang>0)
 
 " Mappings {{{1
 
-nno <unique><silent> -T :<c-u>Tree<cr>
+nno <unique> -T <cmd>Tree<cr>
 " TODO: If you press `-t` several times in the same tab page, several `fex` windows are opened.{{{
 "
 " I think it would be better if there was always at most one window.
@@ -29,6 +29,6 @@ nno <unique><silent> -T :<c-u>Tree<cr>
 "
 "     /tmp/v3cl1c7/366/fex/home/user/.vim/plugged/vim-fex/ is not a directory
 "}}}
-nno <unique><silent> -t :<c-u>exe 'Tree ' .. getcwd()<cr>
-nno <unique><silent> -- :<c-u>call fex#dirvish_up()<cr>
+nno <unique> -t <cmd>exe 'Tree ' .. getcwd()<cr>
+nno <unique> -- <cmd>call fex#dirvish_up()<cr>
 

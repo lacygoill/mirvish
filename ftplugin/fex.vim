@@ -27,28 +27,28 @@ let &l:stl = '%!g:statusline_winid == win_getid()'
 " the desired result (we want a new  large horizontal split; not a vertical one,
 " which we would probably get if the  previous window is a vertical split opened
 " via `C-w f`).
-nno <buffer><nowait><silent> <c-s> :<c-u>call fex#tree#edit()<cr>
-nno <buffer><nowait><silent> <c-w>F :<c-u>call fex#tree#split()<cr>
-nno <buffer><nowait><silent> <c-w>f :<c-u>call fex#tree#split()<cr>
-nno <buffer><nowait><silent> <c-w>gf :<c-u>call fex#tree#split('tabedit')<cr>
+nno <buffer><nowait> <c-s> <cmd>call fex#tree#edit()<cr>
+nno <buffer><nowait> <c-w>F <cmd>call fex#tree#split()<cr>
+nno <buffer><nowait> <c-w>f <cmd>call fex#tree#split()<cr>
+nno <buffer><nowait> <c-w>gf <cmd>call fex#tree#split('tabedit')<cr>
 
-nno <buffer><nowait><silent> ( k:call fex#tree#preview()<cr>
-nno <buffer><nowait><silent> ) j:call fex#tree#preview()<cr>
-nno <buffer><nowait><silent> [[ :<c-u>call search('.*/$', 'b')<cr>
-nno <buffer><nowait><silent> ]] :<c-u>call search('.*/$')<cr>
+nno <buffer><nowait> ( k<cmd>call fex#tree#preview()<cr>
+nno <buffer><nowait> ) j<cmd>call fex#tree#preview()<cr>
+nno <buffer><nowait> [[ <cmd>call search('.*/$', 'b')<cr>
+nno <buffer><nowait> ]] <cmd>call search('.*/$')<cr>
 
-nno <buffer><nowait><silent> -M :<c-u>call fex#print_metadata('auto')<cr>
-nno <buffer><nowait><silent> -m :<c-u>call fex#print_metadata('manual')<cr>
-xno <buffer><nowait><silent> -m :<c-u>call fex#print_metadata('manual', 'vis')<cr>
+nno <buffer><nowait> -M <cmd>call fex#print_metadata('auto')<cr>
+nno <buffer><nowait> -m <cmd>call fex#print_metadata('manual')<cr>
+xno <buffer><nowait> -m <c-\><c-n><cmd>call fex#print_metadata('manual', 'vis')<cr>
 
-nno <buffer><nowait><silent> R :<c-u>call fex#tree#reload()<cr>
-nno <buffer><nowait><silent> g? :<c-u>call fex#tree#display_help()<cr>
-nno <buffer><nowait><silent> gh :<c-u>call fex#tree#toggle_dot_entries()<cr>
+nno <buffer><nowait> R <cmd>call fex#tree#reload()<cr>
+nno <buffer><nowait> g? <cmd>call fex#tree#display_help()<cr>
+nno <buffer><nowait> gh <cmd>call fex#tree#toggle_dot_entries()<cr>
 
-nno <buffer><nowait><silent> h :<c-u>call fex#tree#relative_dir('parent')<cr>
-nno <buffer><nowait><silent> l :<c-u>call fex#tree#relative_dir('child')<cr>
-nno <buffer><nowait><silent> p :<c-u>call fex#tree#preview()<cr>
-nno <buffer><nowait><silent> q :<c-u>call fex#tree#close()<cr>
+nno <buffer><nowait> h <cmd>call fex#tree#relative_dir('parent')<cr>
+nno <buffer><nowait> l <cmd>call fex#tree#relative_dir('child')<cr>
+nno <buffer><nowait> p <cmd>call fex#tree#preview()<cr>
+nno <buffer><nowait> q <cmd>call fex#tree#close()<cr>
 
 " Variables {{{1
 
