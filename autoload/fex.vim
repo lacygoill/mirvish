@@ -114,24 +114,24 @@ fu fex#print_metadata(how, ...) abort "{{{1
     endif
 
     if a:how is# 'auto'
-        if !exists('#fex_print_metadata')
+        if !exists('#FexPrintMetadata')
             " Install an autocmd to automatically print the metadata for the file
             " under the cursor.
             call s:auto_metadata()
             " Re-install it every time we enter a new directory.
-            augroup fex_print_metadata_and_persist | au!
+            augroup FexPrintMetadataAndPersist | au!
                 au FileType dirvish,tree call s:auto_metadata()
             augroup END
         else
             " if on, then toggle off
-            sil! au!  fex_print_metadata
-            sil! aug! fex_print_metadata
+            sil! au!  FexPrintMetadata
+            sil! aug! FexPrintMetadata
         endif
     elseif a:how is# 'manual'
-        sil! au!  fex_print_metadata
-        sil! aug! fex_print_metadata
-        sil! au!  fex_print_metadata_and_persist
-        sil! aug! fex_print_metadata_and_persist
+        sil! au!  FexPrintMetadata
+        sil! aug! FexPrintMetadata
+        sil! au!  FexPrintMetadataAndPersist
+        sil! aug! FexPrintMetadataAndPersist
         unlet! b:fex_last_line
     endif
     call s:print_metadata(a:0)
@@ -158,7 +158,7 @@ fu s:print_metadata(vis) abort "{{{1
 endfu
 
 fu s:auto_metadata() abort "{{{1
-    augroup fex_print_metadata
+    augroup FexPrintMetadata
         au! * <buffer>
         au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) != line('.')
             \ |     let b:fex_last_line = line('.')

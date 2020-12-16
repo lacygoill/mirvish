@@ -5,7 +5,7 @@ let g:loaded_fex = 1
 
 " Autocommand {{{1
 
-augroup my_fex | au!
+augroup MyFex | au!
     au BufNewFile /tmp/*/fex* call expand('<afile>:p')->fex#tree#populate()
 augroup END
 
