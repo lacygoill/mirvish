@@ -36,8 +36,6 @@ var loaded = true
 
 import {Catch, Win_getid} from 'lg.vim'
 
-# TODO: If we simply write `var cache =  {}`, an error is raised at compile time
-# in the first line of `UseCache()`.  Find a MWE.  Understand it.
 var cache: dict<dict<any>>
 var hide_dot_entries = false
 const INDICATOR = '[/=*>|]'
@@ -65,11 +63,8 @@ const HELP =<< trim END
     }         preview next file/directory
 END
 
-def CleanCache() #{{{1
-    cache = {}
-enddef
-
-def fex#tree#close() #{{{1
+# Interface {{{1
+def fex#tree#close() #{{{2
     if reg_recording() != ''
         feedkeys('q', 'in')
         return
@@ -115,7 +110,7 @@ def fex#tree#close() #{{{1
 enddef
 var clean_cache_timer_id: number
 
-def fex#tree#displayHelp() #{{{1
+def fex#tree#displayHelp() #{{{2
     if getline(1) =~ '"'
         sil keepj :1;/^[^"]/- d _
         set cole=3 smc<
@@ -149,7 +144,7 @@ def fex#tree#displayHelp() #{{{1
     cursor(1, 1)
 enddef
 
-def fex#tree#split(in_newtab = false) #{{{1
+def fex#tree#split(in_newtab = false) #{{{2
     var file = Getfile()
     if in_newtab
         exe 'tabedit ' .. file
@@ -158,7 +153,7 @@ def fex#tree#split(in_newtab = false) #{{{1
     endif
 enddef
 
-def fex#tree#edit() #{{{1
+def fex#tree#edit() #{{{2
     var file = Getfile()
     if !filereadable(file)
         return
@@ -180,7 +175,7 @@ def fex#tree#edit() #{{{1
     endtry
 enddef
 
-def fex#tree#fde(): any #{{{1
+def fex#tree#fde(): any #{{{2
     # Warning:{{{
     # This function is by far the slowest when we execute `:Tree`.
     # This is due to the `var idx =` and `if matchstr()` statements.
@@ -204,11 +199,11 @@ def fex#tree#fde(): any #{{{1
     return lvl
 enddef
 
-def fex#tree#fdl() #{{{1
+def fex#tree#fdl() #{{{2
     &l:fdl = &foldclose == 'all' ? 0 : 99
 enddef
 
-def fex#tree#fdt(): string #{{{1
+def fex#tree#fdt(): string #{{{2
     var pat = '\(.*─\s\)\(.*\)/'
     var Rep = (m) => m[1] .. substitute(m[2], '.*/', '', '')
     return (get(b:, 'foldtitle_full', false)
@@ -217,125 +212,7 @@ def fex#tree#fdt(): string #{{{1
         .. getline(v:foldstart)->substitute(pat, Rep, '')
 enddef
 
-def Format() #{{{1
-    # `tree(1)`  makes the  paths begin  with an  initial dot  to stand  for the
-    # working directory.
-    # But the  latter could change after  we change the focus  to another window
-    # (`vim-cwd`).
-    # This could break `C-w f`.
-    #
-    # We need to translate the dot into the current working directory.
-    var cwd = getcwd()
-    sil keepj keepp :%s:─\s\zs\.\ze/:\=cwd:e
-    # Why?{{{
-    #
-    # We  may have  created a  symbolic link  whose target  is a  directory, and
-    # during the creation we may have appended a slash at the end.
-    # If  that's the  case, because  of the  `-F` option,  `tree(1)` will  add a
-    # second slash.  We'll  end up with two slashes, which  will give unexpected
-    # results regarding the syntax highlighting.
-    #}}}
-    sil keepj keepp :%s:/\ze/$::e
-enddef
-
-def GetIgnorePat(): string #{{{1
-    # Purpose:
-    # Build a FILE pattern to pass to `tree(1)`, so that it ignores certain entries.
-    # We use 'wig' to decide what to ignore.
-
-    # 'wig' can contain patterns matching directories.
-    # But  `tree(1)` compares  the patterns  we pass  to `-I`  to the  LAST path
-    # component of the entries (files/directories).
-    # So, you can't do this:
-    #
-    #     $ tree -I '*/__pycache__/*' ~/.vim/pythonx/
-    #
-    # Instead, you must do this:
-    #
-    #     $ tree -I '__pycache__' ~/.vim/pythonx/
-
-    #          ┌ to match `*.bak` in `&wig`
-    #          │ (no dot in the pattern to also match `*~`)
-    #          │
-    #          │               ┌ to match `*/pycache/*`
-    #          │               │
-    #          │               │              ┌ to match `tags`
-    #          ├────────┐      ├─────┐        ├───────┐
-    var pat = '\*[^/]\+\|\*/\zs[^*/]\+\ze/\*\|^[^*/]\+$'
-    var ignore_pat = split(&wig, ',')->map((_, v) => matchstr(v, pat))
-        # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
-        #
-        #     &wig ..= ',' .. &undodir .. '/*.*'
-        #
-        # We must eliminate those.
-        #}}}
-        ->filter((_, v) => !empty(v) && v !~ '^[.*/]\+$')
-        ->join('|')
-
-    return printf('-I "%s"', ignore_pat)
-enddef
-
-def GetTreeCmd(dir: string): string #{{{1
-    #                     ┌ print the full path for each entry (necessary for `gf` &friends)
-    #                     │┌ append a `/' for directories, a `*' for executable file, ...
-    #                     ││┌ turn colorization off
-    #                     │││
-    var short_options = '-fFn' .. (hide_dot_entries ? '' : ' -a')
-    var long_options = '--dirsfirst --noreport'
-    #                     │           │
-    #                     │           └ don't print the file and directory report at the end
-    #                     └ print directories before files
-
-    var ignore_pat = GetIgnorePat()
-
-    var limit = '-L ' .. (IsBigDirectory(dir) ? 2 : 10) .. ' --filelimit 300'
-    #             │                                          │
-    #             │                                          └ do not descend directories
-    #             │                                            that contain more than 300 entries
-    #             │
-    #             └ don't display directories whose depth is greater than 2 or 10
-
-    return 'tree ' .. short_options .. ' ' .. long_options
-        .. ' ' .. limit .. ' ' .. ignore_pat .. ' ' .. shellescape(dir)
-enddef
-
-def Getcurdir(): string #{{{1
-    var curdir = expand('%:p')->matchstr('fex\zs.*')
-    return empty(curdir) ? '/' : curdir
-enddef
-
-def Getfile(): string #{{{1
-    var line = getline('.')
-
-    return line =~ '\s->\s'
-        ?     matchstr(line, '.*─\s\zs.*\ze\s->\s')
-        :     matchstr(line, '.*─\s\zs.*' .. INDICATOR .. '\@1<!')
-    # Do *not* add the `$` anchor!                                ^{{{
-    #
-    # You don't want match until the end of the line.
-    # You want to match  a maximum of text, so maybe until the  end of the line,
-    # but with the condition that it doesn't finish with `[/=*>|]`.
-    #}}}
-enddef
-
-def IsBigDirectory(dir: string): bool #{{{1
-    sil return dir == '/'
-        || dir == '/home'
-        || dir =~ '^/home/[^/]\+/\=$'
-        || systemlist('find ' .. shellescape(dir) .. ' -type f 2>/dev/null | wc -l')[0]->str2nr() > BIG_DIR_SIZE
-enddef
-
-def Matchdelete() #{{{1
-    var id = getmatches()
-        ->filter((_, v) => v.pattern == BIG_DIR_PAT)
-        ->get(0, {})
-        ->get('id', 0)
-    if id != 0
-        matchdelete(id)
-    endif
-enddef
-
-def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{1
+def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{2
     if !executable('tree')
         return 'echoerr ' .. string('requires the tree shell command; currently not installed')
     endif
@@ -371,7 +248,7 @@ def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{1
 enddef
 var current_file_pos: string
 
-def fex#tree#populate(path: string) #{{{1
+def fex#tree#populate(path: string) #{{{2
     if exists('b:fex_curdir')
         return
     endif
@@ -418,7 +295,7 @@ def fex#tree#populate(path: string) #{{{1
     endif
 enddef
 
-def fex#tree#preview() #{{{1
+def fex#tree#preview() #{{{2
     exe 'pedit ' .. Getfile()
 
     var prev_winnr = winnr('#')
@@ -427,7 +304,7 @@ def fex#tree#preview() #{{{1
     endif
 enddef
 
-def fex#tree#relativeDir(who: string) #{{{1
+def fex#tree#relativeDir(who: string) #{{{2
     var curdir = Getcurdir()
 
     var new_dir: string
@@ -467,7 +344,7 @@ def fex#tree#relativeDir(who: string) #{{{1
     endif
 enddef
 
-def fex#tree#reload() #{{{1
+def fex#tree#reload() #{{{2
     # remove information in cache, so that the reloading is forced to re-invoke `tree(1)`
     var cur_dir = Getcurdir()
     if has_key(cache, cur_dir)
@@ -486,7 +363,135 @@ def fex#tree#reload() #{{{1
     search(pat)
 enddef
 
-def SaveView(curdir: string) #{{{1
+def fex#tree#toggleDotEntries() #{{{2
+    hide_dot_entries = !hide_dot_entries
+    fex#tree#reload()
+enddef
+#}}}1
+# Core {{{1
+def CleanCache() #{{{2
+    cache = {}
+enddef
+
+def Format() #{{{2
+    # `tree(1)`  makes the  paths begin  with an  initial dot  to stand  for the
+    # working directory.
+    # But the  latter could change after  we change the focus  to another window
+    # (`vim-cwd`).
+    # This could break `C-w f`.
+    #
+    # We need to translate the dot into the current working directory.
+    var cwd = getcwd()
+    sil keepj keepp :%s:─\s\zs\.\ze/:\=cwd:e
+    # Why?{{{
+    #
+    # We  may have  created a  symbolic link  whose target  is a  directory, and
+    # during the creation we may have appended a slash at the end.
+    # If  that's the  case, because  of the  `-F` option,  `tree(1)` will  add a
+    # second slash.  We'll  end up with two slashes, which  will give unexpected
+    # results regarding the syntax highlighting.
+    #}}}
+    sil keepj keepp :%s:/\ze/$::e
+enddef
+
+def GetIgnorePat(): string #{{{2
+    # Purpose:
+    # Build a FILE pattern to pass to `tree(1)`, so that it ignores certain entries.
+    # We use 'wig' to decide what to ignore.
+
+    # 'wig' can contain patterns matching directories.
+    # But  `tree(1)` compares  the patterns  we pass  to `-I`  to the  LAST path
+    # component of the entries (files/directories).
+    # So, you can't do this:
+    #
+    #     $ tree -I '*/__pycache__/*' ~/.vim/pythonx/
+    #
+    # Instead, you must do this:
+    #
+    #     $ tree -I '__pycache__' ~/.vim/pythonx/
+
+    #          ┌ to match `*.bak` in `&wig`
+    #          │ (no dot in the pattern to also match `*~`)
+    #          │
+    #          │               ┌ to match `*/pycache/*`
+    #          │               │
+    #          │               │              ┌ to match `tags`
+    #          ├────────┐      ├─────┐        ├───────┐
+    var pat = '\*[^/]\+\|\*/\zs[^*/]\+\ze/\*\|^[^*/]\+$'
+    var ignore_pat = split(&wig, ',')->map((_, v) => matchstr(v, pat))
+        # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
+        #
+        #     &wig ..= ',' .. &undodir .. '/*.*'
+        #
+        # We must eliminate those.
+        #}}}
+        ->filter((_, v) => !empty(v) && v !~ '^[.*/]\+$')
+        ->join('|')
+
+    return printf('-I "%s"', ignore_pat)
+enddef
+
+def GetTreeCmd(dir: string): string #{{{2
+    #                     ┌ print the full path for each entry (necessary for `gf` &friends)
+    #                     │┌ append a `/' for directories, a `*' for executable file, ...
+    #                     ││┌ turn colorization off
+    #                     │││
+    var short_options = '-fFn' .. (hide_dot_entries ? '' : ' -a')
+    var long_options = '--dirsfirst --noreport'
+    #                     │           │
+    #                     │           └ don't print the file and directory report at the end
+    #                     └ print directories before files
+
+    var ignore_pat = GetIgnorePat()
+
+    var limit = '-L ' .. (IsBigDirectory(dir) ? 2 : 10) .. ' --filelimit 300'
+    #             │                                          │
+    #             │                                          └ do not descend directories
+    #             │                                            that contain more than 300 entries
+    #             │
+    #             └ don't display directories whose depth is greater than 2 or 10
+
+    return 'tree ' .. short_options .. ' ' .. long_options
+        .. ' ' .. limit .. ' ' .. ignore_pat .. ' ' .. shellescape(dir)
+enddef
+
+def Getcurdir(): string #{{{2
+    var curdir = expand('%:p')->matchstr('fex\zs.*')
+    return empty(curdir) ? '/' : curdir
+enddef
+
+def Getfile(): string #{{{2
+    var line = getline('.')
+
+    return line =~ '\s->\s'
+        ?     matchstr(line, '.*─\s\zs.*\ze\s->\s')
+        :     matchstr(line, '.*─\s\zs.*' .. INDICATOR .. '\@1<!')
+    # Do *not* add the `$` anchor!                                ^{{{
+    #
+    # You don't want match until the end of the line.
+    # You want to match  a maximum of text, so maybe until the  end of the line,
+    # but with the condition that it doesn't finish with `[/=*>|]`.
+    #}}}
+enddef
+
+def IsBigDirectory(dir: string): bool #{{{2
+    sil return dir == '/'
+        || dir == '/home'
+        || dir =~ '^/home/[^/]\+/\=$'
+        || systemlist('find ' .. shellescape(dir) .. ' -type f 2>/dev/null | wc -l')[0]->str2nr() > BIG_DIR_SIZE
+enddef
+
+def Matchdelete() #{{{2
+    var id = getmatches()
+        ->filter((_, v) => v.pattern == BIG_DIR_PAT)
+        ->get(0, {})
+        ->get('id', 0)
+    if id != 0
+        matchdelete(id)
+    endif
+enddef
+
+def SaveView(curdir: string) #{{{2
     if !has_key(cache, curdir)
         return
     endif
@@ -494,14 +499,14 @@ def SaveView(curdir: string) #{{{1
     cache[curdir].fdl = &l:fdl
 enddef
 
-def Timer_stop() #{{{1
+def Timer_stop() #{{{2
     if clean_cache_timer_id != 0
         timer_stop(clean_cache_timer_id)
         clean_cache_timer_id = 0
     endif
 enddef
 
-def UseCache(dir: string) #{{{1
+def UseCache(dir: string) #{{{2
     setline(1, cache[dir].contents)
 
     # restore last position if one was saved
@@ -529,9 +534,4 @@ def UseCache(dir: string) #{{{1
     endif
 enddef
 var last_pos: number
-
-def fex#tree#toggleDotEntries() #{{{1
-    hide_dot_entries = !hide_dot_entries
-    fex#tree#reload()
-enddef
 
