@@ -1,219 +1,230 @@
-if exists('g:autoloaded_fex')
-    finish
-endif
-let g:autoloaded_fex = 1
+vim9 noclear
+
+if exists('loaded') | finish | endif
+var loaded = true
 
 import Win_getid from 'lg.vim'
 
-" Why not hiding by default?{{{
-"
-" If you hide dot entries, when you go up the tree from a hidden directory, your
-" position in the  directory above won't be the hidden  directory where you come
-" from.
-"
-" This matters if you want to get back where you were easily.
-" Indeed, now you need to toggle the visibility of hidden entries, and find back
-" your old  directory, instead of just  pressing the key to  enter the directory
-" under the cursor.
-"}}}
-let s:hide_dot_entries = 0
+# Why not hiding by default?{{{
+#
+# If you hide dot entries, when you go up the tree from a hidden directory, your
+# position in the  directory above won't be the hidden  directory where you come
+# from.
+#
+# This matters if you want to get back where you were easily.
+# Indeed, now you need to toggle the visibility of hidden entries, and find back
+# your old  directory, instead of just  pressing the key to  enter the directory
+# under the cursor.
+#}}}
+var hide_dot_entries: bool
 
-fu fex#format_entries() abort "{{{1
-    let pat = glob2regpat(&wig)->substitute(',', '\\|', 'g')
-    let pat = '\%(' .. pat .. '\)$'
-    sil exe 'keepj keepp g:' .. pat .. ':d_'
+const _2_POW_10 = pow(2, 10)->float2nr()
+const _2_POW_20 = pow(2, 20)->float2nr()
+const _2_POW_30 = pow(2, 30)->float2nr()
 
-    if s:hide_dot_entries
-        sil keepj keepp g:/\.[^\/]\+/\=$:d_
+def fex#formatEntries() #{{{1
+    var pat = glob2regpat(&wig)->substitute(',', '\\|', 'g')
+    pat = '\%(' .. pat .. '\)$'
+    sil exe 'keepj keepp g:' .. pat .. ':d _'
+
+    if hide_dot_entries
+        sil keepj keepp g:/\.[^\/]\+/\=$:d _
     endif
 
     sort :^.*[\/]:
-endfu
+enddef
 
-fu s:get_metadata(line, ...) abort "{{{1
-    let file = a:line
+def GetMetadata(line: string, with_filename = false): string #{{{1
+    var file = line
+        # normalize name (important for when we filter output of `readdirex()`)
+        ->trim('/', 2)
 
-    " normalize name (important for when we filter output of `readdirex()`)
-    let file = trim(file, '/')
-    " if it's a dir, we just need the last path component
-    let file = fnamemodify(file, ':t')
-
-    " in case we call this function from the tree explorer
+    # in case we call this function from the tree explorer
     if match(file, '─') != -1
-        let file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
+        file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
-    let metadata = expand('%:p')->readdirex({e -> e.name is# file})->get(0, {})
-    if empty(metadata) | return '' | endif
 
-    let fsize = metadata.size
-    let ftype = metadata.type
-    let group = metadata.group
-    let perm = metadata.perm
-    let time = metadata.time
-    let owner = metadata.user
+    var dir = fnamemodify(file, ':h')
+    file = fnamemodify(file, ':t')
 
-    if ftype is# 'dir'
-        let human_fsize = ''
-        " Why don't you compute the size of a directory?{{{
-        "
-        " The only way I can think of is using `du(1)`:
-        "
-        "     let human_fsize = system('du -sh ' .. shellescape(file))
-        "         \ ->trim("\n", 2)
-        "         \ ->matchstr('\S\+')
-        "
-        " But it would be too slow on a big directory (`$ time du -sh big_directory/`).
-        " It would be especially noticeable in automatic mode.
-        "}}}
+    var metadata = dir
+        ->readdirex((e) => e.name == file)
+        ->get(0, {})
+    if empty(metadata)
+        return ''
+    endif
+
+    var fsize = metadata.size
+    var ftype = metadata.type
+    var group = metadata.group
+    var perm = metadata.perm
+    var time = metadata.time
+    var owner = metadata.user
+
+    var human_fsize: string
+    if ftype == 'dir'
+        human_fsize = ''
+        # Why don't you compute the size of a directory?{{{
+        #
+        # The only way I can think of is using `du(1)`:
+        #
+        #     var human_fsize = system('du -sh ' .. shellescape(file))
+        #         \ ->trim("\n", 2)
+        #         \ ->matchstr('\S\+')
+        #
+        # But it would be too slow on a big directory (`$ time du -sh big_directory/`).
+        # It would be especially noticeable in automatic mode.
+        #}}}
     else
-        let human_fsize = s:make_fsize_human_readable(fsize)
+        human_fsize = MakeFsizeHumanReadable(fsize)
     endif
 
     return fsize == -1
-        \ ? '?' .. "\n"
-        \ : ((a:0 ? fnamemodify(file, ':t')->printf('%12.12s ') : '')
-        \ .. ftype[0] .. ' ' .. perm .. ' ' .. owner .. ' ' .. group
-        \ .. ' ' .. strftime('%Y-%m-%d %H:%M', time)
-        \ .. ' ' .. (fsize == -2 ? '[big]' : human_fsize))
-        \ .. (ftype =~# '^linkd\=$' ? ' ->' .. resolve(file)->fnamemodify(':~:.') : '')
-        \ .. "\n"
-endfu
+        ? '?' .. "\n"
+        : ((with_filename ? fnamemodify(file, ':t')->printf('%12.12s ') : '')
+        .. ftype[0] .. ' ' .. perm .. ' ' .. owner .. ' ' .. group
+        .. ' ' .. strftime('%Y-%m-%d %H:%M', time)
+        .. ' ' .. (fsize == -2 ? '[big]' : human_fsize))
+        .. (ftype =~ '^linkd\=$' ? ' ->' .. resolve(file)->fnamemodify(':~:.') : '')
+        .. "\n"
+enddef
 
-fu s:make_fsize_human_readable(fsize) abort "{{{1
-    return a:fsize >= 1073741824
-        \ ?        (a:fsize/1073741824) .. ',' .. string(a:fsize % 1073741824)[0] .. 'G'
-        \ :    a:fsize >= 1048576
-        \ ?        (a:fsize/1048576) .. ',' .. string(a:fsize % 1048576)[0] .. 'M'
-        \ :    a:fsize >= 1024
-        \ ?        (a:fsize/1024) .. ',' .. string(a:fsize % 1024)[0] .. 'K'
-        \ :    a:fsize > 0
-        \ ?        a:fsize .. 'B'
-        \ :        ''
-endfu
+def MakeFsizeHumanReadable(fsize: number): string #{{{1
+    return fsize >= _2_POW_30
+        ?        (fsize / _2_POW_30) .. ',' .. string(fsize % _2_POW_30)[0] .. 'G'
+        :    fsize >= _2_POW_20
+        ?        (fsize / _2_POW_20) .. ',' .. string(fsize % _2_POW_20)[0] .. 'M'
+        :    fsize >= _2_POW_10
+        ?        (fsize / _2_POW_10) .. ',' .. string(fsize % _2_POW_10)[0] .. 'K'
+        :    fsize > 0
+        ?        fsize .. 'B'
+        :        ''
+enddef
 
-fu fex#preview() abort "{{{1
-    let file = getline('.')
+def fex#preview() #{{{1
+    var file = getline('.')
     if filereadable(file)
         exe 'pedit ' .. file
-        let winid = s:Win_getid('P')
-        noa call win_execute(winid, ['wincmd L', 'norm! zv'])
+        var winid = Win_getid('P')
+        noa win_execute(winid, ['wincmd L', 'norm! zv'])
     elseif isdirectory(file)
-        sil let ls = systemlist('ls ' .. shellescape(file))
-        let b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
-        call writefile(ls, b:dirvish['preview_ls'])
+        sil var ls = systemlist('ls ' .. shellescape(file))
+        b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
+        writefile(ls, b:dirvish['preview_ls'])
         exe 'sil pedit ' .. b:dirvish['preview_ls']
-        let winid = s:Win_getid('P')
-        noa call win_execute(winid, 'wincmd L')
+        var winid = Win_getid('P')
+        noa win_execute(winid, 'wincmd L')
     endif
-endfu
+enddef
 
-fu fex#print_metadata(how, ...) abort "{{{1
-    " Automatically printing metadata in visual mode doesn't make sense.
-    if a:how is# 'auto' && a:0
+def fex#printMetadata(auto = false) #{{{1
+    var in_visualmode = mode() =~ "^[vV\<c-v>]$"
+    # Automatically printing metadata in visual mode doesn't make sense.
+    if auto && in_visualmode
         return
     endif
 
-    if a:how is# 'auto'
+    if auto
         if !exists('#FexPrintMetadata')
-            " Install an autocmd to automatically print the metadata for the file
-            " under the cursor.
-            call s:auto_metadata()
-            " Re-install it every time we enter a new directory.
+            # Install an autocmd to automatically print the metadata for the file
+            # under the cursor.
+            AutoMetadata()
+            # Re-install it every time we enter a new directory.
             augroup FexPrintMetadataAndPersist | au!
-                au FileType dirvish,tree call s:auto_metadata()
+                au FileType dirvish,tree AutoMetadata()
             augroup END
         else
-            " if on, then toggle off
+            # if on, then toggle off
             sil! au!  FexPrintMetadata
             sil! aug! FexPrintMetadata
         endif
-    elseif a:how is# 'manual'
+    else
         sil! au!  FexPrintMetadata
         sil! aug! FexPrintMetadata
         sil! au!  FexPrintMetadataAndPersist
         sil! aug! FexPrintMetadataAndPersist
         unlet! b:fex_last_line
     endif
-    call s:print_metadata(a:0)
-endfu
+    PrintMetadata(in_visualmode)
+enddef
 
-fu s:print_metadata(vis) abort "{{{1
-    let lines = a:vis ? getline("'<", "'>") : [getline('.')]
-    let metadata = ''
-    if a:vis
+def PrintMetadata(in_visualmode: bool) #{{{1
+    var lines = in_visualmode ? getline("'<", "'>") : [getline('.')]
+    var metadata = ''
+    if in_visualmode
         for line in lines
-            let metadata ..= s:get_metadata(line, 1)
+            metadata ..= GetMetadata(line, true)
         endfor
     else
         for line in lines
-            let metadata ..= s:get_metadata(line)
+            metadata ..= GetMetadata(line)
         endfor
     endif
-    " Flush any delayed screen updates before printing the metadata.
-    " See `:h :echo-redraw`.
+    # Flush any delayed screen updates before printing the metadata.
+    # See `:h :echo-redraw`.
     redraw
-    " The last newline causes an undesired hit-enter prompt when we only ask the
-    " metadata of a single file.
+    # The last newline causes an undesired hit-enter prompt when we only ask the
+    # metadata of a single file.
     echo trim(metadata, "\n", 2)
-endfu
+enddef
 
-fu s:auto_metadata() abort "{{{1
+def AutoMetadata() #{{{1
     augroup FexPrintMetadata
         au! * <buffer>
         au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) != line('.')
-            \ |     let b:fex_last_line = line('.')
-            \ |     call s:print_metadata(0)
-            \ | endif
+            |     b:fex_last_line = line('.')
+            |     PrintMetadata(false)
+            | endif
     augroup END
-endfu
+enddef
 
-fu fex#toggle_dot_entries() abort "{{{1
-    let s:hide_dot_entries = !s:hide_dot_entries
+def fex#toggleDotEntries() #{{{1
+    hide_dot_entries = !hide_dot_entries
     Dirvish %
-endfu
+enddef
 
-fu fex#trash_put() abort "{{{1
-    sil call system('trash-put ' .. getline('.')->shellescape())
+def fex#trashPut() #{{{1
+    sil system('trash-put ' .. getline('.')->shellescape())
     e
-endfu
+enddef
 
-fu fex#dirvish_up() abort "{{{1
-    let cnt = v:count1
-    let file = expand('%:p')
-    let dir = fnamemodify(file, ':h')
+def fex#dirvishUp() #{{{1
+    var cnt = v:count1
+    var file = expand('%:p')
+    var dir = fnamemodify(file, ':h')
     sil! update
-    " Make sure the directory of the current file exists.{{{
-    "
-    " Maybe it does not (e.g. `:FreeKeys`, `:Tree`, ...).
-    " And if it does not, `:Dirvish %:p:h` will fail.
-    " We handle this special case by falling back on `:Dirvish`.
-    "}}}
+    # Make sure the directory of the current file exists.{{{
+    #
+    # Maybe it does not (e.g. `:FreeKeys`, `:Tree`, ...).
+    # And if it does not, `:Dirvish %:p:h` will fail.
+    # We handle this special case by falling back on `:Dirvish`.
+    #}}}
     if file != '' && !isdirectory(dir)
-        " Why `:silent`?{{{
-        "
-        " Without, in some buffers, you'll get an error message such as:
-        "
-        "     dirvish: invalid directory: '/tmp/vTMT2KK/1'
-        "
-        " This happens for example in `:FreeKeys` and `:Tree`.
-        "
-        " MWE:
-        "
-        "     :e /tmp/new_dir/file
-        "     :Dirvish
-        "
-        " The issue comes from:
-        "
-        "     " ~/.vim/plugged/vim-dirvish/autoload/dirvish.vim:28
-        "     call s:msg_error("invalid directory: '".a:dir."'")
-        "}}}
+        # Why `:silent`?{{{
+        #
+        # Without, in some buffers, you'll get an error message such as:
+        #
+        #     dirvish: invalid directory: '/tmp/vTMT2KK/1'
+        #
+        # This happens for example in `:FreeKeys` and `:Tree`.
+        #
+        # MWE:
+        #
+        #     :e /tmp/new_dir/file
+        #     :Dirvish
+        #
+        # The issue comes from:
+        #
+        #     " ~/.vim/plugged/vim-dirvish/autoload/dirvish.vim:28
+        #     call s:msg_error("invalid directory: '".a:dir."'")
+        #}}}
         sil Dirvish
         return
     endif
     exe 'Dirvish %:p' .. repeat(':h', cnt)
-endfu
+enddef
 
-fu fex#undo_ftplugin() abort "{{{1
+def fex#undoFtplugin() #{{{1
     set bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< stl< swf< wfw< wrap<
     unlet! b:fex_curdir
 
@@ -239,5 +250,5 @@ fu fex#undo_ftplugin() abort "{{{1
     nunmap <buffer> l
     nunmap <buffer> p
     nunmap <buffer> q
-endfu
+enddef
 
