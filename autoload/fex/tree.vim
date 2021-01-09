@@ -36,7 +36,9 @@ var loaded = true
 
 import {Catch, Win_getid} from 'lg.vim'
 
-var cache = {}
+# TODO: If we simply write `var cache =  {}`, an error is raised at compile time
+# in the first line of `UseCache()`.  Find a MWE.  Understand it.
+var cache: dict<dict<any>>
 var hide_dot_entries = false
 const INDICATOR = '[/=*>|]'
 const BIG_DIR_PAT = '^/.*'
@@ -499,34 +501,34 @@ def Timer_stop() #{{{1
     endif
 enddef
 
-fu UseCache(dir) abort "{{{1
-    call setline(1, s:cache[a:dir].contents)
+def UseCache(dir: string) #{{{1
+    setline(1, cache[dir].contents)
 
-    " restore last position if one was saved
-    if has_key(s:cache[a:dir], 'pos')
-        let s:last_pos = s:cache[a:dir].pos
-        " Why not restoring the position now?{{{
-        "
-        " It would be too soon.
-        " This function is called from a `BufNewFile` event.
-        " Vim will  re-position the cursor  on the first line  afterwards (after
-        " BufEnter).
-        "}}}
-        au BufWinEnter <buffer> ++once exe s:last_pos
+    # restore last position if one was saved
+    if has_key(cache[dir], 'pos')
+        last_pos = cache[dir].pos
+        # Why not restoring the position now?{{{
+        #
+        # It would be too soon.
+        # This function is called from a `BufNewFile` event.
+        # Vim will  re-position the cursor  on the first line  afterwards (after
+        # BufEnter).
+        #}}}
+        au BufWinEnter <buffer> ++once cursor(last_pos, 1)
     endif
 
-    " restore last foldlevel if one was saved
-    if has_key(s:cache[a:dir], 'fdl')
-        let &l:fdl = s:cache[a:dir].fdl
+    # restore last foldlevel if one was saved
+    if has_key(cache[dir], 'fdl')
+        &l:fdl = cache[dir].fdl
     endif
 
-    " if the  directory is big, and  not all its contents  can be displayed,
-    " highlight its path on the first line as an indicator
-    if get(s:cache[a:dir], 'big', 0)
-        call matchadd('WarningMsg', s:BIG_DIR_PAT, 0)
+    # if the  directory is big, and  not all its contents  can be displayed,
+    # highlight its path on the first line as an indicator
+    if get(cache[dir], 'big', 0)
+        matchadd('WarningMsg', BIG_DIR_PAT, 0)
     endif
-    return ''
-endfu
+enddef
+var last_pos: number
 
 def fex#tree#toggleDotEntries() #{{{1
     hide_dot_entries = !hide_dot_entries
