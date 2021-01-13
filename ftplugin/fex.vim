@@ -45,8 +45,8 @@ nno <buffer><nowait> R <cmd>call fex#tree#reload()<cr>
 nno <buffer><nowait> g? <cmd>call fex#tree#displayHelp()<cr>
 nno <buffer><nowait> gh <cmd>call fex#tree#toggleDotEntries()<cr>
 
-nno <buffer><nowait> h <cmd>call fex#tree#relativeDir('parent')<cr>
-nno <buffer><nowait> l <cmd>call fex#tree#relativeDir('child')<cr>
+nno <buffer><nowait> [[ <cmd>call fex#tree#relativeDir('parent')<cr>
+nno <buffer><nowait> ]] <cmd>call fex#tree#relativeDir('child')<cr>
 nno <buffer><nowait> p <cmd>call fex#tree#preview()<cr>
 nno <buffer><nowait> q <cmd>call fex#tree#close()<cr>
 

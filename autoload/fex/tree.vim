@@ -78,7 +78,7 @@ def fex#tree#close() #{{{2
         # Make sure the preview window has not been already closed.
         # If it has, `win_id2win()` will return 0.
         if preview_winnr != 0
-            exe preview_winnr .. 'wincmd c'
+            exe ':' .. preview_winnr .. 'wincmd c'
             unlet! t:fex_preview_winid
         endif
     endif

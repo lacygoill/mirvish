@@ -246,8 +246,8 @@ def fex#undoFtplugin() #{{{1
     nunmap <buffer> g?
     nunmap <buffer> gh
 
-    nunmap <buffer> h
-    nunmap <buffer> l
+    nunmap <buffer> [[
+    nunmap <buffer> ]]
     nunmap <buffer> p
     nunmap <buffer> q
 enddef
