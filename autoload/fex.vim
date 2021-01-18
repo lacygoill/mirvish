@@ -18,12 +18,12 @@ import Win_getid from 'lg.vim'
 #}}}
 var hide_dot_entries: bool
 
-const _2_POW_10 = pow(2, 10)->float2nr()
-const _2_POW_20 = pow(2, 20)->float2nr()
-const _2_POW_30 = pow(2, 30)->float2nr()
+const _2_POW_10: number = pow(2, 10)->float2nr()
+const _2_POW_20: number = pow(2, 20)->float2nr()
+const _2_POW_30: number = pow(2, 30)->float2nr()
 
 def fex#formatEntries() #{{{1
-    var pat = glob2regpat(&wig)->substitute(',', '\\|', 'g')
+    var pat: string = glob2regpat(&wig)->substitute(',', '\\|', 'g')
     pat = '\%(' .. pat .. '\)$'
     sil exe 'keepj keepp g:' .. pat .. ':d _'
 
@@ -35,7 +35,7 @@ def fex#formatEntries() #{{{1
 enddef
 
 def GetMetadata(line: string, with_filename = false): string #{{{1
-    var file = line
+    var file: string = line
         # normalize name (important for when we filter output of `readdirex()`)
         ->trim('/', 2)
 
@@ -44,22 +44,22 @@ def GetMetadata(line: string, with_filename = false): string #{{{1
         file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
 
-    var dir = fnamemodify(file, ':h')
+    var dir: string = fnamemodify(file, ':h')
     file = fnamemodify(file, ':t')
 
-    var metadata = dir
+    var metadata: dict<any> = dir
         ->readdirex((e) => e.name == file)
         ->get(0, {})
     if empty(metadata)
         return ''
     endif
 
-    var fsize = metadata.size
-    var ftype = metadata.type
-    var group = metadata.group
-    var perm = metadata.perm
-    var time = metadata.time
-    var owner = metadata.user
+    var fsize: number = metadata.size
+    var ftype: string = metadata.type
+    var group: string = metadata.group
+    var perm: string = metadata.perm
+    var time: number = metadata.time
+    var owner: string = metadata.user
 
     var human_fsize: string
     if ftype == 'dir'
@@ -68,9 +68,9 @@ def GetMetadata(line: string, with_filename = false): string #{{{1
         #
         # The only way I can think of is using `du(1)`:
         #
-        #     var human_fsize = system('du -sh ' .. shellescape(file))
-        #         \ ->trim("\n", 2)
-        #         \ ->matchstr('\S\+')
+        #     var human_fsize: string = system('du -sh ' .. shellescape(file))
+        #         ->trim("\n", 2)
+        #         ->matchstr('\S\+')
         #
         # But it would be too slow on a big directory (`$ time du -sh big_directory/`).
         # It would be especially noticeable in automatic mode.
@@ -102,23 +102,23 @@ def MakeFsizeHumanReadable(fsize: number): string #{{{1
 enddef
 
 def fex#preview() #{{{1
-    var file = getline('.')
+    var file: string = getline('.')
     if filereadable(file)
         exe 'pedit ' .. file
-        var winid = Win_getid('P')
+        var winid: number = Win_getid('P')
         noa win_execute(winid, ['wincmd L', 'norm! zv'])
     elseif isdirectory(file)
-        sil var ls = systemlist('ls ' .. shellescape(file))
+        sil var ls: list<string> = systemlist('ls ' .. shellescape(file))
         b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         writefile(ls, b:dirvish['preview_ls'])
         exe 'sil pedit ' .. b:dirvish['preview_ls']
-        var winid = Win_getid('P')
+        var winid: number = Win_getid('P')
         noa win_execute(winid, 'wincmd L')
     endif
 enddef
 
 def fex#printMetadata(auto = false) #{{{1
-    var in_visualmode = mode() =~ "^[vV\<c-v>]$"
+    var in_visualmode: bool = mode() =~ "^[vV\<c-v>]$"
     # Automatically printing metadata in visual mode doesn't make sense.
     if auto && in_visualmode
         return
@@ -149,8 +149,8 @@ def fex#printMetadata(auto = false) #{{{1
 enddef
 
 def PrintMetadata(in_visualmode: bool) #{{{1
-    var lines = in_visualmode ? getline("'<", "'>") : [getline('.')]
-    var metadata = ''
+    var lines: list<string> = in_visualmode ? getline("'<", "'>") : [getline('.')]
+    var metadata: string = ''
     if in_visualmode
         for line in lines
             metadata ..= GetMetadata(line, true)
@@ -189,9 +189,9 @@ def fex#trashPut() #{{{1
 enddef
 
 def fex#dirvishUp() #{{{1
-    var cnt = v:count1
-    var file = expand('%:p')
-    var dir = fnamemodify(file, ':h')
+    var cnt: number = v:count1
+    var file: string = expand('%:p')
+    var dir: string = fnamemodify(file, ':h')
     sil! update
     # Make sure the directory of the current file exists.{{{
     #

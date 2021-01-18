@@ -37,13 +37,13 @@ var loaded = true
 import {Catch, Win_getid} from 'lg.vim'
 
 var cache: dict<dict<any>>
-var hide_dot_entries = false
-const INDICATOR = '[/=*>|]'
-const BIG_DIR_PAT = '^/.*'
-const BIG_DIR_SIZE = 10'000
-const CLEAN_AFTER = 60'000
+var hide_dot_entries: bool = false
+const INDICATOR: string = '[/=*>|]'
+const BIG_DIR_PAT: string = '^/.*'
+const BIG_DIR_SIZE: number = 10'000
+const CLEAN_AFTER: number = 60'000
 
-const HELP =<< trim END
+const HELP: list<string> =<< trim END
        ===== Key Bindings =====
 
     (         move cursor to previous directory
@@ -70,11 +70,11 @@ def fex#tree#close() #{{{2
         return
     endif
 
-    var fex_winid = win_getid()
+    var fex_winid: number = win_getid()
     t:fex_winwidth = winwidth(0)
 
     if exists('t:fex_preview_winid')
-        var preview_winnr = win_id2win(t:fex_preview_winid)
+        var preview_winnr: number = win_id2win(t:fex_preview_winid)
         # Make sure the preview window has not been already closed.
         # If it has, `win_id2win()` will return 0.
         if preview_winnr != 0
@@ -83,7 +83,7 @@ def fex#tree#close() #{{{2
         endif
     endif
 
-    var curdir = Getcurdir()
+    var curdir: string = Getcurdir()
     # save the view in this directory before closing the window
     SaveView(curdir)
 
@@ -102,7 +102,7 @@ def fex#tree#close() #{{{2
     clean_cache_timer_id = timer_start(CLEAN_AFTER, () => CleanCache())
     # make sure we're still in the fex window
     if fex_winid == win_getid()
-        var winid = Win_getid('#')
+        var winid: number = Win_getid('#')
         # FIXME: `E444` if the fex window is the last one.
         close
         win_gotoid(winid)
@@ -128,9 +128,9 @@ def fex#tree#displayHelp() #{{{2
     # So, we also temporarily disable conceal.
     #}}}
     setl smc=50 cole=0
-    var dir = expand('%:p')->matchstr('/fex\zs.*')
+    var dir: string = expand('%:p')->matchstr('/fex\zs.*')
 
-    var help = [
+    var help: list<string> = [
         '   ===== Tree Command =====',
         '',
         '$ ' .. GetTreeCmd(dir),
@@ -145,7 +145,7 @@ def fex#tree#displayHelp() #{{{2
 enddef
 
 def fex#tree#split(in_newtab = false) #{{{2
-    var file = Getfile()
+    var file: string = Getfile()
     if in_newtab
         exe 'tabedit ' .. file
     else
@@ -154,11 +154,11 @@ def fex#tree#split(in_newtab = false) #{{{2
 enddef
 
 def fex#tree#edit() #{{{2
-    var file = Getfile()
+    var file: string = Getfile()
     if !filereadable(file)
         return
     endif
-    var id = win_getid()
+    var id: number = win_getid()
     wincmd p
     # if we keep pressing `C-s` on a file, we don't want to keep opening splits forever
     if file == expand('%:p')
@@ -170,6 +170,7 @@ def fex#tree#edit() #{{{2
         norm! zv
     catch
         Catch()
+        return
     finally
         win_gotoid(id)
     endtry
@@ -191,8 +192,8 @@ def fex#tree#fde(): any #{{{2
     #
     #     $ vim /tmp/script.profile
     #}}}
-    var idx = getline(v:lnum)->matchstr('.\{-}[├└]')->strchars() - 1
-    var lvl = idx / 4
+    var idx: number = getline(v:lnum)->matchstr('.\{-}[├└]')->strchars() - 1
+    var lvl: number = idx / 4
     if getline(v:lnum + 1)->matchstr('\%' .. (idx + 5) .. 'v.') =~ '[├└]'
         return '>' .. (lvl + 1)
     endif
@@ -204,8 +205,9 @@ def fex#tree#fdl() #{{{2
 enddef
 
 def fex#tree#fdt(): string #{{{2
-    var pat = '\(.*─\s\)\(.*\)/'
-    var Rep = (m) => m[1] .. substitute(m[2], '.*/', '', '')
+    var pat: string = '\(.*─\s\)\(.*\)/'
+    var Rep: func = (m: list<string>): string =>
+        m[1] .. substitute(m[2], '.*/', '', '')
     return (get(b:, 'foldtitle_full', false)
                 ? '[' .. (v:foldend - v:foldstart) .. ']'
                 : '')
@@ -224,20 +226,18 @@ def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{2
         current_file_pos = '\C\V─\s' .. expand('%:p') .. '\m\%(' .. INDICATOR .. '\|\s->\s\|$\)'
     endif
 
-    var dir = !empty(arg_dir) ? expand(arg_dir) : expand('%:p:h')
+    var dir: string = !empty(arg_dir) ? expand(arg_dir) : expand('%:p:h')
     dir = substitute(dir, '.\{-1,}\zs/\+$', '', '')
     if !isdirectory(dir)
         return 'echoerr ' .. string(dir .. '/ is not a directory')
     endif
 
-    #                                       ┌ `BufNewFile` won't be emitted
-    #                                       │  if the buffer name ends with a slash.
-    #                                       │
-    #                                       │  Besides it  would raise  an error
-    #                                       │  when  `save#buffer()`   would  be
-    #                                       │  invoked (`:update` would fail; E502).
-    #                                       │
-    var tempfile = tempname() .. '/fex' .. (dir == '/' ? '' : dir)
+    var tempfile: string = tempname()
+        .. '/fex'
+        # `BufNewFile` won't be emitted if the buffer name ends with a slash.
+        # Besides it would raise an  error when `save#buffer()` would be invoked
+        # (`:update` would fail; E502).
+        .. (dir == '/' ? '' : dir)
     if nosplit
         exe 'e ' .. tempfile
     else
@@ -253,7 +253,7 @@ def fex#tree#populate(path: string) #{{{2
         return
     endif
 
-    var dir = matchstr(path, '/fex\zs.*')
+    var dir: string = matchstr(path, '/fex\zs.*')
     if dir == ''
         dir = '/'
     endif
@@ -271,7 +271,7 @@ def fex#tree#populate(path: string) #{{{2
         return
     endif
 
-    var cmd = GetTreeCmd(dir)
+    var cmd: string = GetTreeCmd(dir)
     sil systemlist(cmd)->setline(1)
     Format()
 
@@ -298,14 +298,14 @@ enddef
 def fex#tree#preview() #{{{2
     exe 'pedit ' .. Getfile()
 
-    var prev_winnr = winnr('#')
+    var prev_winnr: number = winnr('#')
     if getwinvar(prev_winnr, '&pvw', false)
         t:fex_preview_winid = win_getid(prev_winnr)
     endif
 enddef
 
 def fex#tree#relativeDir(who: string) #{{{2
-    var curdir = Getcurdir()
+    var curdir: string = Getcurdir()
 
     var new_dir: string
     if who == 'parent'
@@ -346,19 +346,19 @@ enddef
 
 def fex#tree#reload() #{{{2
     # remove information in cache, so that the reloading is forced to re-invoke `tree(1)`
-    var cur_dir = Getcurdir()
+    var cur_dir: string = Getcurdir()
     if has_key(cache, cur_dir)
         remove(cache, cur_dir)
     endif
 
     # save current line; necessary to restore position later
-    var line = getline('.')
+    var line: string = getline('.')
 
     # reload
     exe 'Tree! ' .. cur_dir
 
     # restore position
-    var pat = '^\C\V' .. escape(line, '\') .. '\m$'
+    var pat: string = '^\C\V' .. escape(line, '\') .. '\m$'
     pat = substitute(pat, '[├└]', '\\m[├└]\\V', 'g')
     search(pat)
 enddef
@@ -381,7 +381,7 @@ def Format() #{{{2
     # This could break `C-w f`.
     #
     # We need to translate the dot into the current working directory.
-    var cwd = getcwd()
+    var cwd: string = getcwd()
     sil keepj keepp :%s:─\s\zs\.\ze/:\=cwd:e
     # Why?{{{
     #
@@ -410,15 +410,16 @@ def GetIgnorePat(): string #{{{2
     #
     #     $ tree -I '__pycache__' ~/.vim/pythonx/
 
-    #          ┌ to match `*.bak` in `&wig`
-    #          │ (no dot in the pattern to also match `*~`)
-    #          │
-    #          │               ┌ to match `*/pycache/*`
-    #          │               │
-    #          │               │              ┌ to match `tags`
-    #          ├────────┐      ├─────┐        ├───────┐
-    var pat = '\*[^/]\+\|\*/\zs[^*/]\+\ze/\*\|^[^*/]\+$'
-    var ignore_pat = split(&wig, ',')->map((_, v) => matchstr(v, pat))
+    # to match `*.bak` in `&wig` (no dot in the pattern to also match `*~`)
+    var pat: string = '\*[^/]\+\|'
+        .. '\*/\zs'
+        # to match `*/pycache/*`
+        .. '[^*/]\+'
+        .. '\ze/\*\|'
+        # to match `tags`
+        .. '^[^*/]\+$'
+    var ignore_pat: string = split(&wig, ',')
+        ->map((_, v) => matchstr(v, pat))
         # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
         #
         #     &wig ..= ',' .. &undodir .. '/*.*'
@@ -432,36 +433,38 @@ def GetIgnorePat(): string #{{{2
 enddef
 
 def GetTreeCmd(dir: string): string #{{{2
-    #                     ┌ print the full path for each entry (necessary for `gf` &friends)
-    #                     │┌ append a `/' for directories, a `*' for executable file, ...
-    #                     ││┌ turn colorization off
-    #                     │││
-    var short_options = '-fFn' .. (hide_dot_entries ? '' : ' -a')
-    var long_options = '--dirsfirst --noreport'
-    #                     │           │
-    #                     │           └ don't print the file and directory report at the end
-    #                     └ print directories before files
+    var short_options: string = '-'
+        # print the full path for each entry (necessary for `gf` &friends)
+        .. 'f'
+        # append a `/' for directories, a `*' for executable file, ...
+        .. 'F'
+        # turn colorization off
+        .. 'n'
+        .. (hide_dot_entries ? '' : ' -a')
+    # print directories before files
+    var long_options: string = '--dirsfirst'
+        # don't print the file and directory report at the end
+        .. ' --noreport'
 
-    var ignore_pat = GetIgnorePat()
+    var ignore_pat: string = GetIgnorePat()
 
-    var limit = '-L ' .. (IsBigDirectory(dir) ? 2 : 10) .. ' --filelimit 300'
-    #             │                                          │
-    #             │                                          └ do not descend directories
-    #             │                                            that contain more than 300 entries
-    #             │
-    #             └ don't display directories whose depth is greater than 2 or 10
+    # don't display directories whose depth is greater than 2 or 10
+    var limit: string = '-L '
+        .. (IsBigDirectory(dir) ? 2 : 10)
+        # do not descend directories that contain more than 300 entries
+        .. ' --filelimit 300'
 
     return 'tree ' .. short_options .. ' ' .. long_options
         .. ' ' .. limit .. ' ' .. ignore_pat .. ' ' .. shellescape(dir)
 enddef
 
 def Getcurdir(): string #{{{2
-    var curdir = expand('%:p')->matchstr('fex\zs.*')
+    var curdir: string = expand('%:p')->matchstr('fex\zs.*')
     return empty(curdir) ? '/' : curdir
 enddef
 
 def Getfile(): string #{{{2
-    var line = getline('.')
+    var line: string = getline('.')
 
     return line =~ '\s->\s'
         ?     matchstr(line, '.*─\s\zs.*\ze\s->\s')
@@ -482,7 +485,7 @@ def IsBigDirectory(dir: string): bool #{{{2
 enddef
 
 def Matchdelete() #{{{2
-    var id = getmatches()
+    var id: number = getmatches()
         ->filter((_, v) => v.pattern == BIG_DIR_PAT)
         ->get(0, {})
         ->get('id', 0)
