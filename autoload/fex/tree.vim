@@ -214,9 +214,10 @@ def fex#tree#fdt(): string #{{{2
         .. getline(v:foldstart)->substitute(pat, Rep, '')
 enddef
 
-def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{2
+def fex#tree#open(arg_dir: string, nosplit: bool) #{{{2
     if !executable('tree')
-        return 'echoerr ' .. string('requires the tree shell command; currently not installed')
+        Error('requires the tree shell command; currently not installed')
+        return
     endif
 
     Timer_stop()
@@ -229,7 +230,8 @@ def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{2
     var dir: string = !empty(arg_dir) ? expand(arg_dir) : expand('%:p:h')
     dir = substitute(dir, '.\{-1,}\zs/\+$', '', '')
     if !isdirectory(dir)
-        return 'echoerr ' .. string(dir .. '/ is not a directory')
+        Error(dir .. '/ is not a directory')
+        return
     endif
 
     var tempfile: string = tempname()
@@ -243,8 +245,6 @@ def fex#tree#open(arg_dir: string, nosplit: bool): string #{{{2
     else
         exe 'to :' .. get(t:, 'fex_winwidth', &columns / 3) .. 'vnew ' .. tempfile
     endif
-
-    return ''
 enddef
 var current_file_pos: string
 
@@ -537,4 +537,11 @@ def UseCache(dir: string) #{{{2
     endif
 enddef
 var last_pos: number
+
+# Utilities {{{1
+def Error(msg: string) #{{{2
+    echohl ErrorMsg
+    echom msg
+    echohl NONE
+enddef
 
