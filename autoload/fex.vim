@@ -40,7 +40,7 @@ def GetMetadata(line: string, with_filename = false): string #{{{1
         ->trim('/', 2)
 
     # in case we call this function from the tree explorer
-    if match(file, '─') != -1
+    if match(file, '─') >= 0
         file = substitute(file, '^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
 
