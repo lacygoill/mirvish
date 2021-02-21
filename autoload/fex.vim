@@ -48,7 +48,7 @@ def GetMetadata(line: string, with_filename = false): string #{{{1
     file = fnamemodify(file, ':t')
 
     var metadata: dict<any> = dir
-        ->readdirex((e) => e.name == file)
+        ->readdirex((e: dict<any>): bool => e.name == file)
         ->get(0, {})
     if empty(metadata)
         return ''
