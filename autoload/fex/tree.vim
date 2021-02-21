@@ -34,7 +34,10 @@ var loaded = true
 
 # Init {{{1
 
-import {Catch, Win_getid} from 'lg.vim'
+import {
+    Catch,
+    Win_getid,
+    } from 'lg.vim'
 
 var cache: dict<dict<any>>
 var hide_dot_entries: bool = false
@@ -139,7 +142,7 @@ def fex#tree#displayHelp() #{{{2
 
     help += HELP
 
-    map(help, (_, v) => !empty(v) ? '" ' .. v : v)
+    map(help, (_, v: string): string => !empty(v) ? '" ' .. v : v)
     append(0, help)
     cursor(1, 1)
 enddef
@@ -299,7 +302,7 @@ def fex#tree#preview() #{{{2
     exe 'pedit ' .. Getfile()
 
     var prev_winnr: number = winnr('#')
-    if getwinvar(prev_winnr, '&pvw', false)
+    if getwinvar(prev_winnr, '&pvw')
         t:fex_preview_winid = win_getid(prev_winnr)
     endif
 enddef
@@ -419,14 +422,14 @@ def GetIgnorePat(): string #{{{2
         # to match `tags`
         .. '^[^*/]\+$'
     var ignore_pat: string = split(&wig, ',')
-        ->map((_, v) => matchstr(v, pat))
+        ->map((_, v: string): string => matchstr(v, pat))
         # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
         #
         #     &wig ..= ',' .. &undodir .. '/*.*'
         #
         # We must eliminate those.
         #}}}
-        ->filter((_, v) => !empty(v) && v !~ '^[.*/]\+$')
+        ->filter((_, v: string): bool => !empty(v) && v !~ '^[.*/]\+$')
         ->join('|')
 
     return printf('-I "%s"', ignore_pat)
@@ -486,7 +489,7 @@ enddef
 
 def Matchdelete() #{{{2
     var id: number = getmatches()
-        ->filter((_, v) => v.pattern == BIG_DIR_PAT)
+        ->filter((_, v: dict<any>): bool => v.pattern == BIG_DIR_PAT)
         ->get(0, {})
         ->get('id', 0)
     if id != 0
