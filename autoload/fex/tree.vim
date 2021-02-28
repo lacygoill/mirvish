@@ -280,11 +280,11 @@ def fex#tree#populate(path: string) #{{{2
 
     if stridx(cmd, '-L 2 --filelimit 300') == -1
         # save the contents of the buffer in a cache, for quicker access in the future
-        extend(cache, {[dir]: {contents: getline(1, '$'), big: false}})
+        cache[dir] = {contents: getline(1, '$'), big: false}
     else
         matchadd('WarningMsg', BIG_DIR_PAT, 0)
-        extend(cache, {[dir]: {contents: getline(1, '$'), big: true}})
-        #                                                      ^
+        cache[dir] = {contents: getline(1, '$'), big: true}
+        #                                             ^
         # When an entry of the cache contains a non-zero 'big' key, it means the
         # directory is too big for all of its contents to be displayed.
         # We use this info  to highlight the path of a too  big directory on the
@@ -501,8 +501,8 @@ def SaveView(curdir: string) #{{{2
     if !has_key(cache, curdir)
         return
     endif
-    cache[curdir].pos = line('.')
-    cache[curdir].fdl = &l:fdl
+    cache[curdir]['pos'] = line('.')
+    cache[curdir]['fdl'] = &l:fdl
 enddef
 
 def Timer_stop() #{{{2
@@ -513,11 +513,11 @@ def Timer_stop() #{{{2
 enddef
 
 def UseCache(dir: string) #{{{2
-    setline(1, cache[dir].contents)
+    setline(1, cache[dir]['contents'])
 
     # restore last position if one was saved
     if has_key(cache[dir], 'pos')
-        last_pos = cache[dir].pos
+        last_pos = cache[dir]['pos']
         # Why not restoring the position now?{{{
         #
         # It would be too soon.
@@ -530,7 +530,7 @@ def UseCache(dir: string) #{{{2
 
     # restore last foldlevel if one was saved
     if has_key(cache[dir], 'fdl')
-        &l:fdl = cache[dir].fdl
+        &l:fdl = cache[dir]['fdl']
     endif
 
     # if the  directory is big, and  not all its contents  can be displayed,
