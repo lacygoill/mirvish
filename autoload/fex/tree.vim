@@ -142,8 +142,9 @@ def fex#tree#displayHelp() #{{{2
 
     help += HELP
 
-    map(help, (_, v: string): string => !empty(v) ? '" ' .. v : v)
-    append(0, help)
+    help
+        ->map((_, v: string): string => !empty(v) ? '" ' .. v : v)
+        ->append(0)
     cursor(1, 1)
 enddef
 
@@ -210,11 +211,12 @@ enddef
 def fex#tree#fdt(): string #{{{2
     var pat: string = '\(.*─\s\)\(.*\)/'
     var Rep: func = (m: list<string>): string =>
-        m[1] .. substitute(m[2], '.*/', '', '')
-    return (get(b:, 'foldtitle_full', false)
-                ? '[' .. (v:foldend - v:foldstart) .. ']'
-                : '')
-        .. getline(v:foldstart)->substitute(pat, Rep, '')
+        m[1] .. m[2]->substitute('.*/', '', '')
+    return (
+             get(b:, 'foldtitle_full', false)
+                 ? '[' .. (v:foldend - v:foldstart) .. ']'
+                 : ''
+           ) .. getline(v:foldstart)->substitute(pat, Rep, '')
 enddef
 
 def fex#tree#open(arg_dir: string, nosplit: bool) #{{{2
@@ -231,7 +233,7 @@ def fex#tree#open(arg_dir: string, nosplit: bool) #{{{2
     endif
 
     var dir: string = !empty(arg_dir) ? expand(arg_dir) : expand('%:p:h')
-    dir = substitute(dir, '.\{-1,}\zs/\+$', '', '')
+    dir = dir->substitute('.\{-1,}\zs/\+$', '', '')
     if !isdirectory(dir)
         Error(dir .. '/ is not a directory')
         return
@@ -319,7 +321,9 @@ def fex#tree#relativeDir(who: string) #{{{2
         if curdir == '/'
             return
         endif
-        new_dir = substitute(curdir, '^\.', getcwd(), '')->fnamemodify(':h')
+        new_dir = curdir
+            ->substitute('^\.', getcwd(), '')
+            ->fnamemodify(':h')
     else
         if getline('.') =~ '^"\|^$'
             norm! l
@@ -361,9 +365,9 @@ def fex#tree#reload() #{{{2
     exe 'Tree! ' .. cur_dir
 
     # restore position
-    var pat: string = '^\C\V' .. escape(line, '\') .. '\m$'
-    pat = substitute(pat, '[├└]', '\\m[├└]\\V', 'g')
-    search(pat)
+    ('^\C' .. '\V' .. escape(line, '\') .. '\m' .. '$')
+        ->substitute('[├└]', '\\m[├└]\\V', 'g')
+        ->search()
 enddef
 
 def fex#tree#toggleDotEntries() #{{{2
