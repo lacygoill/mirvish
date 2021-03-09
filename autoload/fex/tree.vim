@@ -196,7 +196,7 @@ def fex#tree#fde(): any #{{{2
     #
     #     $ vim /tmp/script.profile
     #}}}
-    var idx: number = getline(v:lnum)->matchstr('.\{-}[├└]')->strchars() - 1
+    var idx: number = getline(v:lnum)->matchstr('.\{-}\ze[├└]')->strchars(true)
     var lvl: number = idx / 4
     if getline(v:lnum + 1)->matchstr('\%' .. (idx + 5) .. 'v.') =~ '[├└]'
         return '>' .. (lvl + 1)
