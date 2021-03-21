@@ -58,8 +58,8 @@ const HELP: list<string> =<< trim END
     g?        toggle this help
     R         reload directory hierarchy without using the cache
     gh        toggle hidden files/directories visibility
-    h         move to parent directory
-    l         move to child directory
+    [[        move to parent directory
+    ]]        move to child directory
     p         preview current file/directory contents
     q         close the window
     {         preview previous file/directory
@@ -181,11 +181,15 @@ def fex#tree#edit() #{{{2
 enddef
 
 def fex#tree#fde(): any #{{{2
-    # Warning:{{{
-    # This function is by far the slowest when we execute `:Tree`.
-    # This is due to the `var idx =` and `if matchstr()` statements.
+    # If you refactor this function, make sure the plugin doesn't get too slow.{{{
     #
-    # As a result, `:Tree /proc` is slow the first time:
+    # This function is invoked once per line; that's a lot in a big directory.
+    # That's why it's worth being optimized.
+    #
+    # Try to avoid `matchstr()` and regexes using quantifiers.
+    # Prefer `match()`, `strpart()`, ...
+    #
+    # If you want to refactor the function, make a profiling before and after:
     #
     #     $ vim --cmd 'prof  start /tmp/script.profile' \
     #           --cmd 'prof! file  */tree.vim' \
@@ -196,9 +200,10 @@ def fex#tree#fde(): any #{{{2
     #
     #     $ vim /tmp/script.profile
     #}}}
-    var idx: number = getline(v:lnum)->matchstr('.\{-}\ze[├└]')->strchars(true)
+    var line: string = getline(v:lnum)
+    var idx: number = line->charidx(line->match('[├└]'))
     var lvl: number = idx / 4
-    if getline(v:lnum + 1)->matchstr('\%' .. (idx + 5) .. 'v.') =~ '[├└]'
+    if getline(v:lnum + 1)[idx + 4] =~ '[├└]'
         return '>' .. (lvl + 1)
     endif
     return lvl
@@ -258,6 +263,12 @@ def fex#tree#populate(path: string) #{{{2
         return
     endif
 
+    # If we  have the  guarantee that  `/fex` matches, we  could use  this which
+    # should be faster:
+    #
+    #     dir->strpart(matchend(dir, '/fex'))
+    #
+    # Although, it's a bit harder to read...
     var dir: string = matchstr(path, '/fex\zs.*')
     if dir == ''
         dir = '/'
@@ -271,7 +282,7 @@ def fex#tree#populate(path: string) #{{{2
 
     # If we've already visited this directory, no need to re-invoke `tree(1)`.
     # Just use the cache.
-    if has_key(cache, dir) && has_key(cache[dir], 'contents')
+    if cache->has_key(dir) && cache[dir]->has_key('contents')
         UseCache(dir)
         return
     endif
@@ -354,7 +365,7 @@ enddef
 def fex#tree#reload() #{{{2
     # remove information in cache, so that the reloading is forced to re-invoke `tree(1)`
     var cur_dir: string = Getcurdir()
-    if has_key(cache, cur_dir)
+    if cache->has_key(cur_dir)
         remove(cache, cur_dir)
     endif
 
@@ -502,7 +513,7 @@ def Matchdelete() #{{{2
 enddef
 
 def SaveView(curdir: string) #{{{2
-    if !has_key(cache, curdir)
+    if !cache->has_key(curdir)
         return
     endif
     cache[curdir]['pos'] = line('.')
@@ -520,7 +531,7 @@ def UseCache(dir: string) #{{{2
     setline(1, cache[dir]['contents'])
 
     # restore last position if one was saved
-    if has_key(cache[dir], 'pos')
+    if cache[dir]->has_key('pos')
         last_pos = cache[dir]['pos']
         # Why not restoring the position now?{{{
         #
@@ -533,7 +544,7 @@ def UseCache(dir: string) #{{{2
     endif
 
     # restore last foldlevel if one was saved
-    if has_key(cache[dir], 'fdl')
+    if cache[dir]->has_key('fdl')
         &l:fdl = cache[dir]['fdl']
     endif
 
