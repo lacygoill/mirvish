@@ -107,6 +107,7 @@ def fex#preview() #{{{1
         exe 'pedit ' .. file
         var winid: number = Win_getid('P')
         noa win_execute(winid, ['wincmd L', 'norm! zv'])
+
     elseif isdirectory(file)
         sil var ls: list<string> = systemlist('ls ' .. shellescape(file))
         b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
@@ -165,7 +166,7 @@ def PrintMetadata(in_visualmode: bool) #{{{1
     redraw
     # The last newline causes an undesired hit-enter prompt when we only ask the
     # metadata of a single file.
-    echo trim(metadata, "\n", 2)
+    echo metadata->trim("\n", 2)
 enddef
 
 def AutoMetadata() #{{{1

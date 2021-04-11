@@ -37,7 +37,7 @@ var loaded = true
 import {
     Catch,
     Win_getid,
-    } from 'lg.vim'
+} from 'lg.vim'
 
 var cache: dict<dict<any>>
 var hide_dot_entries: bool = false
@@ -49,8 +49,8 @@ const CLEAN_AFTER: number = 60'000
 const HELP: list<string> =<< trim END
        ===== Key Bindings =====
 
-    (         move cursor to previous directory
-    )         move cursor to next directory
+    (         preview previous file/directory
+    )         preview next file/directory
     -M        print current file's metadata and update as the cursor moves
     -m        print current file's metadata
     C-w f     edit file in new split
@@ -62,8 +62,6 @@ const HELP: list<string> =<< trim END
     ]]        move to child directory
     p         preview current file/directory contents
     q         close the window
-    {         preview previous file/directory
-    }         preview next file/directory
 END
 
 # Interface {{{1
@@ -102,7 +100,7 @@ def fex#tree#close() #{{{2
     # So, we remove the cache after a  few minutes to prevent it from taking too
     # much memory.
     #}}}
-    clean_cache_timer_id = timer_start(CLEAN_AFTER, () => CleanCache())
+    clean_cache_timer_id = timer_start(CLEAN_AFTER, (_) => CleanCache())
     # make sure we're still in the fex window
     if fex_winid == win_getid()
         var winid: number = Win_getid('#')
@@ -138,7 +136,7 @@ def fex#tree#displayHelp() #{{{2
         '',
         '$ ' .. GetTreeCmd(dir),
         '',
-        ]
+    ]
 
     help += HELP
 
@@ -555,7 +553,7 @@ def UseCache(dir: string) #{{{2
     endif
 enddef
 var last_pos: number
-
+#}}}1
 # Utilities {{{1
 def Error(msg: string) #{{{2
     echohl ErrorMsg
