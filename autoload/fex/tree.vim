@@ -267,7 +267,7 @@ def fex#tree#populate(path: string) #{{{2
     #     dir->strpart(matchend(dir, '/fex'))
     #
     # Although, it's a bit harder to read...
-    var dir: string = matchstr(path, '/fex\zs.*')
+    var dir: string = path->matchstr('/fex\zs.*')
     if dir == ''
         dir = '/'
     endif
@@ -390,15 +390,6 @@ def CleanCache() #{{{2
 enddef
 
 def Format() #{{{2
-    # `tree(1)`  makes the  paths begin  with an  initial dot  to stand  for the
-    # working directory.
-    # But the  latter could change after  we change the focus  to another window
-    # (`vim-cwd`).
-    # This could break `C-w f`.
-    #
-    # We need to translate the dot into the current working directory.
-    var cwd: string = getcwd()
-    sil keepj keepp :%s:─\s\zs\.\ze/:\=cwd:e
     # Why?{{{
     #
     # We  may have  created a  symbolic link  whose target  is a  directory, and
@@ -434,8 +425,9 @@ def GetIgnorePat(): string #{{{2
         .. '\ze/\*\|'
         # to match `tags`
         .. '^[^*/]\+$'
-    var ignore_pat: string = split(&wig, ',')
-        ->map((_, v: string): string => matchstr(v, pat))
+    var ignore_pat: string = &wig
+        ->split(',')
+        ->map((_, v: string): string => v->matchstr(pat))
         # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
         #
         #     &wig ..= ',' .. &undodir .. '/*.*'
@@ -483,8 +475,8 @@ def Getfile(): string #{{{2
     var line: string = getline('.')
 
     return line =~ '\s->\s'
-        ?     matchstr(line, '.*─\s\zs.*\ze\s->\s')
-        :     matchstr(line, '.*─\s\zs.*' .. INDICATOR .. '\@1<!')
+        ?     line->matchstr('.*─\s\zs.*\ze\s->\s')
+        :     line->matchstr('.*─\s\zs.*' .. INDICATOR .. '\@1<!')
     # Do *not* add the `$` anchor!                                ^{{{
     #
     # You don't want match until the end of the line.

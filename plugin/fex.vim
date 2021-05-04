@@ -27,7 +27,7 @@ nno <unique> -T <cmd>Tree<cr>
 # need to  always press `-T`  from a regular buffer,  because if you  press `-T`
 # from a `fex` buffer, an error is raised:
 #
-#     /tmp/v3cl1c7/366/fex/home/user/.vim/plugged/vim-fex/ is not a directory
+#     /tmp/v3cl1c7/366/fex/home/user/.vim/pack/mine/opt/fex/ is not a directory
 #}}}
 nno <unique> -t <cmd>exe 'Tree ' .. getcwd()<cr>
 nno <unique> -- <cmd>call fex#dirvishUp()<cr>

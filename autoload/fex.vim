@@ -25,7 +25,7 @@ const _2_POW_30: number = pow(2, 30)->float2nr()
 def fex#formatEntries() #{{{1
     var pat: string = glob2regpat(&wig)->substitute(',', '\\|', 'g')
     pat = '\%(' .. pat .. '\)$'
-    sil exe 'keepj keepp g:' .. pat .. ':d _'
+    exe 'sil keepj keepp g:' .. pat .. ':d _'
 
     if hide_dot_entries
         sil keepj keepp g:/\.[^\/]\+/\=$:d _
@@ -44,8 +44,8 @@ def GetMetadata(line: string, with_filename = false): string #{{{1
         file = file->substitute('^.\{-}─\s\|[/=*>|]$\|.*\zs\s->\s.*', '', 'g')
     endif
 
-    var dir: string = fnamemodify(file, ':h')
-    file = fnamemodify(file, ':t')
+    var dir: string = file->fnamemodify(':h')
+    file = file->fnamemodify(':t')
 
     var metadata: dict<any> = dir
         ->readdirex((e: dict<any>): bool => e.name == file)
@@ -81,11 +81,11 @@ def GetMetadata(line: string, with_filename = false): string #{{{1
 
     return fsize == -1
         ? '?' .. "\n"
-        : ((with_filename ? fnamemodify(file, ':t')->printf('%12.12s ') : '')
+        : ((with_filename ? file->fnamemodify(':t')->printf('%12.12s ') : '')
         .. ftype[0] .. ' ' .. perm .. ' ' .. owner .. ' ' .. group
         .. ' ' .. strftime('%Y-%m-%d %H:%M', time)
         .. ' ' .. (fsize == -2 ? '[big]' : human_fsize))
-        .. (ftype =~ '^linkd\=$' ? ' ->' .. resolve(file)->fnamemodify(':~:.') : '')
+        .. (ftype =~ '^linkd\=$' ? ' ->' .. file->resolve()->fnamemodify(':~:.') : '')
         .. "\n"
 enddef
 
@@ -192,7 +192,7 @@ enddef
 def fex#dirvishUp() #{{{1
     var cnt: number = v:count1
     var file: string = expand('%:p')
-    var dir: string = fnamemodify(file, ':h')
+    var dir: string = file->fnamemodify(':h')
     sil! update
     # Make sure the directory of the current file exists.{{{
     #
@@ -216,7 +216,7 @@ def fex#dirvishUp() #{{{1
         #
         # The issue comes from:
         #
-        #     " ~/.vim/plugged/vim-dirvish/autoload/dirvish.vim:28
+        #     " ~/.vim/pack/minpac/opt/vim-dirvish/autoload/dirvish.vim:28
         #     call s:msg_error("invalid directory: '".a:dir."'")
         #}}}
         sil Dirvish
