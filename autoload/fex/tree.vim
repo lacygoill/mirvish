@@ -95,7 +95,7 @@ def fex#tree#close() #{{{2
     #
     #     $ tree -a ~ >/tmp/file
     #     $ stat -c '%s' /tmp/file
-    #     several megabytes~
+    #     several megabytes˜
     #
     # So, we remove the cache after a  few minutes to prevent it from taking too
     # much memory.
