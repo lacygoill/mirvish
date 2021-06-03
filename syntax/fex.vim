@@ -32,19 +32,19 @@ syn match fexTreeHelpCmd '^"\s$\stree.*' contained
 
 " Colors {{{1
 
-hi link fexTreeWarning        WarningMsg
-hi link fexTreeHelp           Comment
-hi link fexTreeHelpKey        Function
-hi link fexTreeHelpTitle      Type
-hi link fexTreeHelpCmd        WarningMsg
+hi def link fexTreeWarning        WarningMsg
+hi def link fexTreeHelp           Comment
+hi def link fexTreeHelpKey        Function
+hi def link fexTreeHelpTitle      Type
+hi def link fexTreeHelpCmd        WarningMsg
 
-hi link fexTreeDirectory      Directory
-hi      fexTreeExecutable     ctermfg=darkgreen guifg=darkgreen
+hi def link fexTreeDirectory      Directory
+hi          fexTreeExecutable     ctermfg=darkgreen guifg=darkgreen
 
-hi      fexTreeLink           ctermfg=darkmagenta guifg=darkmagenta
-hi link fexTreeLinkFile       Normal
-hi link fexTreeLinkDirectory  Directory
-hi      fexTreeLinkExecutable ctermfg=darkgreen guifg=darkgreen
+hi          fexTreeLink           ctermfg=darkmagenta guifg=darkmagenta
+hi def link fexTreeLinkFile       Normal
+hi def link fexTreeLinkDirectory  Directory
+hi          fexTreeLinkExecutable ctermfg=darkgreen guifg=darkgreen
 
 let b:current_syntax = 'fex'
 
