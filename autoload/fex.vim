@@ -23,7 +23,7 @@ const _2_POW_20: number = pow(2, 20)->float2nr()
 const _2_POW_30: number = pow(2, 30)->float2nr()
 
 def fex#formatEntries() #{{{1
-    var pat: string = glob2regpat(&wig)->substitute(',', '\\|', 'g')
+    var pat: string = glob2regpat(&wildignore)->substitute(',', '\\|', 'g')
     pat = '\%(' .. pat .. '\)$'
     exe 'sil keepj keepp g:' .. pat .. ':d _'
 
@@ -172,7 +172,7 @@ enddef
 def AutoMetadata() #{{{1
     augroup FexPrintMetadata
         au! * <buffer>
-        au CursorMoved <buffer> if get(b:, 'fex_last_line', 0) != line('.')
+        au CursorMoved <buffer> if get(b:, 'fex_last_line', false) != line('.')
             |     b:fex_last_line = line('.')
             |     PrintMetadata(false)
             | endif
@@ -226,7 +226,20 @@ def fex#dirvishUp() #{{{1
 enddef
 
 def fex#undoFtplugin() #{{{1
-    set bh< bl< bt< cocu< cole< fde< fdl< fdm< fdt< stl< swf< wfw< wrap<
+    set bufhidden<
+    set buflisted<
+    set buftype<
+    set concealcursor<
+    set conceallevel<
+    set foldexpr<
+    set foldlevel<
+    set foldmethod<
+    set foldtext<
+    set statusline<
+    set swapfile<
+    set winfixwidth<
+    set wrap<
+
     unlet! b:fex_curdir
 
     nunmap <buffer> <c-s>

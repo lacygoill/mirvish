@@ -1,32 +1,40 @@
+vim9script
+
 if exists('b:did_ftplugin')
     finish
 endif
 
-" Options {{{1
+# Options {{{1
 
-setl bh=delete bt=nofile nobl cul noswf wfw nowrap
+&l:bufhidden = 'delete'
+&l:buftype = 'nofile'
+&l:buflisted = false
+&l:cursorline = true
+&l:swapfile = false
+&l:winfixwidth = true
+&l:wrap = false
 
-setl cocu=nc
-setl cole=3
-setl fde=fex#tree#fde()
-setl fdm=expr
-setl fdt=fex#tree#fdt()
-call fex#tree#fdl()
+&l:concealcursor = 'nc'
+&l:conceallevel = 3
+&l:foldexpr = 'fex#tree#foldexpr()'
+&l:foldmethod = 'expr'
+&l:foldtext = 'fex#tree#foldtext()'
+fex#tree#foldlevel()
 
-let &l:stl = '%!g:statusline_winid == win_getid()'
-    \ .. ' ? "%y %{fex#statusline#curdir()}%<%=%l/%L "'
-    \ .. ' : "%y %{fex#statusline#curdir()}"'
+&l:statusline = '%!g:statusline_winid == win_getid()'
+    .. ' ? "%y %{fex#statusline#curdir()}%<%=%l/%L "'
+    .. ' : "%y %{fex#statusline#curdir()}"'
 
-" Mappings {{{1
+# Mappings {{{1
 
-" FIXME: Press `C-s` twice.  The second time, a vertical split is created.
-" Nothing should happen.
-" If the file is already displayed in the tab page, don't open it.
-"
-" Also, there is  an issue in the  function; `wincmd p` will not  always give us
-" the desired result (we want a new  large horizontal split; not a vertical one,
-" which we would probably get if the  previous window is a vertical split opened
-" via `C-w f`).
+# FIXME: Press `C-s` twice.  The second time, a vertical split is created.
+# Nothing should happen.
+# If the file is already displayed in the tab page, don't open it.
+#
+# Also, there is  an issue in the  function; `wincmd p` will not  always give us
+# the desired result (we want a new  large horizontal split; not a vertical one,
+# which we would probably get if the  previous window is a vertical split opened
+# via `C-w f`).
 nno <buffer><nowait> <c-s> <cmd>call fex#tree#edit()<cr>
 nno <buffer><nowait> <c-w>F <cmd>call fex#tree#split()<cr>
 nno <buffer><nowait> <c-w>f <cmd>call fex#tree#split()<cr>
@@ -50,12 +58,12 @@ nno <buffer><nowait> ]] <cmd>call fex#tree#relativeDir('child')<cr>
 nno <buffer><nowait> p <cmd>call fex#tree#preview()<cr>
 nno <buffer><nowait> q <cmd>call fex#tree#close()<cr>
 
-" Variables {{{1
+# Variables {{{1
 
-let b:did_ftplugin = 1
+b:did_ftplugin = true
 
-" Teardown {{{1
+# Teardown {{{1
 
-let b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
-    \ .. '| call fex#undoFtplugin()'
+b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
+    .. '| call fex#undoFtplugin()'
 

@@ -114,7 +114,8 @@ var clean_cache_timer_id: number
 def fex#tree#displayHelp() #{{{2
     if getline(1) =~ '"'
         sil keepj :1;/^[^"]/- d _
-        set cole=3 smc<
+        &l:conceallevel = 3
+        set synmaxcol<
         return
     endif
 
@@ -128,7 +129,8 @@ def fex#tree#displayHelp() #{{{2
     # But, if you do so, it will prevent some text from being concealed.
     # So, we also temporarily disable conceal.
     #}}}
-    setl smc=50 cole=0
+    &l:synmaxcol = 50
+    &l:conceallevel = 0
     var dir: string = expand('%:p')->matchstr('/fex\zs.*')
 
     var help: list<string> = [
@@ -178,7 +180,7 @@ def fex#tree#edit() #{{{2
     endtry
 enddef
 
-def fex#tree#fde(): any #{{{2
+def fex#tree#foldexpr(): any #{{{2
     # If you refactor this function, make sure the plugin doesn't get too slow.{{{
     #
     # This function is invoked once per line; that's a lot in a big directory.
@@ -207,11 +209,11 @@ def fex#tree#fde(): any #{{{2
     return lvl
 enddef
 
-def fex#tree#fdl() #{{{2
-    &l:fdl = &foldclose == 'all' ? 0 : 99
+def fex#tree#foldlevel() #{{{2
+    &l:foldlevel = &foldclose == 'all' ? 0 : 99
 enddef
 
-def fex#tree#fdt(): string #{{{2
+def fex#tree#foldtext(): string #{{{2
     var pat: string = '\(.*─\s\)\(.*\)/'
     var Rep: func = (m: list<string>): string =>
         m[1] .. m[2]->substitute('.*/', '', '')
@@ -313,7 +315,7 @@ def fex#tree#preview() #{{{2
     exe 'pedit ' .. Getfile()
 
     var prev_winnr: number = winnr('#')
-    if getwinvar(prev_winnr, '&pvw')
+    if getwinvar(prev_winnr, '&previewwindow')
         t:fex_preview_winid = win_getid(prev_winnr)
     endif
 enddef
@@ -404,9 +406,9 @@ enddef
 def GetIgnorePat(): string #{{{2
     # Purpose:
     # Build a FILE pattern to pass to `tree(1)`, so that it ignores certain entries.
-    # We use 'wig' to decide what to ignore.
+    # We use 'wildignore' to decide what to ignore.
 
-    # 'wig' can contain patterns matching directories.
+    # 'wildignore' can contain patterns matching directories.
     # But  `tree(1)` compares  the patterns  we pass  to `-I`  to the  LAST path
     # component of the entries (files/directories).
     # So, you can't do this:
@@ -417,7 +419,7 @@ def GetIgnorePat(): string #{{{2
     #
     #     $ tree -I '__pycache__' ~/.vim/pythonx/
 
-    # to match `*.bak` in `&wig` (no dot in the pattern to also match `*~`)
+    # to match `*.bak` in `&wildignore` (no dot in the pattern to also match `*~`)
     var pat: string = '\*[^/]\+\|'
         .. '\*/\zs'
         # to match `*/pycache/*`
@@ -425,12 +427,12 @@ def GetIgnorePat(): string #{{{2
         .. '\ze/\*\|'
         # to match `tags`
         .. '^[^*/]\+$'
-    var ignore_pat: string = &wig
+    var ignore_pat: string = &wildignore
         ->split(',')
         ->map((_, v: string): string => v->matchstr(pat))
         # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
         #
-        #     &wig ..= ',' .. &undodir .. '/*.*'
+        #     &wildignore ..= ',' .. &undodir .. '/*.*'
         #
         # We must eliminate those.
         #}}}
@@ -507,7 +509,7 @@ def SaveView(curdir: string) #{{{2
         return
     endif
     cache[curdir]['pos'] = line('.')
-    cache[curdir]['fdl'] = &l:fdl
+    cache[curdir]['foldlevel'] = &l:foldlevel
 enddef
 
 def Timer_stop() #{{{2
@@ -518,7 +520,7 @@ def Timer_stop() #{{{2
 enddef
 
 def UseCache(dir: string) #{{{2
-    setline(1, cache[dir]['contents'])
+    cache[dir]['contents']->setline(1)
 
     # restore last position if one was saved
     if cache[dir]->has_key('pos')
@@ -534,13 +536,13 @@ def UseCache(dir: string) #{{{2
     endif
 
     # restore last foldlevel if one was saved
-    if cache[dir]->has_key('fdl')
-        &l:fdl = cache[dir]['fdl']
+    if cache[dir]->has_key('foldlevel')
+        &l:foldlevel = cache[dir]['foldlevel']
     endif
 
     # if the  directory is big, and  not all its contents  can be displayed,
     # highlight its path on the first line as an indicator
-    if get(cache[dir], 'big', 0)
+    if cache[dir]->get('big', false)
         matchadd('WarningMsg', BIG_DIR_PAT, 0)
     endif
 enddef
