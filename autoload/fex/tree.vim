@@ -253,7 +253,7 @@ def fex#tree#open(arg_dir: string, nosplit: bool) #{{{2
     if nosplit
         exe 'e ' .. tempfile
     else
-        exe 'to :' .. get(t:, 'fex_winwidth', &columns / 3) .. 'vnew ' .. tempfile
+        exe 'to :' .. get(t:, 'fex_winwidth', &columns / 3) .. ' vnew ' .. tempfile
     endif
 enddef
 var current_file_pos: string
@@ -400,7 +400,7 @@ def Format() #{{{2
     # second slash.  We'll  end up with two slashes, which  will give unexpected
     # results regarding the syntax highlighting.
     #}}}
-    sil keepj keepp :%s:/\ze/$::e
+    sil keepj keepp :% s:/\ze/$::e
 enddef
 
 def GetIgnorePat(): string #{{{2
