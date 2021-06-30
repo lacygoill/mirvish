@@ -5,17 +5,17 @@ var loaded = true
 
 # Autocommand {{{1
 
-augroup MyFex | au!
-    au BufNewFile /tmp/*/fex* expand('<afile>:p')->fex#tree#populate()
+augroup MyFex | autocmd!
+    autocmd BufNewFile /tmp/*/fex* expand('<afile>:p')->fex#tree#populate()
 augroup END
 
 # Command {{{1
 
-com -bang -bar -nargs=? -complete=file Tree fex#tree#open(<q-args>, <bang>0)
+command -bang -bar -nargs=? -complete=file Tree fex#tree#open(<q-args>, <bang>0)
 
 # Mappings {{{1
 
-nno <unique> -T <cmd>Tree<cr>
+nnoremap <unique> -T <Cmd>Tree<CR>
 # TODO: If you press `-t` several times in the same tab page, several `fex` windows are opened.{{{
 #
 # I think it would be better if there was always at most one window.
@@ -29,6 +29,6 @@ nno <unique> -T <cmd>Tree<cr>
 #
 #     /tmp/v3cl1c7/366/fex/home/user/.vim/pack/mine/opt/fex/ is not a directory
 #}}}
-nno <unique> -t <cmd>exe 'Tree ' .. getcwd()<cr>
-nno <unique> -- <cmd>call fex#dirvishUp()<cr>
+nnoremap <unique> -t <Cmd>execute 'Tree ' .. getcwd()<CR>
+nnoremap <unique> -- <Cmd>call fex#dirvishUp()<CR>
 

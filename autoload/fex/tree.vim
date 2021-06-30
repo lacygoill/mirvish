@@ -79,7 +79,7 @@ def fex#tree#close() #{{{2
         # Make sure the preview window has not been already closed.
         # If it has, `win_id2win()` will return 0.
         if preview_winnr != 0
-            exe ':' .. preview_winnr .. 'wincmd c'
+            execute ':' .. preview_winnr .. 'wincmd c'
             unlet! t:fex_preview_winid
         endif
     endif
@@ -113,7 +113,7 @@ var clean_cache_timer_id: number
 
 def fex#tree#displayHelp() #{{{2
     if getline(1) =~ '"'
-        sil keepj :1;/^[^"]/- d _
+        silent keepjumps :1;/^[^"]/-1 delete _
         &l:conceallevel = 3
         set synmaxcol<
         return
@@ -151,9 +151,9 @@ enddef
 def fex#tree#split(in_newtab = false) #{{{2
     var file: string = Getfile()
     if in_newtab
-        exe 'tabedit ' .. file
+        execute 'tabedit ' .. file
     else
-        exe 'sp ' .. file
+        execute 'split ' .. file
     endif
 enddef
 
@@ -170,8 +170,8 @@ def fex#tree#edit() #{{{2
     endif
     # E36: Not enough room
     try
-        exe 'sp ' .. file
-        norm! zv
+        execute 'split ' .. file
+        normal! zv
     catch
         Catch()
         return
@@ -191,12 +191,12 @@ def fex#tree#foldexpr(): any #{{{2
     #
     # If you want to refactor the function, make a profiling before and after:
     #
-    #     $ vim --cmd 'prof  start /tmp/script.profile' \
-    #           --cmd 'prof! file  */tree.vim' \
+    #     $ vim --cmd 'profile  start /tmp/script.profile' \
+    #           --cmd 'profile! file  */tree.vim' \
     #           -c    ':Tree /proc' \
-    #           -cq
+    #           -cquit
     #
-    #     :q
+    #     :quit
     #
     #     $ vim /tmp/script.profile
     #}}}
@@ -251,9 +251,9 @@ def fex#tree#open(arg_dir: string, nosplit: bool) #{{{2
         # (`:update` would fail; E502).
         .. (dir == '/' ? '' : dir)
     if nosplit
-        exe 'e ' .. tempfile
+        execute 'edit ' .. tempfile
     else
-        exe 'to :' .. get(t:, 'fex_winwidth', &columns / 3) .. ' vnew ' .. tempfile
+        execute 'topleft :' .. get(t:, 'fex_winwidth', &columns / 3) .. ' vnew ' .. tempfile
     endif
 enddef
 var current_file_pos: string
@@ -288,7 +288,7 @@ def fex#tree#populate(path: string) #{{{2
     endif
 
     var cmd: string = GetTreeCmd(dir)
-    sil systemlist(cmd)->setline(1)
+    silent systemlist(cmd)->setline(1)
     Format()
 
     if stridx(cmd, '-L 2 --filelimit 300') == -1
@@ -306,13 +306,13 @@ def fex#tree#populate(path: string) #{{{2
 
     # position cursor on current file
     if current_file_pos != ''
-        au BufWinEnter <buffer> ++once search(current_file_pos)
+        autocmd BufWinEnter <buffer> ++once search(current_file_pos)
             | current_file_pos = ''
     endif
 enddef
 
 def fex#tree#preview() #{{{2
-    exe 'pedit ' .. Getfile()
+    execute 'pedit ' .. Getfile()
 
     var prev_winnr: number = winnr('#')
     if getwinvar(prev_winnr, '&previewwindow')
@@ -326,7 +326,7 @@ def fex#tree#relativeDir(who: string) #{{{2
     var new_dir: string
     if who == 'parent'
         if getline('.') =~ '^"\|^$'
-            norm! h
+            normal! h
             return
         endif
         if curdir == '/'
@@ -337,7 +337,7 @@ def fex#tree#relativeDir(who: string) #{{{2
             ->fnamemodify(':h')
     else
         if getline('.') =~ '^"\|^$'
-            norm! l
+            normal! l
             return
         endif
         #                   ┌ don't try to open an entry
@@ -354,7 +354,7 @@ def fex#tree#relativeDir(who: string) #{{{2
     endif
 
     SaveView(curdir)
-    exe 'Tree! ' .. new_dir
+    execute 'Tree! ' .. new_dir
 
     # If we go up the tree, position the cursor on the directory we come from.
     if exists('curdir')
@@ -373,7 +373,7 @@ def fex#tree#reload() #{{{2
     var line: string = getline('.')
 
     # reload
-    exe 'Tree! ' .. cur_dir
+    execute 'Tree! ' .. cur_dir
 
     # restore position
     ('^\C' .. '\V' .. escape(line, '\') .. '\m' .. '$')
@@ -400,7 +400,7 @@ def Format() #{{{2
     # second slash.  We'll  end up with two slashes, which  will give unexpected
     # results regarding the syntax highlighting.
     #}}}
-    sil keepj keepp :% s:/\ze/$::e
+    silent keepjumps keeppatterns :% substitute;/\ze/$;;e
 enddef
 
 def GetIgnorePat(): string #{{{2
@@ -488,7 +488,7 @@ def Getfile(): string #{{{2
 enddef
 
 def IsBigDirectory(dir: string): bool #{{{2
-    sil return dir == '/'
+    silent return dir == '/'
         || dir == '/home'
         || dir =~ '^/home/[^/]\+/\=$'
         || systemlist('find ' .. shellescape(dir) .. ' -type f 2>/dev/null | wc -l')[0]->str2nr() > BIG_DIR_SIZE
@@ -532,7 +532,7 @@ def UseCache(dir: string) #{{{2
         # Vim will  re-position the cursor  on the first line  afterwards (after
         # BufEnter).
         #}}}
-        au BufWinEnter <buffer> ++once cursor(last_pos, 1)
+        autocmd BufWinEnter <buffer> ++once cursor(last_pos, 1)
     endif
 
     # restore last foldlevel if one was saved
@@ -551,7 +551,7 @@ var last_pos: number
 # Utilities {{{1
 def Error(msg: string) #{{{2
     echohl ErrorMsg
-    echom msg
+    echomsg msg
     echohl NONE
 enddef
 

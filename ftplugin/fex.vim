@@ -35,28 +35,28 @@ fex#tree#foldlevel()
 # the desired result (we want a new  large horizontal split; not a vertical one,
 # which we would probably get if the  previous window is a vertical split opened
 # via `C-w f`).
-nno <buffer><nowait> <c-s> <cmd>call fex#tree#edit()<cr>
-nno <buffer><nowait> <c-w>F <cmd>call fex#tree#split()<cr>
-nno <buffer><nowait> <c-w>f <cmd>call fex#tree#split()<cr>
-nno <buffer><nowait> <c-w>gf <cmd>call fex#tree#split(v:true)<cr>
+nnoremap <buffer><nowait> <C-S> <Cmd>call fex#tree#edit()<CR>
+nnoremap <buffer><nowait> <C-W>F <Cmd>call fex#tree#split()<CR>
+nnoremap <buffer><nowait> <C-W>f <Cmd>call fex#tree#split()<CR>
+nnoremap <buffer><nowait> <C-W>gf <Cmd>call fex#tree#split(v:true)<CR>
 
-nno <buffer><nowait> ( k<cmd>call fex#tree#preview()<cr>
-nno <buffer><nowait> ) j<cmd>call fex#tree#preview()<cr>
-nno <buffer><nowait> [[ <cmd>call search('.*/$', 'b')<cr>
-nno <buffer><nowait> ]] <cmd>call search('.*/$')<cr>
+nnoremap <buffer><nowait> ( k<Cmd>call fex#tree#preview()<CR>
+nnoremap <buffer><nowait> ) j<Cmd>call fex#tree#preview()<CR>
+nnoremap <buffer><nowait> [[ <Cmd>call search('.*/$', 'b')<CR>
+nnoremap <buffer><nowait> ]] <Cmd>call search('.*/$')<CR>
 
-nno <buffer><nowait> -M <cmd>call fex#printMetadata(v:true)<cr>
-nno <buffer><nowait> -m <cmd>call fex#printMetadata()<cr>
-xno <buffer><nowait> -m <c-\><c-n><cmd>call fex#printMetadata()<cr>
+nnoremap <buffer><nowait> -M <Cmd>call fex#printMetadata(v:true)<CR>
+nnoremap <buffer><nowait> -m <Cmd>call fex#printMetadata()<CR>
+xnoremap <buffer><nowait> -m <C-\><C-N><Cmd>call fex#printMetadata()<CR>
 
-nno <buffer><nowait> R <cmd>call fex#tree#reload()<cr>
-nno <buffer><nowait> g? <cmd>call fex#tree#displayHelp()<cr>
-nno <buffer><nowait> gh <cmd>call fex#tree#toggleDotEntries()<cr>
+nnoremap <buffer><nowait> R <Cmd>call fex#tree#reload()<CR>
+nnoremap <buffer><nowait> g? <Cmd>call fex#tree#displayHelp()<CR>
+nnoremap <buffer><nowait> gh <Cmd>call fex#tree#toggleDotEntries()<CR>
 
-nno <buffer><nowait> [[ <cmd>call fex#tree#relativeDir('parent')<cr>
-nno <buffer><nowait> ]] <cmd>call fex#tree#relativeDir('child')<cr>
-nno <buffer><nowait> p <cmd>call fex#tree#preview()<cr>
-nno <buffer><nowait> q <cmd>call fex#tree#close()<cr>
+nnoremap <buffer><nowait> [[ <Cmd>call fex#tree#relativeDir('parent')<CR>
+nnoremap <buffer><nowait> ]] <Cmd>call fex#tree#relativeDir('child')<CR>
+nnoremap <buffer><nowait> p <Cmd>call fex#tree#preview()<CR>
+nnoremap <buffer><nowait> q <Cmd>call fex#tree#close()<CR>
 
 # Variables {{{1
 
@@ -64,6 +64,6 @@ b:did_ftplugin = true
 
 # Teardown {{{1
 
-b:undo_ftplugin = get(b:, 'undo_ftplugin', 'exe')
+b:undo_ftplugin = get(b:, 'undo_ftplugin', 'execute')
     .. '| call fex#undoFtplugin()'
 

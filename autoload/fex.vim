@@ -25,10 +25,10 @@ const _2_POW_30: number = pow(2, 30)->float2nr()
 def fex#formatEntries() #{{{1
     var pat: string = glob2regpat(&wildignore)->substitute(',', '\\|', 'g')
     pat = '\%(' .. pat .. '\)$'
-    exe 'sil keepj keepp g:' .. pat .. ':d _'
+    execute 'silent keepjumps keeppatterns global;' .. pat .. ';delete _'
 
     if hide_dot_entries
-        sil keepj keepp g:/\.[^\/]\+/\=$:d _
+        silent keepjumps keeppatterns global;/\.[^\/]\+/\=$;delete _
     endif
 
     sort :^.*[\/]:
@@ -104,22 +104,22 @@ enddef
 def fex#preview() #{{{1
     var file: string = getline('.')
     if filereadable(file)
-        exe 'pedit ' .. file
+        execute 'pedit ' .. file
         var winid: number = Win_getid('P')
-        noa win_execute(winid, ['wincmd L', 'norm! zv'])
+        noautocmd win_execute(winid, ['wincmd L', 'normal! zv'])
 
     elseif isdirectory(file)
-        sil var ls: list<string> = systemlist('ls ' .. shellescape(file))
+        silent var ls: list<string> = systemlist('ls ' .. shellescape(file))
         b:dirvish['preview_ls'] = get(b:dirvish, 'preview_ls', tempname())
         writefile(ls, b:dirvish['preview_ls'])
-        exe 'sil pedit ' .. b:dirvish['preview_ls']
+        execute 'silent pedit ' .. b:dirvish['preview_ls']
         var winid: number = Win_getid('P')
-        noa win_execute(winid, 'wincmd L')
+        noautocmd win_execute(winid, 'wincmd L')
     endif
 enddef
 
 def fex#printMetadata(auto = false) #{{{1
-    var in_visualmode: bool = mode() =~ "^[vV\<c-v>]$"
+    var in_visualmode: bool = mode() =~ "^[vV\<C-V>]$"
     # Automatically printing metadata in visual mode doesn't make sense.
     if auto && in_visualmode
         return
@@ -131,19 +131,19 @@ def fex#printMetadata(auto = false) #{{{1
             # under the cursor.
             AutoMetadata()
             # Re-install it every time we enter a new directory.
-            augroup FexPrintMetadataAndPersist | au!
-                au FileType dirvish,tree AutoMetadata()
+            augroup FexPrintMetadataAndPersist | autocmd!
+                autocmd FileType dirvish,tree AutoMetadata()
             augroup END
         else
             # if on, then toggle off
-            sil! au!  FexPrintMetadata
-            sil! aug! FexPrintMetadata
+            silent! autocmd! FexPrintMetadata
+            silent! augroup! FexPrintMetadata
         endif
     else
-        sil! au!  FexPrintMetadata
-        sil! aug! FexPrintMetadata
-        sil! au!  FexPrintMetadataAndPersist
-        sil! aug! FexPrintMetadataAndPersist
+        silent! autocmd! FexPrintMetadata
+        silent! augroup! FexPrintMetadata
+        silent! autocmd! FexPrintMetadataAndPersist
+        silent! augroup! FexPrintMetadataAndPersist
         unlet! b:fex_last_line
     endif
     PrintMetadata(in_visualmode)
@@ -162,7 +162,7 @@ def PrintMetadata(in_visualmode: bool) #{{{1
         endfor
     endif
     # Flush any delayed screen updates before printing the metadata.
-    # See `:h :echo-redraw`.
+    # See `:help :echo-redraw`.
     redraw
     # The last newline causes an undesired hit-enter prompt when we only ask the
     # metadata of a single file.
@@ -171,8 +171,8 @@ enddef
 
 def AutoMetadata() #{{{1
     augroup FexPrintMetadata
-        au! * <buffer>
-        au CursorMoved <buffer> if get(b:, 'fex_last_line', false) != line('.')
+        autocmd! * <buffer>
+        autocmd CursorMoved <buffer> if get(b:, 'fex_last_line', false) != line('.')
             |     b:fex_last_line = line('.')
             |     PrintMetadata(false)
             | endif
@@ -185,15 +185,15 @@ def fex#toggleDotEntries() #{{{1
 enddef
 
 def fex#trashPut() #{{{1
-    sil system('trash-put ' .. getline('.')->shellescape())
-    e
+    silent system('trash-put ' .. getline('.')->shellescape())
+    edit
 enddef
 
 def fex#dirvishUp() #{{{1
     var cnt: number = v:count1
     var file: string = expand('%:p')
     var dir: string = file->fnamemodify(':h')
-    sil! update
+    silent! update
     # Make sure the directory of the current file exists.{{{
     #
     # Maybe it does not (e.g. `:FreeKeys`, `:Tree`, ...).
@@ -211,7 +211,7 @@ def fex#dirvishUp() #{{{1
         #
         # MWE:
         #
-        #     :e /tmp/new_dir/file
+        #     :edit /tmp/new_dir/file
         #     :Dirvish
         #
         # The issue comes from:
@@ -219,10 +219,10 @@ def fex#dirvishUp() #{{{1
         #     " ~/.vim/pack/minpac/opt/vim-dirvish/autoload/dirvish.vim:28
         #     call s:msg_error("invalid directory: '".a:dir."'")
         #}}}
-        sil Dirvish
+        silent Dirvish
         return
     endif
-    exe 'Dirvish %:p' .. repeat(':h', cnt)
+    execute 'Dirvish %:p' .. repeat(':h', cnt)
 enddef
 
 def fex#undoFtplugin() #{{{1
@@ -242,10 +242,10 @@ def fex#undoFtplugin() #{{{1
 
     unlet! b:fex_curdir
 
-    nunmap <buffer> <c-s>
-    nunmap <buffer> <c-w>F
-    nunmap <buffer> <c-w>f
-    nunmap <buffer> <c-w>gf
+    nunmap <buffer> <C-S>
+    nunmap <buffer> <C-W>F
+    nunmap <buffer> <C-W>f
+    nunmap <buffer> <C-W>gf
 
     nunmap <buffer> (
     nunmap <buffer> )
