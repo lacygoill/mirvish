@@ -1,8 +1,5 @@
 vim9script noclear
 
-if exists('loaded') | finish | endif
-var loaded = true
-
 # TODO: Make the plugin async (faster in big directories).
 # Look for `system()` and `systemlist()` everywhere in the plugin.
 # Inspiration: https://github.com/lambdalisue/fern.vim
@@ -143,7 +140,7 @@ def fex#tree#displayHelp() #{{{2
     help += HELP
 
     help
-        ->map((_, v: string): string => !empty(v) ? '" ' .. v : v)
+        ->map((_, v: string) => !empty(v) ? '" ' .. v : v)
         ->append(0)
     cursor(1, 1)
 enddef
@@ -429,7 +426,7 @@ def GetIgnorePat(): string #{{{2
         .. '^[^*/]\+$'
     var ignore_pat: string = &wildignore
         ->split(',')
-        ->map((_, v: string): string => v->matchstr(pat))
+        ->map((_, v: string) => v->matchstr(pat))
         # We may get empty matches, or sth like `*.*` because of (in vimrc):{{{
         #
         #     &wildignore ..= ',' .. &undodir .. '/*.*'

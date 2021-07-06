@@ -1,8 +1,5 @@
 vim9script noclear
 
-if exists('loaded') | finish | endif
-var loaded = true
-
 import Win_getid from 'lg.vim'
 
 # Why not hiding by default?{{{
@@ -216,7 +213,7 @@ def fex#dirvishUp() #{{{1
         #
         # The issue comes from:
         #
-        #     " ~/.vim/pack/minpac/opt/vim-dirvish/autoload/dirvish.vim:28
+        #     # ~/.vim/pack/minpac/opt/vim-dirvish/autoload/dirvish.vim:28
         #     call s:msg_error("invalid directory: '".a:dir."'")
         #}}}
         silent Dirvish
