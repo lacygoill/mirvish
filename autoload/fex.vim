@@ -150,11 +150,11 @@ def PrintMetadata(in_visualmode: bool) #{{{1
     var lines: list<string> = in_visualmode ? getline("'<", "'>") : [getline('.')]
     var metadata: string = ''
     if in_visualmode
-        for line in lines
+        for line: string in lines
             metadata ..= GetMetadata(line, true)
         endfor
     else
-        for line in lines
+        for line: string in lines
             metadata ..= GetMetadata(line)
         endfor
     endif
