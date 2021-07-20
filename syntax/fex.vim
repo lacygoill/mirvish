@@ -34,20 +34,20 @@ syntax match fexTreeHelpCmd '^"\s$\stree.*' contained
 
 # Colors {{{1
 
-highlight def link fexTreeWarning        WarningMsg
-highlight def link fexTreeHelp           Comment
-highlight def link fexTreeHelpKey        Function
-highlight def link fexTreeHelpTitle      Type
-highlight def link fexTreeHelpCmd        WarningMsg
+highlight default link fexTreeWarning        WarningMsg
+highlight default link fexTreeHelp           Comment
+highlight default link fexTreeHelpKey        Function
+highlight default link fexTreeHelpTitle      Type
+highlight default link fexTreeHelpCmd        WarningMsg
 
-highlight def link fexTreeDirectory      Directory
-# TODO: Without `def link`, this kind of HGs doesn't survive a change of color scheme.
-highlight          fexTreeExecutable     ctermfg=darkgreen guifg=darkgreen
+highlight default link fexTreeDirectory      Directory
+# TODO: Without `default link`, this kind of HGs doesn't survive a change of color scheme.
+highlight              fexTreeExecutable     ctermfg=darkgreen guifg=darkgreen
 
-highlight          fexTreeLink           ctermfg=darkmagenta guifg=darkmagenta
-highlight def link fexTreeLinkFile       Normal
-highlight def link fexTreeLinkDirectory  Directory
-highlight          fexTreeLinkExecutable ctermfg=darkgreen guifg=darkgreen
+highlight              fexTreeLink           ctermfg=darkmagenta guifg=darkmagenta
+highlight default link fexTreeLinkFile       Normal
+highlight default link fexTreeLinkDirectory  Directory
+highlight              fexTreeLinkExecutable ctermfg=darkgreen guifg=darkgreen
 
 b:current_syntax = 'fex'
 
